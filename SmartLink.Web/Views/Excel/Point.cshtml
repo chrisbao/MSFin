@@ -1,0 +1,180 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Point</title>
+    <script src="../../Scripts/jquery-1.10.2.js" type="text/javascript"></script>
+
+    <link href="../../Content/Office.css" rel="stylesheet" type="text/css" />
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
+
+    <!-- To enable offline debugging using a local reference to Office.js, use:                        -->
+    <!-- <script src="../../Scripts/Office/MicrosoftAjax.js" type="text/javascript"></script>  -->
+    <!-- <script src="../../Scripts/Office/1/office.js" type="text/javascript"></script>  -->
+
+    <script>
+        var timestamp = Math.random();
+        document.write("<link href='../../Content/App.css?t=" + timestamp + "' rel='stylesheet' type='text/css' />");
+        document.write("<script src='../../Scripts/App/App.js?t=" + timestamp + "' type='text/javascript'></s" + "cript>");
+        document.write("<script src='../../Scripts/App/Excel/Point.js?t=" + timestamp + "' type='text/javascript'></s" + "cript>");
+    </script>
+</head>
+<body>
+    <div id="excel-addin" class="main manage">
+        <div class="header">
+            <div class="nav-header">
+                <a class="n-back" href="javascript:" title="Back"><i></i><span>Back</span></a>
+                <a class="n-add" href="javascript:" title="Add"><i></i><span>Add</span></a>
+                <a class="n-bulk" href="javascript:" title="Bulk Add"><i></i><span>Bulk Add</span></a>
+                <a class="n-publish" href="javascript:" title="Publish"><i></i><span>Publish</span></a>
+                <a class="n-refresh" href="javascript:" title="Refresh All"><i></i><span>Refresh All</span></a>
+                <a class="n-publishall" href="javascript:" title="Publish All"><i></i><span>Publish All</span></a>
+                <a class="n-delete" href="javascript:" title="Delete"><i></i><span>Delete</span></a>
+                <a class="n-signout" href="../Account/SignOut" title="Sign Out"><i></i><span>Sign Out</span></a>
+            </div>
+            <div class="content-header">
+                <div class="add-header">
+                    <h3 class="title-add" title="Add Source Point">Add Source Point</h3>
+                    <h3 class="title-edit" title="Edit Source Point">Edit Source Point</h3>
+                    <div class="btnWrapper">
+                        <button id="btnCancel">Cancel</button>
+                        <button id="btnSave">Save</button>
+                    </div>
+                </div>
+                <div class="manage-header">
+                    <h3>Manage Source Points</h3>
+                    <div class="search">
+                        <div class="s-input">
+                            <div>
+                                <input type="text" id="txtSearchSourcePoint" data-default="Search by Source Point Name" />
+                                <ul id="autoCompleteWrap2" class="search-tooltips"></ul>
+                            </div>
+                        </div>
+                        <div class="s-label">
+                            <label>Search Source Point Name:</label>
+                            <i id="iSearchSourcePoint"></i>
+                        </div>
+                    </div>
+                    <ul id="headerListPoints" class="point-list">
+                        <li class="point-header">
+                            <div class="point-header-line noscroll">
+                                <div class="i1">
+                                    <div class="ckb-wrapper all">
+                                        <input type="checkbox" />
+                                        <i></i>
+                                    </div>
+                                </div>
+                                <div class="i2">Source Point</div>
+                                <div class="i3">Published Value</div>
+                                <div class="i4">Document Value</div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        <div class="content add-point">
+            <div class="point-item input-wrapper source-name">
+                <label>Source Point Name<em>*</em></label>
+                <input type="text" id="txtName" />
+            </div>
+            <div class="point-item input-wrapper select-group">
+                <label>Assign to Groups:</label>
+                <ul id="groupWrapper"></ul>
+            </div>
+            <h4>Set Location</h4>
+            <div class="point-item input-wrapper">
+                <label>Select range:<em>*</em></label>
+                <div class="select-range">
+                    <input type="text" id="txtLocation" />
+                    <a href="javascript:" id="btnLocation"></a>
+                </div>
+            </div>
+            <div class="point-associated">
+                <h4>Files associated with this Source Point:</h4>
+                <ul id="listAssociated"></ul>
+            </div>
+        </div>
+        <div class="content manage-point">
+            <ul id="listPoints" class="point-list">
+                <!--
+                <li class="point-item item-error item-more" data-id="7902cb2d-2155-41e7-b602-1fdd3572428f" data-range="7a692940-a4b8-b1e7-ac0b-42da2a459fd9">
+                    <div class="point-item-line">
+                        <div class="i1"><div class="ckb-wrapper"><input type="checkbox" /><i></i></div></div>
+                        <div class="i2"><span class="s-name" data-position="" title="1">1</span></div>
+                        <div class="i3" title="a">a</div>
+                        <div class="i4" title=""></div>
+                        <div class="i5">
+                            <div class="i-line"><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i><i class="i-edit" title="Edit"></i></div>
+                            <div class="i-menu"><a href="javascript:"><span title="Action">...</span><span><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i><i class="i-edit" title="Edit"></i></span></a></div>
+                        </div>
+                    </div>
+                    <div class="item-history">
+                        <h6>Publish History</h6>
+                        <ul class="history-list">
+                            <li class="history-header"><div class="h1">Name</div><div class="h2">Value</div><div class="h3">Date</div></li>
+                            <li class="history-item">
+                                <div class="h1" title="Todd Baginski">Todd Baginski</div>
+                                <div class="h2" title="a">a</div><div class="h3" title="04/09/2017 10:26 PM PST">04/09/2017 10:26 PM PST</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="error-info">
+                        <span>Error</span>
+                        <p>The source point is invalid. This could be caused by not saving the excel file after creating the source point. Please delete the source point and recreate it.</p>
+                    </div>
+                </li>
+                -->
+            </ul>
+            <div class="clear"></div>
+            <div id="pager">
+                <div>
+                    Total items: <span id="pagerTotal"></span>, Page count: <span id="pagerPages"></span>, Current page: <span id="pagerCurrent"></span>
+                </div>
+                <div>
+                    <a id="pagerPrev" href="javascript:">Prev</a><a id="pagerNext" href="javascript:">Next</a>
+                    <input type="text" id="pagerValue" /><button id="pagerGo">GO</button>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <i></i><span>Smart Link</span>
+        </div>
+        <div id="popupMain" class="popups">
+            <div class="bg"></div>
+            <div id="popupMessage" class="popup">
+                <div class="success-wrapper">
+                    <i></i>
+                    <span id="lblSuccessMessage"></span>
+                </div>
+                <div id="popupErrorMain" class="error-wrapper">
+                    <h5>Error</h5>
+                    <h6 id="lblErrorTitle"></h6>
+                    <ul id="lblErrorMessage"></ul>
+                    <h6 id="lblErrorRepair"></h6>
+                    <button id="btnErrorOK">OK</button>
+                </div>
+            </div>
+            <div id="popupProcessing" class="popup processing">
+                <i></i>
+            </div>
+            <div id="popupConfirm" class="popup">
+                <div>
+                    <div id="lblConfirmTitle"></div>
+                    <button id="btnYes">Yes</button>
+                    <button id="btnNo">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+

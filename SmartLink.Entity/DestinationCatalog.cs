@@ -1,0 +1,36 @@
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SmartLink.Entity
+{
+    public class DestinationCatalog : BaseEntity
+    {
+        [NotMapped]
+        public string FileName
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(Name))
+                    return Name.Substring(Name.LastIndexOf('/') + 1);
+                else
+                    return Name;
+            }
+        }
+
+        public string Name { get; set; }
+        public ICollection<DestinationPoint> DestinationPoints { get; set; }
+        public DestinationCatalog()
+        {
+            DestinationPoints = new List<DestinationPoint>();
+        }
+
+        [NotMapped]
+        [JsonIgnore]
+        public bool SerializeDestinationPoints { get; set; } = true;
+        public bool ShouldSerializeDestinationPoints()
+        {
+            return SerializeDestinationPoints;
+        }
+    }
+}
