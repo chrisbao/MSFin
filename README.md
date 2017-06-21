@@ -1,1 +1,567 @@
-# MSFin
+# 	      MSFin SmartLink Code Sample
+
+**Table of contents**
+
+[Prerequisites](#prerequisites)
+
+[Register the application in Azure Active Directory for MVC web app](#register-the-application-in-azure-active-directory-for-MVC-web-app)
+
+[Register the application in AAD for web job](#Register-the-application-in-AAD-for-web-job)
+
+[Create Azure resources using ARM template](#create-azure-resources-using-arm-template)
+
+[Configure the communication between web job and O365 tenant](#configure-the-communication-between-webjob-and-o365-tenant)
+
+[Install Excel Add-in](#install-excel-add-in)
+
+[Install Word Add-in](#install-word-add-in)
+
+[Run Excel & Word Add-ins](#run-excel-&-word-add-ins)
+
+[How to view Azure SQL data?](#How-to-view-Azure-SQL-data)
+
+[How to view data in the storage account?](#how-to-view-data-in-the-storage-account)
+
+[How to check WebJob status?](#How-to-check-WebJob-status?)
+
+[Deploy the sample to Azure](#deploy-the-sample-to-azure)
+
+[Upload the Excel & Word manifest files](#Upload-the-excel-&-word-manifest-files)
+
+[Build and debug locally](#build-and-debug-locally)
+
+[Understand the code](#understand-the-code)
+
+[Questions and comments](#questions-and-comments)
+
+[Contributing](#Contributing)
+
+## Prerequisites
+
+**Deploying and running this sample requires**:
+
+- An Azure subscription with permissions to register a new application, and deploy the web app.
+- You have o365 account and you could contact your admin to consent the permission to access it.
+- Visual Studio 2015 (any edition), [Visual Studio 2015 Community](https://go.microsoft.com/fwlink/?LinkId=691978&clcid=0x409) is available for free and ensure Latest Microsoft Office Developer Tools for Visual Studio 2015 is installed.
+- Make sure you have [Outlook 2016](https://products.office.com/en-US/outlook/email-and-calendar-software-microsoft-outlook) installed
+- Familiarity with C#, .NET Web applications, JavaScript programming.
+
+## Register the application in Azure Active Directory for MVC web app
+
+1. Login the Azure AD using the O365 account. ([`https://manage.windowsazure.com`](https://manage.windowsazure.com)) 
+
+2. Click *Active Directory* on the left navigation
+
+   ![](images/activedirectory.png)
+
+3. Click on the name of your Azure AD directory & then click *Applications* in the tabs menu.
+
+   > **Note:** A new active directory needs to be created if no one exists.
+
+   ![](images/ActiveDirectoryApplications.png)
+
+4. Click *Add an application my organization is developing* in the popup.
+
+5. In the Add Application wizard, enter a name of *SmartLink.Web* and choose the type *Web Application and/or Web API*. Click the arrow to the next page of the wizard.
+
+6. In the *App Properties* page, enter a *SIGN-ON URL*
+
+   `https://<websitename>.azurewebsites.net`
+
+7. Enter an *App ID Uri* `https://[your-domain\].onmicrosoft.com/<websitename>`
+
+8. Hit Ok to create the registration.
+
+9. Obtain and store the Azure AD tenant ID.
+
+   - Click *VIEW ENDPOINTS* in the bottom tabs.
+   - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it
+
+10. Obtain and store the application client ID.
+
+  - On the application, Quick Start page, click on *CONFIGURE* in the tabs menu.
+  - Search & copy the *Client ID* value and store it.
+
+11. Obtain and store the application client secret.
+
+    - On the application,  click ‘All Settings’ | Keys then fill the key description and copy the value. 
+    - Store the copied client secret.
+
+
+## Register the application in AAD for web job
+
+Follow [Register theapplication in AAD for MVC WEB APP](#register-the-application-in-azure-active-directory-for-MVC-web-app) section to register another app named *smartlink.webjob* and please refer to the table below when fill the value. 
+
+| SIGN-ON URL    | https://<websitename>.azurewebsites.net  |
+| -------------- | ---------------------------------------- |
+| **App ID Uri** | **https://[your-domain].onmicrosoft.com/<webjobname>** |
+
+Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
+
+![](images/WebJobO365permission.png)
+
+
+
+## Create Azure resources using ARM template
+
+1. Download the project and using visual studio 2015 to open it.
+
+2. Right click on the Azure resource group project *SmartLink.Azure* and click *Deploy* | *New*.
+
+   ![](images/ARMTemplate.png)
+
+3. Fill the Azure login account and create a new resource group (**For example:**
+   *SmartLink.QA*) then select the resource parameter json file (**For example:** *resource.qa.parameters.json*) & edit the parameter.
+
+   ![](images/resourcegroupdeployment.png)
+
+4. After clicking *Edit Parameters* and please fill the parameters below.
+
+   ![](images\editparameter.png)
+
+   > **Note:** Please select the checkbox to store the password as plain text in the parameters file.
+
+   | **Parameter Name**            | **Value**                                | **Note**                                 |
+   | ----------------------------- | :--------------------------------------- | ---------------------------------------- |
+   | webSiteName                   | <WebSiteName>  **For example:** *SmartLinkQAWebApp* |                                          |
+   | sqlserverName                 | <SQLServerName>  **For example:**  *SmarkLinkQASQL* | The SQL server name                      |
+   | hostingPlanName               | <hostingPlanName>  **For example:**  SmartLinkQAHostPlan | The name of the App Service plan to use for hosting the web app. |
+   | skuName                       | <skuName>  **For example: **  F1         |                                          |
+   | skuCapacity                   | <skuCapacity>  **For example:**  1       | sets number of workers for this App Service plan SKU |
+   | administratorLogin            | <administratorLogin>  **For example:**  SmartLinkLogin | This login is used to login to the SQL database. |
+   | administratorLoginPassword    | < administratorLoginPassword >  **For example:** smartlink@qa |                                          |
+   | databaseName                  | <databaseName>  **For example:**  SmartLinkQA | The database name hosted on the SQL server |
+   | collation                     | Leave it as is.                          |                                          |
+   | edition                       | <Edition>  For example: basic            | Specifies the edition for the database. Valid values are:   -- Default  -- None  -- Premium  -- Basic  -- Standard |
+   | maxSizeBytes                  | Leave it a is                            |                                          |
+   | requestedServiceObjectivename | <requestedServiceObjectivename>          | performance level                        |
+   | storageAccountType            | <storageAccountType>  **For example:**  Standard_LRS |                                          |
+   | storageAccountName            | <storageAccountName>  **For example:**  SmartLinkQA |                                          |
+   | appInsightName                | <appInsightName>  **For example:**  msfinsmartlinkqa |                                          |
+
+5. Validate and hit Ok.
+
+   ![](images/validate.png)
+
+6. Uncheck the *Validate only* checkbox andthen hit OK to create the Azure resources.
+
+   | **Resource Name**    | **Resource Type**   | **Pricing Level** | **Resource Group**                       |
+   | -------------------- | ------------------- | ----------------- | ---------------------------------------- |
+   | <WebSiteName>        | App Service         | F1                | Resource group created in the step 3 above. |
+   | <SQLServerName>      | SQL Server          | N/A               | Same as above                            |
+   | <databaseName >      | SQL database        | basic             | Same as above                            |
+   | <storageAccountName> | Storage  account    | LRS               | Same as above                            |
+   | <WebSiteName>        | Application insight | basic             | Same as above                            |
+
+   ​
+
+## Configure the communication between webjob and O365 tenant
+
+1. Create self-certificate.
+
+   - Execute the following command to create the self-certificate. 
+
+     `makecert -n "CN=MyCompanyName MyAppName Cert" -ss my -len 2048`
+
+   - Go to the personal certificate store under current user. 
+
+   - Export the CER certificate with base 64 encoded X.509.
+
+     ![](images/exportcer.png)
+
+   - Execute the following PowerShell command.
+
+     ```powershell
+     $cer = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
+     $cer.Import("<absolute path of the CER file> Example c:\mycert.cer>") 
+     $bin = $cer.GetRawCertData()
+     $base64Value = [System.Convert]::ToBase64String($bin)
+     $bin = $cer.GetCertHash()
+     $base64Thumbprint = [System.Convert]::ToBase64String($bin)
+     $keyid = [System.Guid]::NewGuid().ToString()
+     ```
+
+   - Store the base64Value; $base64Thumbprint; keyid that will be used in other places.
+
+     > **Note:** **If MAKECERT is not available, please download the windows SDK and install the tool only in the screenshot below.**
+
+     [https://www.microsoft.com/en-us/download/confirmation.aspx?id=8279](https://www.microsoft.com/en-us/download/confirmation.aspx?id=8279)
+
+     ![](images/windowssdk.png)
+
+2.  Export PFX certificate
+
+   - Export the PFX certificate from the self-certificate (remember to export with the private key)
+   - Store the password when export the PFX certificate.
+   - Store the PFX certificate. 
+
+3.  Download the project & include the certificate. 
+
+   - Open the solution.
+
+   - Include the PFX certificate in SmartLink.WebJob project. 
+
+     **For example:** smartlinkqa.pfx.
+
+     ​
+
+4. Configure the app settings in Azure portal
+
+   - Go to the application settings.
+
+   - Locate the App settings node.
+
+     ![](images/appsetting.png)
+
+   - Fill the following app settings.   
+
+   | **App  setting **   | **Value**                                | **Notes**                                |
+   | ------------------- | ---------------------------------------- | :--------------------------------------- |
+   | InstrumentationKey  | Application Insight Instrumentation key. | Find it in the application insights      |
+   | ida:WebJobClientId  | The application ID of the AAD App for  WEB JOB | Find it in the AAD App for web job.      |
+   | CertificatePassword | The password when export the  certificate | Step 2 in this [section](#configure-the-communication-between-webjob-and-o365-tenant) |
+   | ida:AADInstance     | [https://login.microsoftonline.com/](https://login.microsoftonline.com/) | Fixed value                              |
+   | ida:TenantId        | The Azure Tenant ID                      | Step 9 in this [section](#register-the-application-in-azure-active-directory-for-MVC-web-app) |
+   | SharePointUrl       | The root site collection of the O365    site | **For example:**  [https://yourtenant.sharepoint.com](https://yourtenantsharepoint.com) |
+   | CertificateFile     | web site relative path                   | **For example:**  smartlinkqa.pfx        |
+
+5. Update the manifest file.
+   - Download the manifest file from the AAD app forthe web job.
+   - Edit XXX following the template below
+   - Upload the manifest file
+
+| **Key**             | **Value**         | **Notes**                                |
+| ------------------- | ----------------- | ---------------------------------------- |
+| customKeyIdentifier | $base64Thumbprint | Step 1.5 in this [section](#configure-the-communication-between-webjob-and-o365-tenant). |
+| keyId               | $keyid            | Step 1.5 in this [section](#configure-the-communication-between-webjob-and-o365-tenant). |
+| value               | $base64Value      | Step 1.5 in this [section](#configure-the-communication-between-webjob-and-o365-tenant) |
+
+
+
+## Deploy the sample to Azure
+
+1. Open the project using visual studio 2015 if you already download it. 
+2. Update the configuration settings in the table below.
+
+| App Setting               | Value                                 | Note                                     |
+| ------------------------- | ------------------------------------- | ---------------------------------------- |
+| ida:clientID              | GUID                                  | Step 10 in this [section](#register-the-application-in-azure-active-directory-for-MVC-web-app) |
+| ida:clientSecret          | String                                | Step 11 in this [section](#register-the-application-in-azure-active-directory-for-MVC-web-app) |
+| ida:TenantID              | GUID                                  | Step 9 in this [section](#register-the-application-in-azure-active-directory-for-MVC-web-app) |
+| ida:domain                | yourtenantname.onmicrosoft.com        |                                          |
+| ida:PostLogoutRedirectUri | https://websitename.azurewebsites.net | Azure web site URL                       |
+| ResourceId                | https://graph.microsoft.com           | this is fixed value                      |
+| ConsentResource           | https://yourtenantname.sharepoint.com |                                          |
+
+![](images/configuration.png)
+
+3. Right click on *SmartLink.Web* and then select *'Publish'*
+
+4. A *Publish* popup will be displayed.
+
+5. Click on *Microsoft Azure App Service.*
+
+6. Sign in with Azure account and select the Azure website then click '*Next*'
+
+7. Select Web Deploy and then click *'Next'*
+
+8. Select Debug and click *'Next'*
+
+   ![](images/webdeploydebug.png)
+
+9. Click *'Publish'*
+
+## Upload the Excel & Word manifest files
+
+1. Go to the app for office add-in management page. 
+
+   **For example:** `https://<tenantname>.sharepoint.com/sites/AppCatelog/AgaveCatalog/Forms/AllItems.aspx` 
+
+2. Click *'Upload'*
+
+   ![](images/appforoffice.png)
+
+3. Find the excel [app manifest file](SmartLinkExcel/SmartLinkExcelManifest/SmartLinkExcel.xml) & word [app manifest file](SmartLinkWord/SmartLinkWordManifest/SmartLinkWord.xml)
+
+4. Update the excel & word manifest files.
+
+   - Update the Id with a new generated GUID and you could refer to the link below on how to generate it. [https://guidgenerator.com/online-guid-generator.aspx](https://guidgenerator.com/online-guid-generator.aspx) 
+
+     > Note: please generate new GUID for the word manifest file.
+
+   - Update the source location default value to the one provisioned in Azure.
+
+     **For example:** `[https://<yourwebsitename>.azurewebsites.net/Home/Index](https://msfinsmartlinkqa.azurewebsites.net/Home/Index)` 
+
+     ![](images/excelmanifest.png)
+
+5. Upload manifest file *SmartLinkExcel.xml* & *SmartLinkWord.xml* to the SharePoint catalog.
+
+## Install Excel Add-in
+
+1. Open Excel 2016.
+
+2. Sign in with O365 account. 
+
+3. Click *File* | *Options*
+
+   ![](images/options.png)
+
+4. Click Trust Center | Trust center settings.
+
+   ![](images/trustcenter.png)
+
+5. Click Trust App Catalogs | Add catalog URL.
+
+   **For example:** `https://<tenantname>.sharepoint.com/sites/AppCatelog`
+
+   ![](images/trustcatalog.png)
+
+6. Restart the excel.
+
+7. Click *Insert* and *My Add-ins*
+
+   ![](images/insertexceladdin.png)
+
+8. Click *MY ORGANIZATION* and insert the *SmartLinkExcel*. 
+
+   ![](images/selectaddin.png)
+
+9. Then the Excel Add-in would be shown on the task panel.
+
+   ![](images/excelwelcome.png)
+
+## Install Word Add-in
+
+1. Open Excel 2016
+
+2. Sign in with O365 account. 
+
+3. Click *File* | *Options*
+
+4. Click *Trust Center* | *Trust center settings*.
+
+   ![](images/wordtrustcenter.png)
+
+5. Click *Trust App Catalogs* | Add catalog URL
+
+   **For example:** `https://<tenantname>.sharepoint.com/sites/AppCatelog`
+
+6. Restart Word.
+
+7. Click *Insert* and *My Add-ins*.
+
+8. Click *MY ORGANIZATION* and insert the *SmartLinkWord*.
+
+9. Then the Word Add-in would be shown on the task panel.
+
+
+
+
+
+## Run Excel & Word Add-ins
+
+1. Work with your O365 admin to go to admin consent page in the browser. 
+
+   **For example:** `https://<yourwebsitename>.azurewebsites.net/Admin/Consents`
+
+2. Ensure the webjob is running status. Please refer to this [section](#How-to-check-WebJob-status?) on how to check the WebJob status.
+
+3. Use the o365 admin account to login and click admin consent button. 
+
+   ![](images/adminconsent.png)
+
+4. Accept the permissions to access SharePoint site. 
+
+   ![](images/adminconsentapprove.png)
+
+5. Open the excel stored in your o365 document library and open it using excel client tool then enable editing the excel and open the excel add-in. 
+
+   ![](images/enableeditingexcel.png)
+
+   ​
+
+6. Use your O365 account to login the excel add-in and create a source point 
+
+   - Click add button.
+
+   ![](images/addnewsourcepoint.png)
+
+   - Edit the source point form.
+
+     - Fill the Source Point name
+     - Select group
+     - Select the range (only one cell is supported, please do not double click the cell.  Click Esc if double click the cell.)
+     - Click the populating cell address button
+     - Save the changes
+
+     ![](images/addnewsourcepointSTEPBYSTEP.png)
+
+7. Open a word document under the same document library where excel file hosted in O365 site.
+
+8. Use your O365 account to login the word add-in and create a destination point.
+
+   ![](images/addestinationpoint.png)
+
+
+
+8. Select the excel file hosts the source points and select one source point. 
+
+   ![](images/selectfile.png)
+
+![](images/selectsourcepoint.png)
+
+
+
+9. Put the cursor in the word before clicking the add button.
+
+   ![](images/AddDestinationpoint.png)
+
+   10. Save the word document and close it. 
+   11. You could refer to the 2 section on [how to view the SQL data](#how-to-view-azure-sql-data) and [how to view data in the storage account](#how-to-view-data-in-the-storage-account?).
+
+## How to view Azure SQL data?
+
+1. Login the Azure portal
+
+2. Select the SQL Server created in this [section](#create-azure-resources-using-arm-template)
+
+3. Click "Show firewall settings"
+
+   ![](images/firewallsettings.png)
+
+4. Add the client IP and save it.
+
+   ![](images/addclientip.png)
+
+5. Open Visual Studio 2015 with administrator permission and open "SQL Server Object explorer"
+
+   ![](images/SQLServerOjbectExplorer.PNG)
+
+6. Select database and connect it.
+
+   - The Server name will be automatically filled after selecting the DB.
+
+   - Fill the correct DB.
+
+   - Fill the correct Authentication Type, *Sql Server Authentication.*
+
+   - Fill the User Name/Password created in this [section](#create-azure-resources-using-arm-template).
+
+   - The Database Name  will be automatically filled.
+
+     ![](images/selectdatabase.png)
+
+   - Expand the tables under the database. 
+
+     ![](images/selecttables.png)
+
+   - View the table data by clicking view data.
+
+     ![](images/viewtabledata.png)
+
+   ​
+
+## How to view data in the storage account?
+
+1. Login the Azure portal. [https://portal.azure.com](https://portal.azure.com) 
+
+2. Select he storage account created in this [section](#create-azure-resources-using-arm-template).
+
+3. Get the access keys.
+
+   - Select Access keys under the settings in the storage account.
+
+     ![](images/selectaccesskeys.png)
+
+   - Copy/Store the access key. 
+
+     ![](images/getaccesskeys.png)
+
+4. Download the Azure Storage explorer.
+
+   - Download the azure storage explorer from thefollowing location [http://storageexplorer.com](http://storageexplorer.com)
+
+     ​
+
+5. Use the API key to connect the storage account in Azure explorer.
+
+   - Connect to Azure storage.
+
+     ![](images/azurestorageexplorer.png)
+
+   - Copy the access key from the step 3 above and paste into textbox below.
+
+     ![](images/connectazurestorage.png)
+
+   - Fill the storage account name (**For example: **msfinsmartlinkqa)
+
+     ![](images/fillaccountname.png)
+
+6. Check the queue/table.
+
+   1. The publsihqueue & publish table is created under the queues/tables.
+
+      ![](images/queueandtable.png)
+
+   2. Check the data in the queue.
+
+      If there is one item in queue, then there is one source point that needs to be proceeded. 
+
+   3. Check the data in the table.
+
+      If the status value is InProgess, it means the item is still processing. (UI shows the progress bar)
+
+      If the status value is Completed, it means the item is proceed completed(UI shows the notification saying process succeeded)
+
+      If the status value is error, it means there is some error processing this item(UI shows the error notification.)
+
+      ![](images/publishstatus.png)
+
+## How to check WebJob status?
+
+1. Login the Azure portal. [https://portal.azure.com](https://portal.azure.com)
+
+2. Select website created in this [section](#create-azure-resources-using-arm-template). 
+
+3. Go to the *WebJobs* under the website.
+
+   ![](images/selectwebjobs.png)
+
+
+
+4. Ensure the WEBJOB status is running.
+
+   ![](images/stoppedwebjob.png)
+
+   ![](images/runningwebjob.png)
+
+## Build and Debug locally
+
+1. TODO:THIS needs double confirm with Max.
+
+2. Open the project using visual studio 2015 if you already download it. 
+
+3. Set as debug mode for the project.
+
+   ![](images/debug.png)
+
+4. Build the project and make sure all projects build succeeded. 
+
+   ![](images/buildsolution.png)
+
+5. Change the settings 
+
+6. Set *SmartLink.Web* as StartUp project, and press F5.
+
+
+
+
+
+## Understand the code
+
+## Questions and Comments
+
+
+
+## Contributing
