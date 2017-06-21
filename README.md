@@ -52,7 +52,7 @@
 
 2. Click *Active Directory* on the left navigation
 
-   ![](Images/activedirectory.png)
+   ![](Images/ActiveDirectory.png)
 
 3. Click on the name of your Azure AD directory & then click *Applications* in the tabs menu.
 
@@ -167,7 +167,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    - Export the CER certificate with base 64 encoded X.509.
 
-     ![](Images/exportcer.png)
+     ![](Images/ExportCER.png)
 
    - Execute the following PowerShell command.
 
@@ -267,7 +267,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 8. Select Debug and click *'Next'*
 
-   ![](Images/webdeploydebug.png)
+   ![](Images/WebDeployDebug.png)
 
 9. Click *'Publish'*
 
@@ -315,7 +315,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    **For example:** `https://<tenantname>.sharepoint.com/sites/AppCatelog`
 
-   ![](Images/trustcatalog.png)
+   ![](Images/TrustCatalog.png)
 
 6. Restart the excel.
 
@@ -325,7 +325,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 8. Click *MY ORGANIZATION* and insert the *SmartLinkExcel*. 
 
-   ![](Images/selectaddin.png)
+   ![](Images/SelectAddIn.png)
 
 9. Then the Excel Add-in would be shown on the task panel.
 
@@ -341,7 +341,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 4. Click *Trust Center* | *Trust center settings*.
 
-   ![](Images/wordtrustcenter.png)
+   ![](Images/WordTrustCenter.png)
 
 5. Click *Trust App Catalogs* | Add catalog URL
 
@@ -395,7 +395,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
      - Click the populating cell address button
      - Save the changes
 
-     ![](Images/addnewsourcepointSTEPBYSTEP.png)
+     ![](Images/addnewsourcepointstepbystep.png)
 
 7. Open a word document under the same document library where excel file hosted in O365 site.
 
@@ -407,9 +407,9 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 8. Select the excel file hosts the source points and select one source point. 
 
-   ![](Images/selectfile.png)
+   ![](Images/SelectFile.png)
 
-![](Images/selectsourcepoint.png)
+![](Images/SelectSourcePoint.png)
 
 
 
@@ -432,7 +432,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 4. Add the client IP and save it.
 
-   ![](Images/addclientip.png)
+   ![](Images/AddClientIP.png)
 
 5. Open Visual Studio 2015 with administrator permission and open "SQL Server Object explorer"
 
@@ -450,15 +450,15 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    - The Database Name  will be automatically filled.
 
-     ![](Images/selectdatabase.png)
+     ![](Images/SelectDatabase.png)
 
    - Expand the tables under the database. 
 
-     ![](Images/selecttables.png)
+     ![](Images/SelectTables.png)
 
    - View the table data by clicking view data.
 
-     ![](Images/viewtabledata.png)
+     ![](Images/ViewTableData.png)
 
    ​
 
@@ -472,11 +472,11 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    - Select Access keys under the settings in the storage account.
 
-     ![](Images/selectaccesskeys.png)
+     ![](Images/SelectAccessKeys.png)
 
    - Copy/Store the access key. 
 
-     ![](Images/getaccesskeys.png)
+     ![](Images/GetAccessKeys.png)
 
 4. Download the Azure Storage explorer.
 
@@ -488,15 +488,15 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    - Connect to Azure storage.
 
-     ![](Images/azurestorageexplorer.png)
+     ![](Images/AzureStorageExplorer.png)
 
    - Copy the access key from the step 3 above and paste into textbox below.
 
-     ![](Images/connectazurestorage.png)
+     ![](Images/ConnectAzureStorage.png)
 
    - Fill the storage account name (**For example: **msfinsmartlinkqa)
 
-     ![](Images/fillaccountname.png)
+     ![](Images/FillAccountName.png)
 
 6. Check the queue/table.
 
@@ -526,15 +526,15 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 3. Go to the *WebJobs* under the website.
 
-   ![](Images/selectwebjobs.png)
+   ![](Images/SelectWebJobs.png)
 
 
 
 4. Ensure the WEBJOB status is running.
 
-   ![](Images/stoppedwebjob.png)
+   ![](Images/StoppedWebJob.png)
 
-   ![](Images/runningwebjob.png)
+   ![](Images/RunningWebJob.png)
 
 ## Build and Debug locally
 
@@ -548,7 +548,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 4. Build the project and make sure all projects build succeeded. 
 
-   ![](Images/buildsolution.png)
+   ![](Images/BuildSolution.png)
 
 5. Change the settings 
 
