@@ -436,7 +436,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 5. Open Visual Studio 2015 with administrator permission and open "SQL Server Object explorer"
 
-   ![](Images/SQLServerOjbectExplorer.PNG)
+   ![](Images/SQLServerOjbectExplorer.png)
 
 6. Select database and connect it.
 
