@@ -538,30 +538,245 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 ## Build and Debug locally
 
-1. TODO:THIS needs double confirm with Max.
+1. Open the project using visual studio 2015 if you already download it. 
 
-2. Open the project using visual studio 2015 if you already download it. 
-
-3. Set as debug mode for the project.
+2. Set as debug mode for the project.
 
    ![](Images/debug.png)
 
-4. Build the project and make sure all projects build succeeded. 
+3. Build the project and make sure all projects build succeeded. 
 
    ![](Images/BuildSolution.png)
 
-5. Change the settings 
+4. Change the web.config settings. 
+
+5. Update the JavaScript file to support the local debug.
 
 6. Set *SmartLink.Web* as StartUp project, and press F5.
 
 
 
 
-
 ## Understand the code
+
+### Excel Data Flow
+
+![](images/SPTechnicalDeail.png)
+
+### Word Data Flow:
+
+![](images/DPTechnicalDetail.png)
+
+### Components:
+
+1. Web Project SmartLink.Web
+
+   - SourcePoint Controller
+
+     `SmartLink.Web\Controllers\SourcePointController.cs`
+
+     - Create source point:
+
+       ```c#
+       [HttpPost]
+       [Route("api/SourcePoint")] 
+       public async Task<IHttpActionResult> PostAsync([FromBody]SourcePointForm sourcePointAdded)
+       ```
+
+     - Get source point
+
+       ```c#
+       [HttpDelete]
+       [Route("api/SourcePoint")]
+       public async Task<IHttpActionResult> DeleteSourcePointAsync(string id)
+       ```
+
+     - Update source point
+
+       ```c#
+       [HttpPut]
+       [Route("api/SourcePoint")]
+       public async Task<IHttpActionResult> EditSourcePointAsync([FromBody]SourcePointForm sourcePointAdded)
+       ```
+
+     - Delete source point
+
+       ```c#
+       [HttpPost]
+       [Route("api/DeleteSelectedSourcePoint")]
+       public async Task<IHttpActionResult> DeleteSelectedSourcePointAsync([FromBody]IEnumerable<Guid> seletedIds)
+       ```
+
+   -  DestinationPoint controller
+
+     `SmartLink.Web\Controllers\DestinationPointController.cs`
+
+     - Create destination point.
+
+       ```c#
+       [HttpPost]
+       [Route("api/DestinationPoint")]
+       public async Task<IHttpActionResult> Post([FromBody]DestinationPointForm destinationPointAdded)
+       ```
+
+     - Get destination point
+
+       ```c#
+       [HttpGet]
+       [Route("api/DestinationPoint")]
+       public async Task<IHttpActionResult> GetDestinationPointBySourcePoint(string sourcePointId)
+       ```
+
+     - Delete destination point
+
+       ```C#
+       [HttpDelete]
+       [Route("api/DestinationPoint")]
+       public async Task<IHttpActionResult> DeleteSourcePoint(string id)
+       ```
+
+     - Get Graph access token
+
+       ```c#
+       [HttpGet]
+       Route("api/GraphAccessToken")]
+       public async Task<IHttpActionResult> GetGraphAccessToken()
+       ```
+
+       ​
+
+   - Authentication
+
+     - Open ID Authentication 
+
+       `SmartLink.Web\App_Start\Startup.Auth.cs`
+
+     - Get graph token.
+
+     ```c#
+     AuthenticationResult result = authContext.AcquireTokenByAuthorizationCode(code, redirectUrl, credential, resourceId);
+     AuthenticationHelper.token = result.AccessToken;
+     ```
+
+     ​
+
+2. Service project SmartLink.Service
+
+   - SmartLink DB context
+
+     `SmartLink\SmartLink.Service\SmartlinkDbContext.cs`
+
+   - SourcePoint Service
+
+     `SmartLink\SmartLink.Service\SourcePointService.cs`
+
+     - Create source point
+
+       ```c#
+       public async Task<SourcePoint> AddSourcePointAsync(string fileName, SourcePoint sourcePoint)
+       ```
+
+     - Get source points
+
+       ```c#
+       public async Task<SourceCatalog> GetSourceCatalogAsync(string fileName)
+       ```
+
+     - Edit source point
+
+       ```c#
+       public async Task<SourcePoint> EditSourcePointAsync(int[] groupIds, SourcePoint sourcePoint)
+       ```
+
+     - Delete source point
+
+       ```c#
+       public async Task DeleteSelectedSourcePointAsync(IEnumerable<Guid> selectedSourcePointIds)
+       ```
+
+   - Destination point Service.
+
+     `SmartLink\SmartLink.Service\DestinationService.cs`
+
+     1. Create destination point
+
+        ```c#
+        public async Task<DestinationPoint> AddDestinationPoint(string fileName, DestinationPoint destinationPoint)
+        ```
+
+     2. Get destination points
+
+        ```c#
+        public async Task<DestinationCatalog> GetDestinationCatalog(string fileName)
+        ```
+
+     3. Delete destination point
+
+        ```c#
+        public async Task DeleteDestinationPoint(Guid destinationPointId)
+        ```
+
+        ​
+
+3. Entity project SmartLink.Entity
+
+   - SourcePoint entity.
+
+     `SmartLink\SmartLink.Entity\SourcePoint.cs`
+
+   - DestinationPoint
+
+     `SmartLink\SmartLink.Entity\DestinationPoint.cs`
+
+   ​
+
+4. WebJob project SmartLink.WebJob
+
+   - Document Service
+
+     `SmartLink\SmartLink.Service\DocumentService.cs`
+
+     - Download the document
+
+       ```c#
+       static private async Task<Stream> GetFileStreamAsync(string authHeader, string destinationFileName, FileContextInfo fileContextInfo)
+       ```
+
+     - Upload the document
+
+       ```c#
+       static public void UpdateStream(IEnumerable<DestinationPoint> destinationPoints, string value, Stream stream, DocumentUpdateResult updateResult)
+       ```
+
+   - Azure Storage Service
+
+     `SmartLink\SmartLink.Service\AzureStorageService.cs`
+
+     1. Get Queue 
+
+        ```c#
+        public CloudQueue GetQueue(string queueName)
+        ```
+
+     2. Get Table
+
+        ```c#
+        public CloudTable GetTable(string tableName)
+        ```
+
+     3. Write message to queue.
+
+        ```c#
+        public Task WriteMessageToQueue(string queueMessage, string queueName)
+        ```
 
 ## Questions and Comments
 
-
+- If you have any trouble running this sample, please [log an issue](https://github.com/XXXX).
+- Questions about XXXXX development in general should be posted to [Stack Overflow](http://stackoverflow.com/questions/tagged/XXXXX). Make sure that your questions or comments are tagged with [XXXX]. 
 
 ## Contributing
+
+We encourage you to contribute to our samples. For guidelines on how to proceed, see [our contribution guide](/Contributing.md).
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
