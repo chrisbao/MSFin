@@ -538,7 +538,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 ## Build and Debug locally
 
-1. Open the project using visual studio 2015 if you already download it. 
+1. Open the project using Visual Studio 2015 if you already download it. 
 
 2. Set as debug mode for the project.
 
@@ -548,13 +548,85 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    ![](Images/BuildSolution.png)
 
-4. Change the web.config settings. 
+4. Create a new Azure AD App for the web.
 
-5. Update the JavaScript file to support the local debug.
+   - Please use the value of SIGN-ON URL & App ID Uri below when follow the section [Register the application in Azure Active Directory for MVC web app](#register-the-application-in-azure-active-directory-for-MVC-web-app) to create a new Azure AD app.  
 
-6. Set *SmartLink.Web* as StartUp project, and press F5.
+     | SIGN-ON URL    | https://localhost:44394/     |
+     | -------------- | ---------------------------- |
+     | **App ID Uri** | **https://localhost:44394/** |
 
+   - Make sure you would get the Tenant ID, Client ID, Client Secret. 
 
+5. Update the [web.config](SmartLink.Web/Web.config).
+
+   | App setting key           | Value                                    | Update [web.config](SmartLink.Web/Web.config) or not | Update [web.debug.config](SmartLink.Web/Web.Debug.config) or not |
+   | ------------------------- | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
+   | ida:ClientId              | Client ID value get from step 4          | Yes                                      | Yes                                      |
+   | ida:TenantId              | Tenant ID value get from step 4          | Yes                                      | No                                       |
+   | ida:ClientSecret          | Client Secret value get from step 4      | Yes                                      | No                                       |
+   | ida:PostLogoutRedirectUri | https://localhost:44394/                 | Yes                                      | Yes                                      |
+   | ConsentResource           | `https://<yourtenantname>.sharepoint.com` | Yes                                      | No                                       |
+
+6. Update the JavaScript file to support the local debug for excel add-in.
+
+   - Open the [SignIn.js](SmartLink.Web/Scripts/App/SignIn.js) and update the isDev property value from false to true.
+
+   - Make sure that an excel file is uploaded to the document library in SharePoint site within your tenant. 
+
+   - Copy the excel file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 45
+
+   - Find the disk drive where solution hosts (**For example:** E disk) and update E: to that disk drive in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 45.
+
+     ```javascript
+      that.filePath = Office.context.document.url.indexOf("E:") > -1 ? "https://<yourtenantname>.sharepoint.com/Shared%20Documents/Book.xlsx" : 
+     ```
+
+7. Set SmartLinkExcel as StartUp project, and press F5.
+
+   - Work with your O365 admin to go to admin consent page in the browser. 
+
+     **For example:** `https://localhost:44394/Admin/Consents`
+
+   - Use the o365 admin account to login and click admin consent button. 
+
+   - Accept the permissions to access SharePoint site. 
+
+   - Open the excel add-in in your local.
+
+   - Click *add* and edit the source point form.
+
+     - Fill the Source Point name
+
+     - Select group
+
+     - Select the range (only one cell is supported, please do not double click the cell.  Click Esc if double click the cell.)
+
+     - Click the populating cell address button
+
+     - Save the changes
+
+       ![](images/addsplocal.png)
+
+     > **Note:** By default, you could debug the JavaScript file by setting the break point in it.You could also attach the process to debug the web application code when click save.  
+
+     ![](images/debugsp.png)
+
+     ​
+
+8. Set SmartLinkWord as StartUp project and press F5
+
+   - Open the words add-in in your local.
+
+   - Click add and edit the destination form.
+
+   - Select the excel file hosts the source points and select one source point just created. 
+
+   - Put the cursor in the word before clicking the add button.
+
+   - Click Add to add the destination point.
+
+     ![](images/adddp.png)
 
 
 ## Understand the code
