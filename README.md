@@ -79,8 +79,8 @@
 
 10. Obtain and store the application client ID.
 
-  - On the application, Quick Start page, click on *CONFIGURE* in the tabs menu.
-  - Search & copy the *Client ID* value and store it.
+   - On the application, Quick Start page, click on *CONFIGURE* in the tabs menu.
+   - Search & copy the *Client ID* value and store it.
 
 11. Obtain and store the application client secret.
 
@@ -498,15 +498,15 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 6. Check the queue/table.
 
-   1. The publsihqueue & publish table is created under the queues/tables.
+   {0}.  The publsihqueue & publish table is created under the queues/tables.
 
       ![](Images/queueandtable.png)
 
-   2. Check the data in the queue.
+   {0}.  Check the data in the queue.
 
       If there is one item in queue, then there is one source point that needs to be proceeded. 
 
-   3. Check the data in the table.
+   {0}.  Check the data in the table.
 
       If the status value is InProgess, it means the item is still processing. (UI shows the progress bar)
 
@@ -768,19 +768,19 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
      `SmartLink\SmartLink.Service\DestinationService.cs`
 
-     1. Create destination point
+     {0}.  Create destination point
 
         ```c#
         public async Task<DestinationPoint> AddDestinationPoint(string fileName, DestinationPoint destinationPoint)
         ```
 
-     2. Get destination points
+     {0}.  Get destination points
 
         ```c#
         public async Task<DestinationCatalog> GetDestinationCatalog(string fileName)
         ```
 
-     3. Delete destination point
+     {0}.  Delete destination point
 
         ```c#
         public async Task DeleteDestinationPoint(Guid destinationPointId)
@@ -822,19 +822,19 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
      `SmartLink\SmartLink.Service\AzureStorageService.cs`
 
-     1. Get Queue 
+     {0}.  Get Queue 
 
         ```c#
         public CloudQueue GetQueue(string queueName)
         ```
 
-     2. Get Table
+     {0}.  Get Table
 
         ```c#
         public CloudTable GetTable(string tableName)
         ```
 
-     3. Write message to queue.
+     {0}.  Write message to queue.
 
         ```c#
         public Task WriteMessageToQueue(string queueMessage, string queueName)
