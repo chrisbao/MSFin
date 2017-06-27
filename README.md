@@ -606,11 +606,11 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
      - Save the changes
 
-       ![](images/addsplocal.png)
+       ![](Images/addsplocal.png)
 
      > **Note:** By default, you could debug the JavaScript file by setting the break point in it.You could also attach the process to debug the web application code when click save.  
 
-     ![](images/debugsp.png)
+     ![](Images/debugsp.png)
 
      ​
 
@@ -626,18 +626,18 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    - Click Add to add the destination point.
 
-     ![](images/adddp.png)
+     ![](Images/adddp.png)
 
 
 ## Understand the code
 
 ### Excel Data Flow
 
-![](images/SPTechnicalDeail.png)
+![](Images/SPTechnicalDeail.png)
 
 ### Word Data Flow:
 
-![](images/DPTechnicalDetail.png)
+![](Images/DPTechnicalDetail.png)
 
 ### Components:
 
