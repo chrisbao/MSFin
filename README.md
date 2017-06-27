@@ -43,7 +43,7 @@
 1. An Azure subscription with permissions to register a new application, and deploy the web app.
 2. You have O365 account and you could contact your admin to consent the permission to access it.
 3. Visual Studio 2015 (any edition), [Visual Studio 2015 Community](https://go.microsoft.com/fwlink/?LinkId=691978&clcid=0x409) is available for free and ensure Latest Microsoft Office Developer Tools for Visual Studio 2015 is installed.
-4. Make sure you have [Outlook 2016](https://products.office.com/en-US/outlook/email-and-calendar-software-microsoft-outlook) installed
+4. Make sure you have [Outlook 2016](https://products.office.com/en-US/outlook/email-and-calendar-software-microsoft-outlook) installed.
 5. Familiarity with C#, .NET Web applications, JavaScript programming.
 
 ## Register the application in Azure Active Directory for MVC web app
