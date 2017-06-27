@@ -500,16 +500,13 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    - The publsihqueue & publish table is created under the queues/tables.
 
-
       ![](Images/queueandtable.png)
 
    - Check the data in the queue.
 
-
       If there is one item in queue, then there is one source point that needs to be proceeded. 
 
    - Check the data in the table.
-
 
       If the status value is InProgess, it means the item is still processing. (UI shows the progress bar)
 
@@ -517,7 +514,9 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
       If the status value is error, it means there is some error processing this item(UI shows the error notification.)
 
-      ![](Images/publishstatus.png)
+   ![](Images/publishstatus.png)
+
+   ​
 
 ## How to check WebJob status?
 
