@@ -4,13 +4,17 @@
 
 [Prerequisites](#prerequisites)
 
-[Register the application in Azure Active Directory for MVC web app](#register-the-application-in-azure-active-directory-for-MVC-web-app)
+[Register the application in Azure Active Directory for MVC web app](#register-the-application-in-azure-active-directory-for-mvc-web-app)
 
-[Register the application in AAD for web job](#Register-the-application-in-AAD-for-web-job)
+[Register the application in AAD for web job](#register-the-application-in-aad-for-web-job)
 
 [Create Azure resources using ARM template](#create-azure-resources-using-arm-template)
 
 [Configure the communication between web job and O365 tenant](#configure-the-communication-between-webjob-and-o365-tenant)
+
+[Deploy the sample to Azure](#deploy-the-sample-to-azure)
+
+[Upload the Excel & Word manifest files](#upload-the-excel-&-word-manifest-files)
 
 [Install Excel Add-in](#install-excel-add-in)
 
@@ -18,15 +22,11 @@
 
 [Run Excel & Word Add-ins](#run-excel-&-word-add-ins)
 
-[How to view Azure SQL data?](#How-to-view-Azure-SQL-data)
+[How to view Azure SQL data?](#How-to-view-azure-sql-data?)
 
 [How to view data in the storage account?](#how-to-view-data-in-the-storage-account)
 
-[How to check WebJob status?](#How-to-check-WebJob-status?)
-
-[Deploy the sample to Azure](#deploy-the-sample-to-azure)
-
-[Upload the Excel & Word manifest files](#Upload-the-excel-&-word-manifest-files)
+[How to check WebJob status?](#How-to-check-webjob-status?)
 
 [Build and debug locally](#build-and-debug-locally)
 
@@ -34,7 +34,7 @@
 
 [Questions and comments](#questions-and-comments)
 
-[Contributing](#Contributing)
+[Contributing](#contributing)
 
 ## Prerequisites
 
@@ -90,7 +90,7 @@
 
 ## Register the application in AAD for web job
 
-Follow [Register theapplication in AAD for MVC WEB APP](#register-the-application-in-azure-active-directory-for-MVC-web-app) section to register another app named *smartlink.webjob* and please refer to the table below when fill the value. 
+Follow [Register the application in AAD for MVC WEB APP](#register-the-application-in-azure-active-directory-for-MVC-web-app) section to register another app named *smartlink.webjob* and please refer to the table below when fill the value. 
 
 | SIGN-ON URL    | https://<websitename>.azurewebsites.net  |
 | -------------- | ---------------------------------------- |
