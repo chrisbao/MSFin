@@ -770,25 +770,25 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
      `SmartLink\SmartLink.Service\DestinationService.cs`
 
-     {0}.  Create destination point
+     - Create destination point
 
-        ```c#
+     ```c#
         public async Task<DestinationPoint> AddDestinationPoint(string fileName, DestinationPoint destinationPoint)
-        ```
+     ```
 
-     {0}.  Get destination points
+     - Get destination points
 
-        ```c#
+     ```c#
         public async Task<DestinationCatalog> GetDestinationCatalog(string fileName)
-        ```
+     ```
 
-     {0}.  Delete destination point
+     - Delete destination point
 
-        ```c#
+     ```c#
         public async Task DeleteDestinationPoint(Guid destinationPointId)
-        ```
+     ```
 
-        ​
+     ​      
 
 3. Entity project SmartLink.Entity
 
@@ -824,23 +824,27 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
      `SmartLink\SmartLink.Service\AzureStorageService.cs`
 
-     {0}.  Get Queue 
+     - Get Queue 
 
-        ```c#
-        public CloudQueue GetQueue(string queueName)
-        ```
+       ```c#
+       public CloudQueue GetQueue(string queueName)
+       ```
 
-     {0}.  Get Table
 
-        ```c#
-        public CloudTable GetTable(string tableName)
-        ```
+     - Get Table
 
-     {0}.  Write message to queue.
+       ```c#
+       public CloudTable GetTable(string tableName)
+       ```
 
-        ```c#
-        public Task WriteMessageToQueue(string queueMessage, string queueName)
-        ```
+
+     - Write message to queue.
+
+       ```c#
+       public Task WriteMessageToQueue(string queueMessage, string queueName)
+       ```
+
+     ​
 
 ## Questions and Comments
 
