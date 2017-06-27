@@ -8,7 +8,8 @@ using System;
 namespace SmartLink.Service
 {
     public static class DateTimeService
-        {/// <summary>
+    {
+        /// <summary>
         /// Convert UTC to PST timezone.
         /// </summary>
         /// <param name="utcDateTime"></param>
