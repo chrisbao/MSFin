@@ -850,3 +850,5 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 We encourage you to contribute to our samples. For guidelines on how to proceed, see [our contribution guide](/Contributing.md).
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+**Copyright (c) 2017 Microsoft. All rights reserved.**
