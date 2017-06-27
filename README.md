@@ -90,7 +90,7 @@
 
 ## Register the application in AAD for web job
 
-Follow [Register the application in AAD for MVC WEB APP](#register-the-application-in-azure-active-directory-for-MVC-web-app) section to register another app named *smartlink.webjob* and please refer to the table below when fill the value. 
+Follow [Register the application in AAD for MVC WEB APP](#register-the-application-in-azure-active-directory-for-mvc-web-app) section to register another app named *smartlink.webjob* and please refer to the table below when fill the value. 
 
 | SIGN-ON URL    | https://<websitename>.azurewebsites.net  |
 | -------------- | ---------------------------------------- |
@@ -309,7 +309,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    ![](Images/trustcenter.png)
 
-5. Click Trust App Catalogs | Add catalog URL.
+5. Click *Trusted Add-in Catalogs* | Add catalog URL.
 
    **For example:** `https://<tenantname>.sharepoint.com/sites/AppCatelog`
 
@@ -331,7 +331,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 ## Install Word Add-in
 
-1. Open Excel 2016
+1. Open Word 2016
 
 2. Sign in with O365 account. 
 
@@ -341,7 +341,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    ![](Images/WordTrustCenter.png)
 
-5. Click *Trust App Catalogs* | Add catalog URL
+5. Click *Trusted Add-in Catalogs* | Add catalog URL
 
    **For example:** `https://<tenantname>.sharepoint.com/sites/AppCatelog`
 
@@ -420,11 +420,11 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 ## How to view Azure SQL data?
 
-1. Login the Azure portal
+1. Login the Azure portal. [https://portal.azure.com](https://portal.azure.com) 
 
-2. Select the SQL Server created in this [section](#create-azure-resources-using-arm-template)
+2. Select the SQL Server created in this [section](#create-azure-resources-using-arm-template).
 
-3. Click "Show firewall settings"
+3. Click "Show firewall settings".
 
    ![](Images/firewallsettings.png)
 
@@ -460,7 +460,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    ​
 
-## How to view data in the storage account?
+## How to view data in the storage account? 
 
 1. Login the Azure portal. [https://portal.azure.com](https://portal.azure.com) 
 
@@ -478,7 +478,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 4. Download the Azure Storage explorer.
 
-   - Download the azure storage explorer from thefollowing location [http://storageexplorer.com](http://storageexplorer.com)
+   - Download the azure storage explorer from the following location [http://storageexplorer.com](http://storageexplorer.com)
 
      ​
 
