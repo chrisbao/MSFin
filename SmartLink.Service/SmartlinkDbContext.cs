@@ -1,7 +1,13 @@
+/*   
+ *   * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.  
+ *   * See LICENSE in the project root for license information.  
+ */
+
 namespace SmartLink.Service
 {
     using SmartLink.Entity;
     using System.Data.Entity;
+
     public class SmartlinkDbContext : System.Data.Entity.DbContext
     {
         // Your context has been configured to use a 'dbContext' connection string from your application's 

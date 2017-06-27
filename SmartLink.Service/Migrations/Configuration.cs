@@ -1,10 +1,12 @@
+/*   
+ *   * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.  
+ *   * See LICENSE in the project root for license information.  
+ */
+
 namespace SmartLink.Service.Migrations
 {
     using Entity;
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
     public sealed class Configuration : DbMigrationsConfiguration<SmartLink.Service.SmartlinkDbContext>
     {

@@ -1,4 +1,9 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿/*   
+ *   * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.  
+ *   * See LICENSE in the project root for license information.  
+ */
+
+using Microsoft.Azure.WebJobs;
 using Microsoft.WindowsAzure.Storage.Table;
 using SmartLink.Common;
 using SmartLink.Entity;
