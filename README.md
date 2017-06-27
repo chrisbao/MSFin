@@ -79,8 +79,8 @@
 
 10. Obtain and store the application client ID.
 
-   - On the application, Quick Start page, click on *CONFIGURE* in the tabs menu.
-   - Search & copy the *Client ID* value and store it.
+  - On the application, Quick Start page, click on *CONFIGURE* in the tabs menu.
+  - Search & copy the *Client ID* value and store it.
 
 11. Obtain and store the application client secret.
 
@@ -498,15 +498,18 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 6. Check the queue/table.
 
-   {0}.  The publsihqueue & publish table is created under the queues/tables.
+   - The publsihqueue & publish table is created under the queues/tables.
+
 
       ![](Images/queueandtable.png)
 
-   {0}.  Check the data in the queue.
+   - Check the data in the queue.
+
 
       If there is one item in queue, then there is one source point that needs to be proceeded. 
 
-   {0}.  Check the data in the table.
+   - Check the data in the table.
+
 
       If the status value is InProgess, it means the item is still processing. (UI shows the progress bar)
 
