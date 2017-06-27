@@ -41,7 +41,7 @@
 **Deploying and running this sample requires**:
 
 - An Azure subscription with permissions to register a new application, and deploy the web app.
-- You have o365 account and you could contact your admin to consent the permission to access it.
+- You have O365 account and you could contact your admin to consent the permission to access it.
 - Visual Studio 2015 (any edition), [Visual Studio 2015 Community](https://go.microsoft.com/fwlink/?LinkId=691978&clcid=0x409) is available for free and ensure Latest Microsoft Office Developer Tools for Visual Studio 2015 is installed.
 - Make sure you have [Outlook 2016](https://products.office.com/en-US/outlook/email-and-calendar-software-microsoft-outlook) installed
 - Familiarity with C#, .NET Web applications, JavaScript programming.
@@ -367,7 +367,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 2. Ensure the webjob is running status. Please refer to this [section](#How-to-check-WebJob-status?) on how to check the WebJob status.
 
-3. Use the o365 admin account to login and click admin consent button. 
+3. Use the O365 admin account to login and click admin consent button. 
 
    ![](Images/adminconsent.png)
 
@@ -375,7 +375,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    ![](Images/adminconsentapprove.png)
 
-5. Open the excel stored in your o365 document library and open it using excel client tool then enable editing the excel and open the excel add-in. 
+5. Open the excel stored in your O365 document library and open it using excel client tool then enable editing the excel and open the excel add-in. 
 
    ![](Images/enableeditingexcel.png)
 
