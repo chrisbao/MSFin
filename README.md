@@ -189,6 +189,8 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
      ![](Images/windowssdk.png)
 
+   ​
+
 2.  Export PFX certificate
 
    - Export the PFX certificate from the self-certificate (remember to export with the private key)
@@ -198,12 +200,11 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 3.  Download the project & include the certificate. 
 
    - Open the solution.
-
    - Include the PFX certificate in SmartLink.WebJob project. 
 
-     **For example:** smartlinkqa.pfx.
+   **For example:** smartlinkqa.pfx.
 
-     ​
+   ​
 
 4. Configure the app settings in Azure portal
 
