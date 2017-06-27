@@ -14,13 +14,13 @@
 
 [Deploy the sample to Azure](#deploy-the-sample-to-azure)
 
-[Upload the Excel & Word manifest files](#upload-the-excel-&-word-manifest-files)
+[Upload the Excel & Word manifest files](#upload-the-excel--word-manifest-files)
 
 [Install Excel Add-in](#install-excel-add-in)
 
 [Install Word Add-in](#install-word-add-in)
 
-[Run Excel & Word Add-ins](#run-excel-&-word-add-ins)
+[Run Excel & Word Add-ins](#run-excel--word-add-ins)
 
 [How to view Azure SQL data?](#How-to-view-azure-sql-data?)
 
