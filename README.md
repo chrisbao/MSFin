@@ -830,13 +830,11 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
        public CloudQueue GetQueue(string queueName)
        ```
 
-
      - Get Table
 
        ```c#
        public CloudTable GetTable(string tableName)
        ```
-
 
      - Write message to queue.
 
@@ -844,12 +842,13 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
        public Task WriteMessageToQueue(string queueMessage, string queueName)
        ```
 
-     ​
+
+   ​
 
 ## Questions and Comments
 
-- If you have any trouble running this sample, please [log an issue](https://github.com/XXXX).
-- Questions about XXXXX development in general should be posted to [Stack Overflow](http://stackoverflow.com/questions/tagged/XXXXX). Make sure that your questions or comments are tagged with [XXXX]. 
+1. If you have any trouble running this sample, please [log an issue](https://github.com/XXXX).
+2. Questions about XXXXX development in general should be posted to [Stack Overflow](http://stackoverflow.com/questions/tagged/XXXXX). Make sure that your questions or comments are tagged with [XXXX]. 
 
 ## Contributing
 
