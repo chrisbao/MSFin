@@ -21,9 +21,9 @@ var point = (function () {
         groups: [],
         ///Define the destination points. 
         points: [],
-        ///todo
+        ///
         keyword: "",
-        ///todo
+        ///
         sourcePointKeyword: "",
         //the background color for the highlighted destination ponit.
         highlightColor: "#66FF00",
