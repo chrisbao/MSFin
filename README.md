@@ -80,6 +80,8 @@
 10. Obtain and store the application client ID.
 
   - On the application, Quick Start page, click on *CONFIGURE* in the tabs menu.
+
+
   - Search & copy the *Client ID* value and store it.
 
 11. Obtain and store the application client secret.
