@@ -76,8 +76,8 @@
 
 10. Obtain and store the Azure AD tenant ID.
 
-   - Click *VIEW ENDPOINTS* in the bottom tabs.
-   - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
+     - Click *VIEW ENDPOINTS* in the bottom tabs.
+     - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
 
 11. Store the copied client secret.
 
