@@ -218,7 +218,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
    | ida:WebJobClientId  | The application ID of the AAD App for  WEB JOB | Find it in the AAD App for web job.      |
    | CertificatePassword | The password when export the  certificate | Step 2 in this [section](#configure-the-communication-between-webjob-and-o365-tenant) |
    | ida:AADInstance     | [https://login.microsoftonline.com/](https://login.microsoftonline.com/) | Fixed value                              |
-   | ida:TenantId        | The Azure Tenant ID                      | Step 9 in this [section](#register-the-application-in-azure-active-directory-for-MVC-web-app) |
+   | ida:TenantId        | The Azure Tenant ID                      | Step 9 in this [section](#register-the-application-in-azure-active-directory-for-mvc-web-app) |
    | SharePointUrl       | The root site collection of the O365    site | **For example:**  [https://yourtenant.sharepoint.com](https://yourtenantsharepoint.com) |
    | CertificateFile     | web site relative path                   | **For example:**  smartlinkqa.pfx        |
 
@@ -551,7 +551,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
 4. Create a new Azure AD App for the web.
 
-   - Please use the value of SIGN-ON URL & App ID Uri below when follow the section [Register the application in Azure Active Directory for MVC web app](#register-the-application-in-azure-active-directory-for-MVC-web-app) to create a new Azure AD app.  
+   - Please use the value of SIGN-ON URL & App ID Uri below when follow the section [Register the application in Azure Active Directory for MVC web app](#register-the-application-in-azure-active-directory-for-mvc-web-app) to create a new Azure AD app.  
 
      | SIGN-ON URL    | https://localhost:44394/     |
      | -------------- | ---------------------------- |
