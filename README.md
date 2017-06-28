@@ -79,8 +79,8 @@
 
 10. Store the copied client secret.
 
-    - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
-    - Store the copied client secret.
+   - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
+   - Store the copied client secret.
 
 11. Store the application client ID
 
@@ -588,7 +588,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
      **For example:** `https://localhost:44394/Admin/Consents`
 
-   - Use the o365 admin account to login and click admin consent button. 
+   - Use the O365 admin account to login and click admin consent button. 
 
    - Accept the permissions to access SharePoint site. 
 
