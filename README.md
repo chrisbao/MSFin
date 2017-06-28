@@ -60,29 +60,31 @@
 
    ![](Images/ActiveDirectoryApplications.png)
 
-4. Click *Add an application my organization is developing* in the popup.
+4. Click the *add* button at the bottom of the page.
 
-5. In the Add Application wizard, enter a name of *SmartLink.Web* and choose the type *Web Application and/or Web API*. Click the arrow to the next page of the wizard.
+5. Click *Add an application my organization is developing* in the popup.
 
-6. In the *App Properties* page, enter a *SIGN-ON URL*
+6. In the Add Application wizard, enter a name of *SmartLink.Web* and choose the type *Web Application and/or Web API*. Click the arrow to the next page of the wizard.
+
+7. In the *App Properties* page, enter a *SIGN-ON URL*
 
    `https://<websitename>.azurewebsites.net`
 
-7. Enter an *App ID Uri* `https://[your-domain\].onmicrosoft.com/<websitename>`
+8. Enter an *App ID Uri* `https://[your-domain\].onmicrosoft.com/<websitename>`
 
-8. Hit *Complete* to create the registration.
+9. Hit *Complete* to create the registration.
 
-9. Obtain and store the Azure AD tenant ID.
+10. Obtain and store the Azure AD tenant ID.
 
    - Click *VIEW ENDPOINTS* in the bottom tabs.
    - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
 
-10. Store the copied client secret.
+11. Store the copied client secret.
 
-    - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
-    - Store the copied client secret.
+     - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
+     - Store the copied client secret.
 
-11. Store the application client ID
+12. Store the application client ID
 
     - On the application, Quick Start page, click on *CONFIGURE* in the tabs menu.
     - Search & copy the Client ID value and store it.
