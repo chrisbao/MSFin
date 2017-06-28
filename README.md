@@ -99,13 +99,21 @@
 
 ## Register the application in AAD for web job
 
-Follow [Register the application in AAD for MVC WEB APP](#register-the-application-in-azure-active-directory-for-mvc-web-app) section to register another app named *smartlink.webjob* and please refer to the table below when fill the value. 
+1. Follow [Register the application in AAD for MVC WEB APP](#register-the-application-in-azure-active-directory-for-mvc-web-app) section to register another app named *smartlink.webjob* and please refer to the table below when fill the value. 
 
-| SIGN-ON URL    | https://<websitename>.azurewebsites.net  |
+| SIGN-ON URL    | https://[websitename].azurewebsites.net  |
 | -------------- | ---------------------------------------- |
 | **App ID Uri** | **https://[your-domain].onmicrosoft.com/<webjobname>** |
 
-Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
+2. Click the CONFIGURE in the tabs menu and click *Add application*.
+
+   ![](Images/setpermission.png)
+
+3. Select *Office 365 SharePoint Online* and save it.
+
+   ![](Images/selecto365.png)
+
+4. Here is the O365 SharePoint Online app permission needed for the Azure AD app *smartlink.webjob*.
 
 ![](Images/WebJobO365permission.png)
 
