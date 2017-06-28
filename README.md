@@ -74,18 +74,18 @@
 
 9. Obtain and store the Azure AD tenant ID.
 
-   - Click *VIEW ENDPOINTS* in the bottom tabs.
-   - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it
+   1. Click *VIEW ENDPOINTS* in the bottom tabs.
+   2. The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it
 
-10. Obtain and store the application client ID
+10. Obtain and store the application client ID.
 
-   - On the application, Quick Start page, click on *CONFIGURE* in the tabs menu.
-   - Search & copy the *Client ID* value and store it.
+   1. On the application, Quick Start page, click on *CONFIGURE* in the tabs menu.
+   2. Search & copy the *Client ID* value and store it.
 
 11. Obtain and store the application client secret.
 
-    - On the application,  click ‘All Settings’ | Keys then fill the key description and copy the value. 
-    - Store the copied client secret.
+    1. On the application,  click ‘All Settings’ | Keys then fill the key description and copy the value. 
+    2. Store the copied client secret.
 
 
 ## Register the application in AAD for web job
