@@ -260,9 +260,9 @@
 
 | App Setting               | Value                                 | Note                                     |
 | ------------------------- | ------------------------------------- | ---------------------------------------- |
-| ida:clientID              | GUID                                  | Step 10 in this [section](#register-the-application-in-azure-active-directory-for-MVC-web-app) |
-| ida:clientSecret          | String                                | Step 11 in this [section](#register-the-application-in-azure-active-directory-for-MVC-web-app) |
-| ida:TenantID              | GUID                                  | Step 9 in this [section](#register-the-application-in-azure-active-directory-for-MVC-web-app) |
+| ida:clientID              | GUID                                  | Step 10 in this [section](#register-the-application-in-azure-active-directory-for-mvc-web-app) |
+| ida:clientSecret          | String                                | Step 11 in this [section](#register-the-application-in-azure-active-directory-for-mvc-web-app) |
+| ida:TenantID              | GUID                                  | Step 9 in this [section](#register-the-application-in-azure-active-directory-for-mvc-web-app) |
 | ida:domain                | yourtenantname.onmicrosoft.com        |                                          |
 | ida:PostLogoutRedirectUri | https://websitename.azurewebsites.net | Azure web site URL                       |
 | ResourceId                | https://graph.microsoft.com           | this is fixed value                      |
