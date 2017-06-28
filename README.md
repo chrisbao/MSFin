@@ -79,8 +79,8 @@
 
 10. Store the copied client secret.
 
-   - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
-   - Store the copied client secret.
+    - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
+    - Store the copied client secret.
 
 11. Store the application client ID
 
