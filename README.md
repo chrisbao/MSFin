@@ -77,10 +77,7 @@
    - Click *VIEW ENDPOINTS* in the bottom tabs.
    - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
 
-10. Obtain and store the application client secret.
-
-   - On the application,  click ‘All Settings’ | Keys then fill the key description and copy the value.
-   - Store the copied client secret.
+10. Store the copied client secret.
 
 
 ## Register the application in AAD for web job
