@@ -24,6 +24,7 @@ namespace SmartLink.Service
         private CloudTableClient _tableClient;
         private IDictionary<string, CloudQueue> _cloudQueues;
         private IDictionary<string, CloudTable> _cloudTables;
+
         public CloudQueueClient QueueClient
         {
             get
@@ -58,6 +59,7 @@ namespace SmartLink.Service
             _cloudQueues = new Dictionary<string, CloudQueue>();
             _cloudTables = new Dictionary<string, CloudTable>();
         }
+
         /// <summary>
         /// Get cloud queue by name
         /// </summary>
@@ -76,6 +78,7 @@ namespace SmartLink.Service
             }
             return _cloudQueues[queueName];
         }
+
         /// <summary>
         /// Get cloud table by name
         /// </summary>
@@ -94,13 +97,14 @@ namespace SmartLink.Service
             }
             return _cloudTables[tableName];
         }
+
           /// <summary>
           /// Add message to the queue.
           /// </summary>
           /// <param name="queueMessage"></param>
           /// <param name="queueName"></param>
           /// <returns></returns>
-        public Task WriteMessageToQueue(string queueMessage, string queueName)
+        public Task WriteMessageToQueueAsync(string queueMessage, string queueName)
         {
             var queue = GetQueue(queueName);
             return queue.AddMessageAsync(new CloudQueueMessage(queueMessage));

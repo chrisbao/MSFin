@@ -16,28 +16,9 @@ namespace SmartLink.Entity
         Created = 0,
         Deleted = 1
     }
+
     public class SourcePoint : BaseEntity
     {
-        [StringLength(255)]
-        public string Name { get; set; }
-        [StringLength(255)]
-        public string RangeId { get; set; }
-
-        public string Position { get; set; }
-        public string Value { get; set; }
-        [StringLength(255)]
-        public string Creator { get; set; }
-        public DateTime Created { get; set; }
-        public SourcePointStatus Status { get; set; }
-
-        public Guid CatalogId { get; set; }
-        [ForeignKey("CatalogId")]
-        public virtual SourceCatalog Catalog { get; set; }
-        public virtual ICollection<SourcePointGroup> Groups { get; set; }
-        public virtual ICollection<PublishedHistory> PublishedHistories { get; set; }
-        [JsonIgnore]
-        public virtual ICollection<DestinationPoint> DestinationPoints { get; set; }
-
         public SourcePoint()
         {
             DestinationPoints = new List<DestinationPoint>();
@@ -45,9 +26,39 @@ namespace SmartLink.Entity
             Groups = new List<SourcePointGroup>();
         }
 
+        [StringLength(255)]
+        public string Name { get; set; }
+
+        [StringLength(255)]
+        public string RangeId { get; set; }
+
+        public string Position { get; set; }
+
+        public string Value { get; set; }
+
+        [StringLength(255)]
+        public string Creator { get; set; }
+
+        public DateTime Created { get; set; }
+
+        public SourcePointStatus Status { get; set; }
+
+        public Guid CatalogId { get; set; }
+        [ForeignKey("CatalogId")]
+
+        public virtual SourceCatalog Catalog { get; set; }
+
+        public virtual ICollection<SourcePointGroup> Groups { get; set; }
+
+        public virtual ICollection<PublishedHistory> PublishedHistories { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<DestinationPoint> DestinationPoints { get; set; }
+        
         [NotMapped]
         [JsonIgnore]
         public bool SerializeCatalog { get; set; } = false;
+
         public bool ShouldSerializeCatalog()
         {
             return SerializeCatalog;

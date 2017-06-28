@@ -19,16 +19,21 @@ namespace SmartLink.Service
         public SmartlinkDbContext()
             : base("name=DefaultConnection")
         {
-            //Database.SetInitializer<SmartlinkDbContext>(new SmartlinkDbContextInitializer());
             this.Configuration.LazyLoadingEnabled = false;
         }
 
         public virtual DbSet<SourceCatalog> SourceCatalogs { get; set; }
+
         public virtual DbSet<SourcePoint> SourcePoints { get; set; }
+
         public virtual DbSet<SourcePointGroup> SourcePointGroups { get; set; }
+
         public virtual DbSet<PublishedHistory> PublishedHistories { get; set; }
+
         public virtual DbSet<DestinationPoint> DestinationPoints { get; set; }
+
         public virtual DbSet<DestinationCatalog> DestinationCatalogs { get; set; }
+
         public virtual DbSet<CustomFormat> CustomFormats { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

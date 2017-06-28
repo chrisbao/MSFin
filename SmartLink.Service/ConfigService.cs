@@ -13,8 +13,8 @@ namespace SmartLink.Service
     {
         public ConfigService()
         {
-
         }
+
         public string ClientId
         {
             get { return CloudConfigurationManager.GetSetting("ida:ClientId"); }
@@ -24,6 +24,7 @@ namespace SmartLink.Service
         {
             get { return CloudConfigurationManager.GetSetting("ida:ClientSecret"); }
         }
+
         public string AzureAdInstance
         {
             get { return CloudConfigurationManager.GetSetting("ida:AADInstance"); }

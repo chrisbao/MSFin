@@ -24,7 +24,9 @@ namespace SmartLink.Entity
         }
 
         public string Name { get; set; }
+
         public ICollection<DestinationPoint> DestinationPoints { get; set; }
+
         public DestinationCatalog()
         {
             DestinationPoints = new List<DestinationPoint>();
@@ -33,6 +35,7 @@ namespace SmartLink.Entity
         [NotMapped]
         [JsonIgnore]
         public bool SerializeDestinationPoints { get; set; } = true;
+
         public bool ShouldSerializeDestinationPoints()
         {
             return SerializeDestinationPoints;

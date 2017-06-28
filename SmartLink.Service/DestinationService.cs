@@ -30,6 +30,7 @@ namespace SmartLink.Service
             _logService = logService;
             _userProfileService = userProfileService;
         }
+
         /// <summary>
         /// Add destination point to the Azure DB.
         /// file name is the absolute path of the file.
@@ -37,7 +38,7 @@ namespace SmartLink.Service
         /// <param name="fileName"></param>
         /// <param name="destinationPoint"></param>
         /// <returns></returns>
-        public async Task<DestinationPoint> AddDestinationPoint(string fileName, DestinationPoint destinationPoint)
+        public async Task<DestinationPoint> AddDestinationPointAsync(string fileName, DestinationPoint destinationPoint)
         {
             try
             {
@@ -63,7 +64,7 @@ namespace SmartLink.Service
                             Message = ".Net Error",
                         };
                         entity.Subject = $"{entity.LogId} - {entity.Action} - {entity.PointType} - Error";
-                        await _logService.WriteLog(entity);
+                        await _logService.WriteLogAsync(entity);
 
                         throw new ApplicationException("Add Source Catalog failed", ex);
                     }
@@ -91,7 +92,7 @@ namespace SmartLink.Service
 
                 if (addDestinationCatalog)
                 {
-                    await _logService.WriteLog(new LogEntity()
+                    await _logService.WriteLogAsync(new LogEntity()
                     {
                         LogId = "40001",
                         Action = Constant.ACTIONTYPE_ADD,
@@ -100,7 +101,7 @@ namespace SmartLink.Service
                         Message = $"Add destination catalog {destinationCatalog.Name}."
                     });
                 }
-                await _logService.WriteLog(new LogEntity()
+                await _logService.WriteLogAsync(new LogEntity()
                 {
                     LogId = "20001",
                     Action = Constant.ACTIONTYPE_ADD,
@@ -118,7 +119,7 @@ namespace SmartLink.Service
                 destinationPoint.ReferencedSourcePoint.SerializeCatalog = true;
                 destinationPoint.ReferencedSourcePoint.Catalog.SerializeSourcePoints = false;
 
-                await _logService.WriteLog(new LogEntity()
+                await _logService.WriteLogAsync(new LogEntity()
                 {
                     LogId = "30002",
                     Action = Constant.ACTIONTYPE_GET,
@@ -144,16 +145,17 @@ namespace SmartLink.Service
                     Detail = ex.ToString()
                 };
                 logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
-                await _logService.WriteLog(logEntity);
+                await _logService.WriteLogAsync(logEntity);
                 throw ex;
             }
         }
+
         /// <summary>
         /// Delete destination point by destination point guid.
         /// </summary>
         /// <param name="destinationPointId"></param>
         /// <returns></returns>
-        public async Task DeleteDestinationPoint(Guid destinationPointId)
+        public async Task DeleteDestinationPointAsync(Guid destinationPointId)
         {
             try
             {
@@ -173,7 +175,7 @@ namespace SmartLink.Service
 
                     _dbContext.DestinationPoints.Remove(destinationPoint);
                     await _dbContext.SaveChangesAsync();
-                    await _logService.WriteLog(new LogEntity()
+                    await _logService.WriteLogAsync(new LogEntity()
                     {
                         LogId = "20002",
                         Action = Constant.ACTIONTYPE_DELETE,
@@ -195,16 +197,17 @@ namespace SmartLink.Service
                     Detail = ex.ToString()
                 };
                 logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
-                await _logService.WriteLog(logEntity);
+                await _logService.WriteLogAsync(logEntity);
                 throw;
             }
         }
+
         /// <summary>
         /// Delete a bunch of destination points by guids.
         /// </summary>
         /// <param name="seletedDestinationPointIds"></param>
         /// <returns></returns>
-        public async Task DeleteSelectedDestinationPoint(IEnumerable<Guid> seletedDestinationPointIds)
+        public async Task DeleteSelectedDestinationPointAsync(IEnumerable<Guid> seletedDestinationPointIds)
         {
             try
             {
@@ -226,7 +229,7 @@ namespace SmartLink.Service
 
                         _dbContext.DestinationPoints.Remove(destinationPoint);
                         await _dbContext.SaveChangesAsync();
-                        await _logService.WriteLog(new LogEntity()
+                        await _logService.WriteLogAsync(new LogEntity()
                         {
                             LogId = "20002",
                             Action = Constant.ACTIONTYPE_DELETE,
@@ -249,17 +252,18 @@ namespace SmartLink.Service
                     Detail = ex.ToString()
                 };
                 logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
-                await _logService.WriteLog(logEntity);
+                await _logService.WriteLogAsync(logEntity);
                 throw;
             }
         }
+
         /// <summary>
         /// Get destination catalog by file name
         /// File name is the absolute path of the file.
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public async Task<DestinationCatalog> GetDestinationCatalog(string fileName)
+        public async Task<DestinationCatalog> GetDestinationCatalogAsync(string fileName)
         {
             try
             {
@@ -279,7 +283,7 @@ namespace SmartLink.Service
                     }
                 }
 
-                await _logService.WriteLog(new LogEntity()
+                await _logService.WriteLogAsync(new LogEntity()
                 {
                     LogId = "20005",
                     Action = Constant.ACTIONTYPE_GET,
@@ -302,16 +306,17 @@ namespace SmartLink.Service
                     Detail = ex.ToString()
                 };
                 logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
-                await _logService.WriteLog(logEntity);
+                await _logService.WriteLogAsync(logEntity);
                 throw ex;
             }
         }
+
         /// <summary>
         /// Get the destination point references by source point guid.
         /// </summary>
         /// <param name="sourcePointId"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<DestinationPoint>> GetDestinationPointBySourcePoint(Guid sourcePointId)
+        public async Task<IEnumerable<DestinationPoint>> GetDestinationPointBySourcePointAsync(Guid sourcePointId)
         {
             var destinationPoints = await _dbContext.DestinationPoints
                 .Include(o => o.Catalog)
@@ -324,11 +329,12 @@ namespace SmartLink.Service
             }
             return destinationPoints;
         }
+
         /// <summary>
         /// Get all custom formats
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<CustomFormat>> GetCustomFormats()
+        public async Task<IEnumerable<CustomFormat>> GetCustomFormatsAsync()
         {
             var customFormats = await _dbContext.CustomFormats.ToArrayAsync();
             return customFormats;

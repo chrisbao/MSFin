@@ -20,6 +20,7 @@ namespace SmartLink.Web.Mappings
                 return "DomainViewModelMappings";
             }
         }
+
         /// <summary>
         /// mapping the view model to entity
         /// </summary>

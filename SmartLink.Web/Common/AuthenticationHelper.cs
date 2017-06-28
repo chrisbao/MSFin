@@ -13,9 +13,9 @@ namespace SmartLink.Web.Common
 
         public static string consentUrl;
 
-        public static async Task<string> AcquireTokenAsync()
+        public static Task<string> AcquireTokenAsync()
         {
-             return token;
+             return Task.FromResult(token);
         }
     }
 }

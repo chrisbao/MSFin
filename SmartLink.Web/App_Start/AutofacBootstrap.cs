@@ -27,8 +27,7 @@ namespace SmartLink.Web
             {
                 cfg.AddProfile(new MappingProfile());
                 cfg.AddProfile(new ServiceMappingProfile());
-                //This list is keep on going...
-
+                // This list is keep on going...
             });
             var mapper = mapperConfiguration.CreateMapper();
             builder.RegisterInstance(mapper).As<IMapper>().SingleInstance();

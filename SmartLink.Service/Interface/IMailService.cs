@@ -10,6 +10,6 @@ namespace SmartLink.Service
 {
     public interface IMailService
     {
-        Task SendPlainTextMail(string fromAddress, string fromDisplayName, IEnumerable<string> toAddresses, string subject, string content);
+        Task SendPlainTextMailAsync(string fromAddress, string fromDisplayName, IEnumerable<string> toAddresses, string subject, string content);
     }
 }

@@ -10,7 +10,8 @@ namespace SmartLink.Service
 {
     public interface ILogService
     {
-        Task WriteLog(LogEntity entity);
+        Task WriteLogAsync(LogEntity entity);
+
         void Flush();
     }
 }

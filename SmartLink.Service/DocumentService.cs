@@ -37,7 +37,6 @@ namespace SmartLink.Service
                 return _configService.AzureAdInstance + _configService.AzureAdTenantId;
             }
         }
-
         protected string Resource
         {
             get
@@ -52,7 +51,6 @@ namespace SmartLink.Service
                 return _configService.CertificatePassword;
             }
         }
-
         protected ObjectCache LocalCache
         {
             get
@@ -60,6 +58,7 @@ namespace SmartLink.Service
                 return MemoryCache.Default;
             }
         }
+
         /// <summary>
         /// Update the bookmark value by destination points in the specific word file.
         /// </summary>
@@ -77,7 +76,7 @@ namespace SmartLink.Service
                 var stream = await GetFileStreamAsync(authHeader, destinationFileName, fileContextInfo);
                 stream.Seek(0, SeekOrigin.Begin);
                 UpdateStream(destinationPoints, value, stream, retValue);
-                await UploadStream(authHeader, destinationFileName, stream, fileContextInfo);
+                await UploadStreamAsync(authHeader, destinationFileName, stream, fileContextInfo);
                 return retValue;
             }
             catch (Exception ex)
@@ -87,6 +86,7 @@ namespace SmartLink.Service
             }
             return retValue;
         }
+
         /// <summary>
         /// Upload the updated word file to SP document library where the word file exsited.
         /// </summary>
@@ -95,30 +95,55 @@ namespace SmartLink.Service
         /// <param name="stream"></param>
         /// <param name="contextInfo"></param>
         /// <returns></returns>
-        static private async Task UploadStream(string authHeader, string destinationFileName, Stream stream, FileContextInfo contextInfo)
+        /// <summary>
+        /// Create the authorization header to authenticate with SP site.
+        /// </summary>
+        /// <returns></returns>
+        private string GetAuthorizationHeader()
         {
-            var fileAbsolutePath = new Uri(destinationFileName).AbsolutePath;
-            int index = fileAbsolutePath.LastIndexOf('/');
-            var filePath = fileAbsolutePath.Substring(0, index);
-            var fileName = fileAbsolutePath.Substring(index + 1);
-
-            using (var client = new WebClient())
+            string authorizationHeader = LocalCache["AuthorizationHeader"] as string;
+            lock (typeof(DocumentService))
             {
-                client.Headers.Add(HttpRequestHeader.Authorization, authHeader);
-                client.Headers.Add(HttpRequestHeader.Accept, "application/json");
 
-                var uploadUri = new Uri($"{contextInfo.WebUrl}/_api/web/GetFolderByServerRelativeUrl(@filePath)/Files/add(url='{fileName}',overwrite=true)?@filePath='{filePath}'");
-                var returnValue = await client.UploadDataTaskAsync(uploadUri, "POST", (stream as MemoryStream).ToArray());
+                if (string.IsNullOrWhiteSpace(authorizationHeader))
+                {
+                    AuthenticationContext authenticationContext = new AuthenticationContext(Authority, false);
+                    var cert = GetCertificate();
+
+                    //Try to use http://stackoverflow.com/questions/6392268/x509certificate-keyset-does-not-exist
+                    using (cert.GetRSAPrivateKey()) { }
+                    //switchest are important to work in webjob
+                    ClientAssertionCertificate cac = new ClientAssertionCertificate(ClientID, cert);
+
+                    var authenticationResult = authenticationContext.AcquireTokenAsync(Resource, cac).Result;
+                    authorizationHeader = authenticationResult.CreateAuthorizationHeader();
+                    LocalCache.Set("AuthorizationHeader", authorizationHeader, authenticationResult.ExpiresOn.AddMinutes(-2));
+                }
             }
+            return authorizationHeader;
         }
 
         /// <summary>
-        /// Update the destination points value in word file.
+        /// Get the certificate via a specific path.
         /// </summary>
-        /// <param name="destinationPoints"></param>
-        /// <param name="value"></param>
-        /// <param name="stream"></param>
-        /// <param name="updateResult"></param>
+        /// <returns></returns>
+        private X509Certificate2 GetCertificate()
+        {
+            //read the certificate private key from the executing location
+            //NOTE: This is a hack…Azure Key Vault is best approach
+            var certPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            certPath = certPath.Substring(0, certPath.LastIndexOf('\\')) + "\\cert\\" + _configService.CertificateFile;
+            var certfile = System.IO.File.OpenRead(certPath);
+            var certificateBytes = new byte[certfile.Length];
+            certfile.Read(certificateBytes, 0, (int)certfile.Length);
+            return new X509Certificate2(
+                certificateBytes,
+                CertificatedPassword,
+                X509KeyStorageFlags.Exportable |
+                X509KeyStorageFlags.MachineKeySet |
+                X509KeyStorageFlags.PersistKeySet);
+        }
+
         static public void UpdateStream(IEnumerable<DestinationPoint> destinationPoints, string value, Stream stream, DocumentUpdateResult updateResult)
         {
             using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(stream, true))
@@ -142,6 +167,31 @@ namespace SmartLink.Service
                 wordDoc.MainDocumentPart.Document.Save();
             }
         }
+
+        static private async Task UploadStreamAsync(string authHeader, string destinationFileName, Stream stream, FileContextInfo contextInfo)
+        {
+            var fileAbsolutePath = new Uri(destinationFileName).AbsolutePath;
+            int index = fileAbsolutePath.LastIndexOf('/');
+            var filePath = fileAbsolutePath.Substring(0, index);
+            var fileName = fileAbsolutePath.Substring(index + 1);
+
+            using (var client = new WebClient())
+            {
+                client.Headers.Add(HttpRequestHeader.Authorization, authHeader);
+                client.Headers.Add(HttpRequestHeader.Accept, "application/json");
+
+                var uploadUri = new Uri($"{contextInfo.WebUrl}/_api/web/GetFolderByServerRelativeUrl(@filePath)/Files/add(url='{fileName}',overwrite=true)?@filePath='{filePath}'");
+                var returnValue = await client.UploadDataTaskAsync(uploadUri, "POST", (stream as MemoryStream).ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Update the destination points value in word file.
+        /// </summary>
+        /// <param name="destinationPoints"></param>
+        /// <param name="value"></param>
+        /// <param name="stream"></param>
+        /// <param name="updateResult"></param>
         /// <summary>
         /// Update the destination point value under sdtrun node by position (tag).
         /// </summary>
@@ -194,6 +244,7 @@ namespace SmartLink.Service
             }
             return retValue;
         }
+
         /// <summary>
         /// Update the destination point value under SDTBlock node by position (tag).
         /// </summary>
@@ -303,6 +354,7 @@ namespace SmartLink.Service
             }
             return retValue;
         }
+
         /// <summary>
         /// Get the word file stream by file name.
         /// </summary>
@@ -331,6 +383,7 @@ namespace SmartLink.Service
                 throw ex;
             }
         }
+
         /// <summary>
         /// Get file context information by file absolute URL.
         /// </summary>
@@ -355,53 +408,7 @@ namespace SmartLink.Service
                 };
             }
         }
-        /// <summary>
-        /// Create the authorization header to authenticate with SP site.
-        /// </summary>
-        /// <returns></returns>
-        private string GetAuthorizationHeader()
-        {
-            string authorizationHeader = LocalCache["AuthorizationHeader"] as string;
-            lock (typeof(DocumentService))
-            {
 
-                if (string.IsNullOrWhiteSpace(authorizationHeader))
-                {
-                    AuthenticationContext authenticationContext = new AuthenticationContext(Authority, false);
-                    var cert = GetCertificate();
-
-                    //Try to use http://stackoverflow.com/questions/6392268/x509certificate-keyset-does-not-exist
-                    using (cert.GetRSAPrivateKey()) { }
-                    //switchest are important to work in webjob
-                    ClientAssertionCertificate cac = new ClientAssertionCertificate(ClientID, cert);
-
-                    var authenticationResult = authenticationContext.AcquireTokenAsync(Resource, cac).Result;
-                    authorizationHeader = authenticationResult.CreateAuthorizationHeader();
-                    LocalCache.Set("AuthorizationHeader", authorizationHeader, authenticationResult.ExpiresOn.AddMinutes(-2));
-                }
-            }
-            return authorizationHeader;
-        }
-        /// <summary>
-        /// Get the certificate via a specific path.
-        /// </summary>
-        /// <returns></returns>
-        private X509Certificate2 GetCertificate()
-        {
-            //read the certificate private key from the executing location
-            //NOTE: This is a hack…Azure Key Vault is best approach
-            var certPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            certPath = certPath.Substring(0, certPath.LastIndexOf('\\')) + "\\cert\\" + _configService.CertificateFile;
-            var certfile = System.IO.File.OpenRead(certPath);
-            var certificateBytes = new byte[certfile.Length];
-            certfile.Read(certificateBytes, 0, (int)certfile.Length);
-            return new X509Certificate2(
-                certificateBytes,
-                CertificatedPassword,
-                X509KeyStorageFlags.Exportable |
-                X509KeyStorageFlags.MachineKeySet |
-                X509KeyStorageFlags.PersistKeySet);
-        }
         /// <summary>
         /// Convert the value to the formatted value.
         /// </summary>

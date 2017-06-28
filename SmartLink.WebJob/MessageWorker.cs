@@ -25,6 +25,7 @@ namespace Smartlink.WebJob
         private readonly IDocumentService _documentService;
 
         private string _storageAccount = string.Empty;
+
         public MessageWorker(ILogService logService, ISourceService sourceService, IDestinationService destinationService, IAzureStorageService azureStorageService, IDocumentService documentService)
         {
             _logService = logService;
@@ -33,6 +34,7 @@ namespace Smartlink.WebJob
             _destinationService = destinationService;
             _documentService = documentService;
         }
+
         /// <summary>
         /// Update the destination point value in word file by source point value.
         /// </summary>
@@ -52,7 +54,7 @@ namespace Smartlink.WebJob
 
                 if (publishHistory != null)
                 {
-                    var destinationPoints = _destinationService.GetDestinationPointBySourcePoint(publishHistory.SourcePointId);
+                    var destinationPoints = _destinationService.GetDestinationPointBySourcePointAsync(publishHistory.SourcePointId);
                     var groupedDestinationPoints = destinationPoints.Result.GroupBy(o => o.CatalogId);
                     var publishValue = publishHistory.Value;
                     IDictionary<string, Task<DocumentUpdateResult>> tasks = new Dictionary<string, Task<DocumentUpdateResult>>();

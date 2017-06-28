@@ -40,7 +40,7 @@ namespace SmartLink.Web.Controllers
             {
                 var destinationPoint = _mapper.Map<DestinationPoint>(destinationPointAdded);
                 var catalogName = HttpUtility.UrlDecode(destinationPointAdded.CatalogName);
-                return Ok(await _destinationService.AddDestinationPoint(catalogName, destinationPoint));
+                return Ok(await _destinationService.AddDestinationPointAsync(catalogName, destinationPoint));
             }
             catch (Exception ex)
             {
@@ -52,7 +52,7 @@ namespace SmartLink.Web.Controllers
         [Route("api/DestinationPoint")]
         public async Task<IHttpActionResult> DeleteSourcePoint(string id)
         {
-            await _destinationService.DeleteDestinationPoint(Guid.Parse(id));
+            await _destinationService.DeleteDestinationPointAsync(Guid.Parse(id));
             return Ok();
         }
 
@@ -60,7 +60,7 @@ namespace SmartLink.Web.Controllers
         [Route("api/DeleteSelectedDestinationPoint")]
         public async Task<IHttpActionResult> DeleteSelectedDestinationPoint([FromBody]IEnumerable<Guid> seletedIds)
         {
-            await _destinationService.DeleteSelectedDestinationPoint(seletedIds);
+            await _destinationService.DeleteSelectedDestinationPointAsync(seletedIds);
             return Ok();
         }
 
@@ -68,7 +68,7 @@ namespace SmartLink.Web.Controllers
         [Route("api/DestinationPointCatalog")]
         public async Task<IHttpActionResult> GetDestinationPointCatalog(string name)
         {
-            var retValue = await _destinationService.GetDestinationCatalog(name);
+            var retValue = await _destinationService.GetDestinationCatalogAsync(name);
             return Ok(retValue);
         }
 
@@ -76,7 +76,7 @@ namespace SmartLink.Web.Controllers
         [Route("api/DestinationPoint")]
         public async Task<IHttpActionResult> GetDestinationPointBySourcePoint(string sourcePointId)
         {
-            var retValue = await _destinationService.GetDestinationPointBySourcePoint(Guid.Parse(sourcePointId));
+            var retValue = await _destinationService.GetDestinationPointBySourcePointAsync(Guid.Parse(sourcePointId));
             return Ok(retValue);
         }
 
@@ -92,7 +92,7 @@ namespace SmartLink.Web.Controllers
         [Route("api/CustomFormats")]
         public async Task<IHttpActionResult> GetCustomFormats()
         {
-            var retValue = await _destinationService.GetCustomFormats();
+            var retValue = await _destinationService.GetCustomFormatsAsync();
             return Ok(retValue);
         }
     }

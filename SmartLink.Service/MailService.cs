@@ -15,12 +15,15 @@ namespace SmartLink.Service
     public class MailService : IMailService
     {
         private readonly IConfigService _configService;
+
         private NetworkCredential _credentials;
+
         public MailService(IConfigService configService)
         {
             _configService = configService;
             _credentials = new NetworkCredential(_configService.SendGridMessageUserName, _configService.SendGridMessagePassword);
         }
+
         /// <summary>
         /// Send plain text email.
         /// </summary>
@@ -30,7 +33,7 @@ namespace SmartLink.Service
         /// <param name="subject"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public async Task SendPlainTextMail(string fromAddress, string fromDisplayName, IEnumerable<string> toAddresses, string subject, string content)
+        public async Task SendPlainTextMailAsync(string fromAddress, string fromDisplayName, IEnumerable<string> toAddresses, string subject, string content)
         {
             MailMessage mailMsg = new MailMessage();
 

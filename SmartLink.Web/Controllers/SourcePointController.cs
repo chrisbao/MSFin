@@ -21,11 +21,13 @@ namespace SmartLink.Web.Controllers
     {
         protected readonly ISourceService _sourceService;
         protected readonly IMapper _mapper;
+
         public SourcePointController(ISourceService sourceService, IMapper mapper)
         {
             _sourceService = sourceService;
             _mapper = mapper;
         }
+
         /// <summary>
         /// Get all source point gro
         /// </summary>
@@ -36,6 +38,7 @@ namespace SmartLink.Web.Controllers
         {
             return await _sourceService.GetAllSourcePointGroupAsync();
         }
+
         /// <summary>
         /// Add source point
         /// </summary>
@@ -62,6 +65,7 @@ namespace SmartLink.Web.Controllers
                 return BadRequest(ex.ToString());
             }
         }
+
         /// <summary>
         /// get source catalog
         /// </summary>
@@ -74,6 +78,7 @@ namespace SmartLink.Web.Controllers
             var retValue = await _sourceService.GetSourceCatalogAsync(name);
             return Ok(retValue);
         }
+
         /// <summary>
         /// get all source catalogs
         /// </summary>
@@ -85,6 +90,7 @@ namespace SmartLink.Web.Controllers
             var retValue = await _sourceService.GetAllSourceCatalogAsync();
             return Ok(retValue);
         }
+
         /// <summary>
         /// get publish status by batchid
         /// If there is any error in the batch process, then return the error.
@@ -113,6 +119,7 @@ namespace SmartLink.Web.Controllers
             };
             return Ok(retValue);
         }
+
         /// <summary>
         /// publish a list of source points.
         /// </summary>
@@ -131,6 +138,7 @@ namespace SmartLink.Web.Controllers
 
             return Ok(retValue);
         }
+
         /// <summary>
         /// Edit the soruce point.
         /// </summary>
@@ -156,6 +164,7 @@ namespace SmartLink.Web.Controllers
                 return BadRequest(ex.ToString());
             }
         }
+
         /// <summary>
         /// Delete source point by source point GUID.
         /// </summary>
@@ -168,6 +177,7 @@ namespace SmartLink.Web.Controllers
             var retValue = await _sourceService.DeleteSourcePointAsync(new Guid(id));
             return Ok();
         }
+
         /// <summary>
         /// Delete selected source points by source point guids.
         /// </summary>

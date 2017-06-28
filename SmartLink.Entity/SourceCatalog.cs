@@ -25,7 +25,9 @@ namespace SmartLink.Entity
         }
 
         public string Name { get; set; }
+
         public ICollection<SourcePoint> SourcePoints { get; set; }
+
         public SourceCatalog()
         {
             SourcePoints = new List<SourcePoint>();
@@ -34,6 +36,7 @@ namespace SmartLink.Entity
         [NotMapped]
         [JsonIgnore]
         public bool SerializeSourcePoints { get; set; } = true;
+
         public bool ShouldSerializeSourcePoints()
         {
             return SerializeSourcePoints;

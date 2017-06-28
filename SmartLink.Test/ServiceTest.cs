@@ -24,6 +24,7 @@ namespace SmartLink.Service.Tests
     public class ServiceTest
     {
         static private IContainer Container { get; set; }
+
         static private AutoMock MockContainer { get; set; }
 
         [ClassInitialize]
@@ -131,6 +132,7 @@ namespace SmartLink.Service.Tests
                 Assert.IsTrue(except.Length == 0);
             }
         }
+
         [TestMethod()]
         public void UpdateSdtBlockTest()
         {
@@ -164,4 +166,3 @@ namespace SmartLink.Service.Tests
         }
     }
 }
-

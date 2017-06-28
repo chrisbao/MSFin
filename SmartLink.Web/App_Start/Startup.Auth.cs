@@ -26,6 +26,7 @@ namespace SmartLink.Web
         private static string resourceId = CloudConfigurationManager.GetSetting("ResourceId");
         private static string consentResource = CloudConfigurationManager.GetSetting("ConsentResource");
         private static string authority = aadInstance + tenantId;
+
         /// <summary>
         /// Implement the OPENID authentication and get the access token to access SP site.
         /// </summary>

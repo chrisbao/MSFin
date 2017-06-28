@@ -13,24 +13,28 @@ namespace SmartLink.Service
     public class LogService : ILogService
     {
         private TelemetryClient _telemetry;
+
         protected readonly IMailService _mailService;
         protected readonly IConfigService _configService;
+
         public LogService(IMailService mailService, IConfigService configService)
         {
             _telemetry = new TelemetryClient();
             _mailService = mailService;
             _configService = configService;
         }
+
         public void Flush()
         {
             _telemetry.Flush();
         }
+
         /// <summary>
         /// Write the log to send grid or application insight.
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public async Task WriteLog(LogEntity entity)
+        public async Task WriteLogAsync(LogEntity entity)
         {
             var properties = new Dictionary<string, string>();
             properties.Add("Subject", entity.Subject);
@@ -49,7 +53,7 @@ namespace SmartLink.Service
 
             if (entity.ActionType == ActionTypeEnum.ErrorLog)
             {
-                await _mailService.SendPlainTextMail(
+                await _mailService.SendPlainTextMailAsync(
                     _configService.SendGridMessageFromAddress,
                     _configService.SendGridMessageFromDisplayName,
                     _configService.SendGridMessageToAddress,

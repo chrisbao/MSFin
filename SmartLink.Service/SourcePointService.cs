@@ -32,6 +32,7 @@ namespace SmartLink.Service
             _logService = logService;
             _userProfileService = userProfileService;
         }
+
         /// <summary>
         /// Add source point in the Azure DB.
         /// The file name is the absolute path of the file.
@@ -63,7 +64,7 @@ namespace SmartLink.Service
                             Message = ".Net Error",
                         };
                         entity.Subject = $"{entity.LogId} - {entity.Action} - {entity.PointType} - Error";
-                        await _logService.WriteLog(entity);
+                        await _logService.WriteLogAsync(entity);
 
                         throw new ApplicationException("Add Source Catalog failed", ex);
                     }
@@ -84,7 +85,7 @@ namespace SmartLink.Service
 
                 if (addSourceCatalog)
                 {
-                    await _logService.WriteLog(new LogEntity()
+                    await _logService.WriteLogAsync(new LogEntity()
                     {
                         LogId = "30003",
                         Action = Constant.ACTIONTYPE_ADD,
@@ -93,7 +94,7 @@ namespace SmartLink.Service
                         Message = $"Add Source Catalog named {sourceCatalog.Name}."
                     });
                 }
-                await _logService.WriteLog(new LogEntity()
+                await _logService.WriteLogAsync(new LogEntity()
                 {
                     LogId = "10001",
                     Action = Constant.ACTIONTYPE_ADD,
@@ -119,11 +120,12 @@ namespace SmartLink.Service
                     Detail = ex.ToString()
                 };
                 logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
-                await _logService.WriteLog(logEntity);
+                await _logService.WriteLogAsync(logEntity);
                 throw ex;
             }
             return sourcePoint;
         }
+
         /// <summary>
         /// Update the source point.
         /// </summary>
@@ -166,7 +168,7 @@ namespace SmartLink.Service
                 }
 
                 await _dbContext.SaveChangesAsync();
-                await _logService.WriteLog(new LogEntity()
+                await _logService.WriteLogAsync(new LogEntity()
                 {
                     LogId = "10002",
                     Action = Constant.ACTIONTYPE_EDIT,
@@ -190,10 +192,11 @@ namespace SmartLink.Service
                     Detail = ex.ToString()
                 };
                 logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
-                await _logService.WriteLog(logEntity);
+                await _logService.WriteLogAsync(logEntity);
                 throw ex;
             }
         }
+
         /// <summary>
         /// Delete source point by source point guid.
         /// </summary>
@@ -217,7 +220,7 @@ namespace SmartLink.Service
                     sourcePoint.Status = SourcePointStatus.Deleted;
                 }
                 var task = await _dbContext.SaveChangesAsync();
-                await _logService.WriteLog(new LogEntity()
+                await _logService.WriteLogAsync(new LogEntity()
                 {
                     LogId = "10003",
                     Action = Constant.ACTIONTYPE_DELETE,
@@ -239,11 +242,12 @@ namespace SmartLink.Service
                     Detail = ex.ToString()
                 };
                 logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
-                await _logService.WriteLog(logEntity);
+                await _logService.WriteLogAsync(logEntity);
                 throw ex;
             }
 
         }
+
         /// <summary>
         /// Delete a bunch of source points by source points guid.
         /// </summary>
@@ -265,7 +269,7 @@ namespace SmartLink.Service
                         sourcePoint.Status = SourcePointStatus.Deleted;
                     }
                     var task = await _dbContext.SaveChangesAsync();
-                    await _logService.WriteLog(new LogEntity()
+                    await _logService.WriteLogAsync(new LogEntity()
                     {
                         LogId = "10003",
                         Action = Constant.ACTIONTYPE_DELETE,
@@ -287,11 +291,12 @@ namespace SmartLink.Service
                     Detail = ex.ToString()
                 };
                 logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
-                await _logService.WriteLog(logEntity);
+                await _logService.WriteLogAsync(logEntity);
                 throw ex;
             }
 
         }
+
         /// <summary>
         /// get the source catalog by file name
         /// </summary>
@@ -314,7 +319,7 @@ namespace SmartLink.Service
                     }
                     sourceCatalog.SourcePoints = sourcePoint;
 
-                    await _logService.WriteLog(new LogEntity()
+                    await _logService.WriteLogAsync(new LogEntity()
                     {
                         LogId = "30001",
                         Action = Constant.ACTIONTYPE_GET,
@@ -337,10 +342,11 @@ namespace SmartLink.Service
                     Detail = ex.ToString()
                 };
                 logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
-                await _logService.WriteLog(logEntity);
+                await _logService.WriteLogAsync(logEntity);
                 throw ex;
             }
         }
+
         /// <summary>
         /// Get all source catalogs
         /// </summary>
@@ -351,6 +357,7 @@ namespace SmartLink.Service
             Parallel.ForEach(sourceCatalog, o => o.SourcePoints = o.SourcePoints.Where(m => m.Status == SourcePointStatus.Created).ToArray());
             return sourceCatalog;
         }
+
         /// <summary>
         /// Publish source points 
         /// Download the word file and update the destination point value with source point value in word file then upload the word file to overwrite existed one.
@@ -422,8 +429,8 @@ namespace SmartLink.Service
                     var message = new PublishedMessage() { PublishHistoryId = history.Id, SourcePointId = history.SourcePointId, PublishBatchId = batchId };
                     writeQueueTask.Add(Task.Run(async () =>
                        {
-                           await _azureStorageService.WriteMessageToQueue(JsonConvert.SerializeObject(message), Constant.PUBLISH_QUEUE_NAME);
-                           await _logService.WriteLog(new LogEntity()
+                           await _azureStorageService.WriteMessageToQueueAsync(JsonConvert.SerializeObject(message), Constant.PUBLISH_QUEUE_NAME);
+                           await _logService.WriteLogAsync(new LogEntity()
                            {
                                LogId = "10004",
                                Action = Constant.ACTIONTYPE_PUBLISH,
@@ -456,7 +463,7 @@ namespace SmartLink.Service
                         Detail = $"{sourcePoint.Id}-{sourcePoint.Name}-{ex.ToString()}"
                     };
                     logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
-                    await _logService.WriteLog(logEntity);
+                    await _logService.WriteLogAsync(logEntity);
                 }
 
                 throw ex;
@@ -473,10 +480,11 @@ namespace SmartLink.Service
                     Detail = ex.ToString()
                 };
                 logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
-                await _logService.WriteLog(logEntity);
+                await _logService.WriteLogAsync(logEntity);
                 throw ex;
             }
         }
+
         /// <summary>
         /// Get all sourcec point groups.
         /// </summary>
@@ -485,6 +493,7 @@ namespace SmartLink.Service
         {
             return await _dbContext.SourcePointGroups.ToListAsync();
         }
+
         /// <summary>
         /// Get the status of all publish hisotries by batchID. 
         /// </summary>
@@ -499,6 +508,7 @@ namespace SmartLink.Service
             });
 
         }
+
         /// <summary>
         /// Get first publish history by publish history ID.
         /// </summary>
@@ -519,10 +529,10 @@ namespace SmartLink.Service
     class SourcePointException : Exception
     {
         public IList<SourcePoint> ErrorSourcePoints { get; protected set; }
+
         public SourcePointException(IList<SourcePoint> errorSourcePoints, string message, Exception innerException) : base(message, innerException)
         {
             ErrorSourcePoints = errorSourcePoints;
         }
     }
-
 }

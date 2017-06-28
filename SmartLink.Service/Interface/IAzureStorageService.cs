@@ -10,7 +10,8 @@ namespace SmartLink.Service
 {
     public interface IAzureStorageService
     {
-        Task WriteMessageToQueue(string queueMessage, string queueName);
+        Task WriteMessageToQueueAsync(string queueMessage, string queueName);
+
         CloudTable GetTable(string tableName);
     }
 }

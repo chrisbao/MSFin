@@ -12,8 +12,8 @@ namespace SmartLink.Entity
     {
         public PublishStatusEntity()
         {
-
         }
+
         public PublishStatusEntity(string publishBatchId, string sourcePointId, string publishHistoryId)
         {
             this.PartitionKey = publishBatchId;
@@ -22,6 +22,7 @@ namespace SmartLink.Entity
             PublishHistoryId = publishHistoryId;
             Status = PublishStatus.InProgess;
         }
+
         public string PublishBatchId
         {
             get
@@ -29,10 +30,13 @@ namespace SmartLink.Entity
                 return PartitionKey;
             }
         }
+
         public string PublishHistoryId { get; set; }
+
         public string SourcePointId { get; set; }
 
         public string StatusValue { get; set; }
+
         [IgnoreProperty]
         public PublishStatus Status
         {
@@ -41,7 +45,9 @@ namespace SmartLink.Entity
         }
 
         public string ErrorSummary { get; set; }
+
         public string ErrorDetail { get; set; }
+
         public string Comments { get; set; }
     }
 }
