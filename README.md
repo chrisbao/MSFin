@@ -70,7 +70,7 @@
 
 7. Enter an *App ID Uri* `https://[your-domain\].onmicrosoft.com/<websitename>`
 
-8. Hit Ok to create the registration.
+8. Hit *Complete* to create the registration.
 
 9. Obtain and store the Azure AD tenant ID.
 
@@ -79,8 +79,8 @@
 
 10. Store the copied client secret.
 
-     - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
-     - Store the copied client secret.
+    - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
+    - Store the copied client secret.
 
 11. Store the application client ID
 
