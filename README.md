@@ -26,7 +26,7 @@
 
 [How to view data in the storage account?](#how-to-view-data-in-the-storage-account)
 
-[How to check WebJob status?](#How-to-check-webjob-status?)
+[How to check WebJob status?](#How-to-check-webjob-status)
 
 [Build and debug locally](#build-and-debug-locally)
 
@@ -79,8 +79,8 @@
 
 10. Store the copied client secret.
 
-    - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
-    - Store the copied client secret.
+   - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
+   - Store the copied client secret.
 
 11. Store the application client ID
 
@@ -363,7 +363,7 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    **For example:** `https://<yourwebsitename>.azurewebsites.net/Admin/Consents`
 
-2. Ensure the webjob is running status. Please refer to this [section](#How-to-check-webjob-status?) on how to check the WebJob status.
+2. Ensure the webjob is running status. Please refer to this [section](#How-to-check-webjob-status) on how to check the WebJob status.
 
 3. Use the O365 admin account to login and click admin consent button. 
 
