@@ -81,12 +81,19 @@
 
 11. Store the copied client secret.
 
-     - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
+     - On the application, click *CONFIGURE* in the tabs menu.
+
+     - Find the *Keys* and select the *duration* for the key then click *save* at the button.
+
+       ![](Images/savekey.png)
+
      - Store the copied client secret.
+
+       ![](Images/copykey.png)
 
 12. Store the application client ID
 
-    - On the application, Quick Start page, click on *CONFIGURE* in the tabs menu.
+    - On the application,  click on *CONFIGURE* in the tabs menu.
     - Search & copy the Client ID value and store it.
 
 
