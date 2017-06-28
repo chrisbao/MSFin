@@ -79,8 +79,8 @@
 
 10. Store the copied client secret.
 
-    - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
-    - Store the copied client secret.
+   - On the application, click *‘All Settings’* | Keys then fill the key description and copy the value.
+   - Store the copied client secret.
 
 11. Store the application client ID
 
@@ -415,8 +415,9 @@ Here are the app permissions needed for the Azure AD app *smartlink.webjob*.
 
    ![](Images/AddDestinationpoint.png)
 
-   10. Save the word document and close it. 
-   11. You could refer to the 2 section on [how to view the SQL data](#how-to-view-azure-sql-data) and [how to view data in the storage account](#how-to-view-data-in-the-storage-account?).
+10. Save the word document and close it. 
+
+11. You could refer to the 2 section on [how to view the SQL data](#how-to-view-azure-sql-data) and [how to view data in the storage account](#how-to-view-data-in-the-storage-account).
 
 ## How to view Azure SQL data?
 
