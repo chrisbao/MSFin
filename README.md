@@ -80,7 +80,9 @@
 10. Store the copied client secret.
 
    - XXX
-   - XXX
+   - XX
+
+11. ​
 
 
 ## Register the application in AAD for web job
