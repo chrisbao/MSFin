@@ -1,16 +1,16 @@
 # 	      MSFin SmartLink Code Sample
 
-**Table of contents**
+**Table of Contents**
 
 [Prerequisites](#prerequisites)
 
-[Register the application in Azure Active Directory for MVC web app](#register-the-application-in-azure-active-directory-for-mvc-web-app)
+[Register the application in Azure Active Directory for MVC Web App](#register-the-application-in-azure-active-directory-for-mvc-web-app)
 
-[Register the application in AAD for web job](#register-the-application-in-aad-for-web-job)
+[Register the application in AAD for WebJob](#register-the-application-in-aad-for-webjob)
 
 [Create Azure resources using ARM template](#create-azure-resources-using-arm-template)
 
-[Configure the communication between web job and O365 tenant](#configure-the-communication-between-webjob-and-o365-tenant)
+[Configure the communication between WebJob and O365 tenant](#configure-the-communication-between-webjob-and-o365-tenant)
 
 [Deploy the sample to Azure](#deploy-the-sample-to-azure)
 
@@ -40,15 +40,15 @@
 
 **Deploying and running this sample requires**:
 
-1. An Azure subscription with permissions to register a new application, and deploy the web app.
-2. You have O365 account and you could contact your admin to consent the permission to access it.
+1. An Azure subscription with permissions to register a new application, and deploy the Web App.
+2. You have an O365 account and you could contact your admin to consent the permission to access it.
 3. Visual Studio 2015 (any edition), [Visual Studio 2015 Community](https://go.microsoft.com/fwlink/?LinkId=691978&clcid=0x409) is available for free and ensure Latest Microsoft Office Developer Tools for Visual Studio 2015 is installed.
 4. Make sure you have [Outlook 2016](https://products.office.com/en-US/outlook/email-and-calendar-software-microsoft-outlook) installed.
 5. Familiarity with C#, .NET Web applications, JavaScript programming.
 
-## Register the application in Azure Active Directory for MVC web app
+## Register the application in Azure Active Directory for MVC Web App
 
-1. Login the Azure AD using the O365 account. ([`https://manage.windowsazure.com`](https://manage.windowsazure.com)) 
+1. Login the Azure AD using your O365 account. ([`https://manage.windowsazure.com`](https://manage.windowsazure.com)) 
 
 2. Click *Active Directory* on the left navigation
 
@@ -97,9 +97,9 @@
     - Search & copy the Client ID value and store it.
 
 
-## Register the application in AAD for web job
+## Register the application in AAD for WebJob
 
-1. Follow [Register the application in AAD for MVC WEB APP](#register-the-application-in-azure-active-directory-for-mvc-web-app) section to register another app named *smartlink.webjob* and please refer to the table below when fill the value. 
+1. Follow [Register the application in AAD for MVC Web App](#register-the-application-in-azure-active-directory-for-mvc-web-app) section to register another app named *smartlink.webjob* and please refer to the table below when filling the value. 
 
 | SIGN-ON URL    | https://[websitename].azurewebsites.net  |
 | -------------- | ---------------------------------------- |
@@ -113,7 +113,7 @@
 
    ![](Images/selecto365.png)
 
-4. Here is the O365 SharePoint Online app permission needed for the Azure AD app *smartlink.webjob*.
+4. Here is the O365 SharePoint Online app permission needed for the Azure AD App *smartlink.webjob*.
 
 ![](Images/WebJobO365permission.png)
 
@@ -141,13 +141,13 @@
    | **Parameter Name**            | **Value**                                | **Note**                                 |
    | ----------------------------- | :--------------------------------------- | ---------------------------------------- |
    | webSiteName                   | <WebSiteName>  **For example:** *SmartLinkQAWebApp* |                                          |
-   | sqlserverName                 | <SQLServerName>  **For example:**  *SmarkLinkQASQL* | The SQL server name                      |
-   | hostingPlanName               | <hostingPlanName>  **For example:**  SmartLinkQAHostPlan | The name of the App Service plan to use for hosting the web app. |
+   | sqlserverName                 | <SQLServerName>  **For example:**  *SmarkLinkQASQL* | The SQL Server name                      |
+   | hostingPlanName               | <hostingPlanName>  **For example:**  SmartLinkQAHostPlan | The name of the App Service plan to use for hosting the Web App. |
    | skuName                       | <skuName>  **For example: **  F1         |                                          |
    | skuCapacity                   | <skuCapacity>  **For example:**  1       | sets number of workers for this App Service plan SKU |
    | administratorLogin            | <administratorLogin>  **For example:**  SmartLinkLogin | This login is used to login to the SQL database. |
    | administratorLoginPassword    | < administratorLoginPassword >  **For example:** smartlink@qa |                                          |
-   | databaseName                  | <databaseName>  **For example:**  SmartLinkQA | The database name hosted on the SQL server |
+   | databaseName                  | <databaseName>  **For example:**  SmartLinkQA | The database name hosted on the SQL Server |
    | collation                     | Leave it as is.                          |                                          |
    | edition                       | <Edition>  For example: basic            | Specifies the edition for the database. Valid values are:   -- Default  -- None  -- Premium  -- Basic  -- Standard |
    | maxSizeBytes                  | Leave it a is                            |                                          |
@@ -160,7 +160,7 @@
 
    ![](Images/validate.png)
 
-6. Uncheck the *Validate only* checkbox andthen hit OK to create the Azure resources.
+6. Uncheck the *Validate only* checkbox and then hit OK to create the Azure resources.
 
    | **Resource Name**    | **Resource Type**   | **Pricing Level** | **Resource Group**                       |
    | -------------------- | ------------------- | ----------------- | ---------------------------------------- |
@@ -172,7 +172,7 @@
 
    ​
 
-## Configure the communication between webjob and O365 tenant
+## Configure the communication between WebJob and O365 tenant
 
 1. Create self-certificate.
 
@@ -200,7 +200,7 @@
 
    - Store the base64Value; $base64Thumbprint; keyid that will be used in other places.
 
-     > **Note:** **If MAKECERT is not available, please download the windows SDK and install the tool only in the screenshot below.**
+     > **Note:** **If MAKECERT is not available, please download the Windows SDK and install the tool only in the screenshot below.**
 
      [https://www.microsoft.com/en-us/download/confirmation.aspx?id=8279](https://www.microsoft.com/en-us/download/confirmation.aspx?id=8279)
 
@@ -209,7 +209,7 @@
 2. Export PFX certificate
 
    - Export the PFX certificate from the self-certificate (remember to export with the private key)
-   - Store the password when export the PFX certificate.
+   - Store the password when exporting the PFX certificate.
    - Store the PFX certificate. 
 
 3. Download the project & include the certificate. 
@@ -232,8 +232,8 @@
    | **App  setting **   | **Value**                                | **Notes**                                |
    | ------------------- | ---------------------------------------- | :--------------------------------------- |
    | InstrumentationKey  | Application Insight Instrumentation key. | Find it in the application insights      |
-   | ida:WebJobClientId  | The application ID of the AAD App for  WEB JOB | Find it in the AAD App for web job.      |
-   | CertificatePassword | The password when export the  certificate | Step 2 in this [section](#configure-the-communication-between-webjob-and-o365-tenant) |
+   | ida:WebJobClientId  | The application ID of the AAD App for WebJob | Find it in the AAD App for WebJob.      |
+   | CertificatePassword | The password when exporting the certificate | Step 2 in this [section](#configure-the-communication-between-webjob-and-o365-tenant) |
    | ida:AADInstance     | [https://login.microsoftonline.com/](https://login.microsoftonline.com/) | Fixed value                              |
    | ida:TenantId        | The Azure Tenant ID                      | Step 9 in this [section](#register-the-application-in-azure-active-directory-for-mvc-web-app) |
    | SharePointUrl       | The root site collection of the O365    site | **For example:**  [https://yourtenant.sharepoint.com](https://yourtenantsharepoint.com) |
@@ -241,7 +241,7 @@
 
 5. Update the manifest file.
 
-   - Download the manifest file from the AAD app forthe web job.
+   - Download the manifest file from the AAD App for the WebJob.
    - Edit XXX following the template below
    - Upload the manifest file
 
@@ -288,7 +288,7 @@
 
 ## Upload the Excel & Word manifest files
 
-1. Go to the app for office add-in management page. 
+1. Go to the app for Office add-in management page. 
 
    **For example:** `https://<tenantname>.sharepoint.com/sites/AppCatelog/AgaveCatalog/Forms/AllItems.aspx` 
 
@@ -296,13 +296,13 @@
 
    ![](Images/appforoffice.png)
 
-3. Find the excel [app manifest file](SmartLinkExcel/SmartLinkExcelManifest/SmartLinkExcel.xml) & word [app manifest file](SmartLinkWord/SmartLinkWordManifest/SmartLinkWord.xml)
+3. Find the Excel [app manifest file](SmartLinkExcel/SmartLinkExcelManifest/SmartLinkExcel.xml) & Word [app manifest file](SmartLinkWord/SmartLinkWordManifest/SmartLinkWord.xml)
 
-4. Update the excel & word manifest files.
+4. Update the Excel & Word manifest files.
 
    - Update the Id with a new generated GUID and you could refer to the link below on how to generate it. [https://guidgenerator.com/online-guid-generator.aspx](https://guidgenerator.com/online-guid-generator.aspx) 
 
-     > Note: please generate new GUID for the word manifest file.
+     > Note: please generate new GUID for the Word manifest file.
 
    - Update the source location default value to the one provisioned in Azure.
 
@@ -316,13 +316,13 @@
 
 1. Open Excel 2016.
 
-2. Sign in with O365 account. 
+2. Sign in with your O365 account. 
 
 3. Click *File* | *Options*
 
    ![](Images/options.png)
 
-4. Click Trust Center | Trust center settings.
+4. Click Trust Center | Trust Center settings.
 
    ![](Images/trustcenter.png)
 
@@ -332,7 +332,7 @@
 
    ![](Images/TrustCatalog.png)
 
-6. Restart the excel.
+6. Restart the Excel.
 
 7. Click *Insert* and *My Add-ins*
 
@@ -350,11 +350,11 @@
 
 1. Open Word 2016
 
-2. Sign in with O365 account. 
+2. Sign in with your O365 account. 
 
 3. Click *File* | *Options*
 
-4. Click *Trust Center* | *Trust center settings*.
+4. Click *Trust Center* | *Trust Center settings*.
 
    ![](Images/WordTrustCenter.png)
 
@@ -380,7 +380,7 @@
 
    **For example:** `https://<yourwebsitename>.azurewebsites.net/Admin/Consents`
 
-2. Ensure the webjob is in running status. Please refer to this [section](#how-to-check-webjob-status) on how to check the WebJob status.
+2. Ensure the WebJob is in running status. Please refer to this [section](#how-to-check-webjob-status) on how to check the WebJob status.
 
 3. Use the O365 admin account to login and click admin consent button. 
 
@@ -390,13 +390,13 @@
 
    ![](Images/adminconsentapprove.png)
 
-5. Open the excel stored in your O365 document library and open it using excel client tool then enable editing the excel and open the excel add-in. 
+5. Open the Excel stored in your O365 document library and open it using Excel client tool then enable editing the Excel and open the Excel add-in. 
 
    ![](Images/enableeditingexcel.png)
 
    ​
 
-6. Use your O365 account to login the excel add-in and create a source point 
+6. Use your O365 account to login the Excel add-in and create a source point 
 
    - Click add button.
 
@@ -412,15 +412,15 @@
 
      ![](Images/addnewsourcepointstepbystep.png)
 
-7. Open a word document under the same document library where excel file hosted in O365 site.
+7. Open a Word document under the same document library where Excel file hosted in O365 site.
 
-8. Use your O365 account to login the word add-in and create a destination point.
+8. Use your O365 account to login the Word add-in and create a destination point.
 
    ![](Images/addestinationpoint.png)
 
 
 
-8. Select the excel file hosts the source points and select one source point. 
+8. Select the Excel file hosts the source points and select one source point. 
 
    ![](Images/SelectFile.png)
 
@@ -450,21 +450,21 @@
 
    ![](Images/AddClientIP.png)
 
-5. Open Visual Studio 2015 with administrator permission and open "SQL Server Object explorer"
+5. Open Visual Studio 2015 with administrator permission and open "SQL Server Object Explorer"
 
    ![](Images/SQLServerOjbectExplorer.png)
 
-6. Select database and connect it.
+6. Select the database and connect it.
 
    - The Server name will be automatically filled after selecting the DB.
 
    - Fill the correct DB.
 
-   - Fill the correct Authentication Type, *Sql Server Authentication.*
+   - Fill the correct Authentication Type, *SQL Server Authentication.*
 
    - Fill the User Name/Password created in this [section](#create-azure-resources-using-arm-template).
 
-   - The Database Name  will be automatically filled.
+   - The Database Name will be automatically filled.
 
      ![](Images/SelectDatabase.png)
 
@@ -494,19 +494,19 @@
 
      ![](Images/GetAccessKeys.png)
 
-4. Download the Azure Storage explorer.
+4. Download the Azure Storage Explorer.
 
-   - Download the azure storage explorer from the following location [http://storageexplorer.com](http://storageexplorer.com)
+   - Download the Azure Storage Explorer from the following location [http://storageexplorer.com](http://storageexplorer.com)
 
      ​
 
-5. Use the API key to connect the storage account in Azure explorer.
+5. Use the API key to connect the storage account in Azure Explorer Explorer.
 
-   - Connect to Azure storage.
+   - Connect to Azure Storage.
 
      ![](Images/AzureStorageExplorer.png)
 
-   - Copy the access key from the step 3 above and paste into textbox below.
+   - Copy the access key from the step 3 above and paste into the textbox below.
 
      ![](Images/ConnectAzureStorage.png)
 
@@ -516,13 +516,13 @@
 
 6. Check the queue/table.
 
-   - The publsihqueue & publish table is created under the queues/tables.
+   - The publish queue & publish table is created under the queues/tables.
 
       ![](Images/queueandtable.png)
 
    - Check the data in the queue.
 
-      If there is one item in queue, then there is one source point that needs to be proceeded. 
+      If there is one item in the queue, then there is one source point that needs to be proceeded. 
 
    - Check the data in the table.
 
@@ -530,7 +530,7 @@
 
       If the status value is Completed, it means the item is proceed completed(UI shows the notification saying process succeeded)
 
-      If the status value is error, it means there is some error processing this item(UI shows the error notification.)
+      If the status value is Error, it means there is some error processing this item(UI shows the error notification.)
 
    ![](Images/publishstatus.png)
 
@@ -568,7 +568,7 @@
 
 4. Create a new Azure AD App for the web.
 
-   - Please use the value of SIGN-ON URL & App ID Uri below when follow the section [Register the application in Azure Active Directory for MVC web app](#register-the-application-in-azure-active-directory-for-mvc-web-app) to create a new Azure AD app.  
+   - Please use the value of SIGN-ON URL & App ID Uri below when following the section [Register the application in Azure Active Directory for MVC Web App](#register-the-application-in-azure-active-directory-for-mvc-web-app) to create a new Azure AD App.  
 
      | SIGN-ON URL    | https://localhost:44394/     |
      | -------------- | ---------------------------- |
@@ -586,13 +586,13 @@
    | ida:PostLogoutRedirectUri | https://localhost:44394/                 | Yes                                      | Yes                                      |
    | ConsentResource           | `https://<yourtenantname>.sharepoint.com` | Yes                                      | No                                       |
 
-6. Update the JavaScript file to support the local debug for excel add-in.
+6. Update the JavaScript file to support the local debug for Excel add-in.
 
    - Open the [SignIn.js](SmartLink.Web/Scripts/App/SignIn.js) and update the isDev property value from false to true.
 
-   - Make sure that an excel file is uploaded to the document library in SharePoint site within your tenant. 
+   - Make sure that an Excel file is uploaded to the document library in SharePoint site within your tenant. 
 
-   - Copy the excel file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 45
+   - Copy the Excel file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 45
 
    - Find the disk drive where solution hosts (**For example:** E disk) and update E: to that disk drive in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 45.
 
@@ -600,11 +600,11 @@
       that.filePath = Office.context.document.url.indexOf("E:") > -1 ? "https://<yourtenantname>.sharepoint.com/Shared%20Documents/Book.xlsx" : 
      ```
 
-7. Update the JavaScript file to support the local debug for word add-in.
+7. Update the JavaScript file to support the local debug for Word add-in.
 
-   - Make sure that an excel file is uploaded to the document library in SharePoint site within your tenant. 
+   - Make sure that an Excel file is uploaded to the document library in SharePoint site within your tenant. 
 
-   - Copy the word file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 55
+   - Copy the Word file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 55
 
      ```javascript
      that.filePath = Office.context && Office.context.document && Office.context.document.url ? Office.context.document.url : "https://cand3.sharepoint.com/Shared%20Documents/Test.docx";
@@ -620,7 +620,7 @@
 
    - Accept the permissions to access SharePoint site. 
 
-   - Open the excel add-in in your local.
+   - Open the Excel add-in in your local.
 
    - Click *add* and edit the source point form.
 
@@ -636,7 +636,7 @@
 
        ![](Images/addsplocal.png)
 
-     > **Note:** By default, you could debug the JavaScript file by setting the break point in it.You could also attach the process to debug the web application code when click save.  This is same for debugging the word add-in.
+     > **Note:** By default, you could debug the JavaScript file by setting the breakpoint in it.You could also attach the process to debug the web application code when click save.  This is same for debugging the Word add-in.
 
      ![](Images/debugsp.png)
 
@@ -654,7 +654,7 @@
 
    - Click add and edit the destination form.
 
-   - Select the excel file hosts the source points and select one source point just created. 
+   - Select the Excel file hosts the source points and select one source point just created. 
 
      ![](Images/fileexplorer.png)
 
@@ -874,7 +874,7 @@
        public CloudTable GetTable(string tableName)
        ```
 
-     - Write message to queue.
+     - Write a message to the queue.
 
        ```c#
        public Task WriteMessageToQueue(string queueMessage, string queueName)
