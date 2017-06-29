@@ -76,8 +76,8 @@
 
 10. Obtain and store the Azure AD tenant ID.
 
-    - Click *VIEW ENDPOINTS* in the bottom tabs.
-    - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
+     - Click *VIEW ENDPOINTS* in the bottom tabs.
+     - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
 
 11. Store the copied client secret.
 
@@ -380,7 +380,7 @@
 
    **For example:** `https://<yourwebsitename>.azurewebsites.net/Admin/Consents`
 
-2. Ensure the webjob is running status. Please refer to this [section](#how-to-check-webjob-status) on how to check the WebJob status.
+2. Ensure the webjob is in running status. Please refer to this [section](#how-to-check-webjob-status) on how to check the WebJob status.
 
 3. Use the O365 admin account to login and click admin consent button. 
 
