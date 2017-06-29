@@ -600,7 +600,17 @@
       that.filePath = Office.context.document.url.indexOf("E:") > -1 ? "https://<yourtenantname>.sharepoint.com/Shared%20Documents/Book.xlsx" : 
      ```
 
-7. Set SmartLinkExcel as StartUp project, and press F5.
+7. Update the JavaScript file to support the local debug for word add-in.
+
+   - Make sure that an excel file is uploaded to the document library in SharePoint site within your tenant. 
+
+   - Copy the word file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 55
+
+     ```javascript
+     that.filePath = Office.context && Office.context.document && Office.context.document.url ? Office.context.document.url : "https://cand3.sharepoint.com/Shared%20Documents/Test.docx";
+     ```
+
+8. Set SmartLinkExcel as StartUp project, and press F5.
 
    - Work with your O365 admin to go to admin consent page in the browser. 
 
@@ -626,19 +636,29 @@
 
        ![](Images/addsplocal.png)
 
-     > **Note:** By default, you could debug the JavaScript file by setting the break point in it.You could also attach the process to debug the web application code when click save.  
+     > **Note:** By default, you could debug the JavaScript file by setting the break point in it.You could also attach the process to debug the web application code when click save.  This is same for debugging the word add-in.
 
      ![](Images/debugsp.png)
 
+      ![](Images/attachprocess.png)
+
+     ![](Images/attachiisexpressprocess.png)
+
      ​
 
-8. Set SmartLinkWord as StartUp project and press F5
+   ​                    ![](Images/debugspsave.png)
+
+9. Set SmartLinkWord as StartUp project and press F5
 
    - Open the words add-in in your local.
 
    - Click add and edit the destination form.
 
    - Select the excel file hosts the source points and select one source point just created. 
+
+     ![](Images/fileexplorer.png)
+
+     ![](Images/selectsps.png)
 
    - Put the cursor in the word before clicking the add button.
 
