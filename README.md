@@ -422,15 +422,15 @@
 
 8. Select the Excel file hosts the source points and select one source point. 
 
-   ![](Images/SelectFile.png)
+   ![](Images/fileexplorer.png)
 
-![](Images/SelectSourcePoint.png)
+![](Images/selectsps.png)
 
 
 
 9. Put the cursor in the word before clicking the add button.
 
-   ![](Images/AddDestinationpoint.png)
+   ![](Images/adddp.png)
 
 10. Save the word document and close it. 
 
