@@ -44,8 +44,8 @@ namespace SmartLink.Entity
         public SourcePointStatus Status { get; set; }
 
         public Guid CatalogId { get; set; }
-        [ForeignKey("CatalogId")]
 
+        [ForeignKey("CatalogId")]
         public virtual SourceCatalog Catalog { get; set; }
 
         public virtual ICollection<SourcePointGroup> Groups { get; set; }

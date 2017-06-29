@@ -17,6 +17,7 @@ namespace SmartLink.Entity
         public int Id { get; set; }
 
         public string Name { get; set; }
+
         [JsonIgnore]
         public virtual ICollection<SourcePoint> SourcePoints { get; set; }
     }

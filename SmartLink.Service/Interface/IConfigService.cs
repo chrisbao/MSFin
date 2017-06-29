@@ -13,15 +13,15 @@ namespace SmartLink.Service
 
         string WebJobClientId { get; }
 
-        string AzureAdInstance { get; }
+        string AzureADInstance { get; }
 
-        string AzureAdTenantId { get; }
+        string AzureADTenantId { get; }
 
         string GraphResourceUrl{ get; }
 
-        string AzureAdGraphResourceURL { get; }
+        string AzureADGraphResourceURL { get; }
 
-        string AzureAdAuthority { get; }
+        string AzureADAuthority { get; }
 
         string ClaimTypeObjectIdentifier { get; }
 

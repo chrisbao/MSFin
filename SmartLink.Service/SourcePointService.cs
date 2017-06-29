@@ -209,7 +209,7 @@ namespace SmartLink.Service
                 var sourcePoint = _dbContext.SourcePoints.Include(o => o.Catalog).FirstOrDefault(o => o.Id == sourcePointId);
                 if (sourcePoint == null)
                 {
-                    throw new NullReferenceException(string.Format("Sourcepoint: {0} is not existed", sourcePointId));
+                    throw new NullReferenceException(string.Format("Source point: {0} is not existed", sourcePointId));
                 }
                 if (sourcePoint.Status == SourcePointStatus.Deleted)
                 {
@@ -262,7 +262,7 @@ namespace SmartLink.Service
                     var sourcePoint = _dbContext.SourcePoints.Include(o => o.Catalog).FirstOrDefault(o => o.Id == sourcePointId);
                     if (sourcePoint == null)
                     {
-                        throw new NullReferenceException(string.Format("Sourcepoint: {0} is not existed", sourcePointId));
+                        throw new NullReferenceException(string.Format("Source point: {0} is not existed", sourcePointId));
                     }
                     if (sourcePoint.Status != SourcePointStatus.Deleted)
                     {
@@ -392,7 +392,7 @@ namespace SmartLink.Service
 
                 var batchId = Guid.NewGuid();
 
-                //A single batch operation can include up to 100 entities, so seperate histories into several batch when histories 
+                //A single batch operation can include up to 100 entities, so separate histories into several batch when histories 
                 //https://docs.microsoft.com/en-us/azure/storage/storage-dotnet-how-to-use-tables
                 var batchCount = Math.Ceiling((float)histories.Count() / Constant.AZURETABLE_BATCH_COUNT);
                 var batchTasks = new List<Task<IList<TableResult>>>();
@@ -486,7 +486,7 @@ namespace SmartLink.Service
         }
 
         /// <summary>
-        /// Get all sourcec point groups.
+        /// Get all source point groups.
         /// </summary>
         /// <returns></returns>
         public async Task<IEnumerable<SourcePointGroup>> GetAllSourcePointGroupAsync()
@@ -495,7 +495,7 @@ namespace SmartLink.Service
         }
 
         /// <summary>
-        /// Get the status of all publish hisotries by batchID. 
+        /// Get the status of all publish histories by batchID. 
         /// </summary>
         /// <param name="batchId"></param>
         /// <returns></returns>

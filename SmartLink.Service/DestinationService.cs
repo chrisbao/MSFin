@@ -161,7 +161,8 @@ namespace SmartLink.Service
             {
                 var destinationPoint = await _dbContext.DestinationPoints
                     .Include(o => o.ReferencedSourcePoint)
-                    .Include(o => o.Catalog).FirstOrDefaultAsync(o => o.Id == destinationPointId);
+                    .Include(o => o.Catalog)
+                    .FirstOrDefaultAsync(o => o.Id == destinationPointId);
 
                 if (destinationPoint != null)
                 {

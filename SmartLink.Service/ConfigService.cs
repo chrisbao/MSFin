@@ -25,12 +25,12 @@ namespace SmartLink.Service
             get { return CloudConfigurationManager.GetSetting("ida:ClientSecret"); }
         }
 
-        public string AzureAdInstance
+        public string AzureADInstance
         {
             get { return CloudConfigurationManager.GetSetting("ida:AADInstance"); }
         }
 
-        public string AzureAdTenantId
+        public string AzureADTenantId
         {
             get { return CloudConfigurationManager.GetSetting("ida:TenantId"); }
         }
@@ -40,14 +40,14 @@ namespace SmartLink.Service
             get { return "https://graph.microsoft.com/v1.0/"; }
         }
 
-        public string AzureAdGraphResourceURL
+        public string AzureADGraphResourceURL
         {
             get { return "https://graph.microsoft.com/"; }
         }
 
-        public string AzureAdAuthority
+        public string AzureADAuthority
         {
-            get { return AzureAdInstance + AzureAdTenantId; }
+            get { return AzureADInstance + AzureADTenantId; }
         }
 
         public string ClaimTypeObjectIdentifier
@@ -136,7 +136,6 @@ namespace SmartLink.Service
         {
             get
             {
-
                 return CloudConfigurationManager.GetSetting("CertificateFile");
             }
         }

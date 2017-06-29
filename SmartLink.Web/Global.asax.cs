@@ -3,23 +3,16 @@
  *   * See LICENSE in the project root for license information.  
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using Autofac;
+using Autofac.Integration.Mvc;
+using Autofac.Integration.WebApi;
+using Microsoft.Azure;
+using SmartLink.Service;
+using System.Data.Entity;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-
-using Autofac;
-using Autofac.Integration.Mvc;
-using Autofac.Integration.WebApi;
-using System.Reflection;
-using System.Configuration;
-using SmartLink.Service;
-using Microsoft.Azure;
-using System.Data.Entity;
 
 namespace SmartLink.Web
 {

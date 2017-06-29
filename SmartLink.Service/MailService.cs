@@ -50,8 +50,6 @@ namespace SmartLink.Service
             mailMsg.Subject = subject;
             string text = content;
             mailMsg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(text, null, MediaTypeNames.Text.Plain));
-            //string html = @"<p>html body</p>";
-            //mailMsg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(html, null, MediaTypeNames.Text.Html));
 
             // Init SmtpClient and send
             SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));

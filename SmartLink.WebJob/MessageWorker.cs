@@ -64,7 +64,7 @@ namespace Smartlink.WebJob
                         {
                             var fileName = sameCatalogDestinationPoints.First().Catalog.Name;
                             var points = sameCatalogDestinationPoints.Select(o => o);
-                            tasks.Add(fileName, _documentService.UpdateBookmrkValueAsync(fileName, points, publishValue));
+                            tasks.Add(fileName, _documentService.UpdateBookmarkValueAsync(fileName, points, publishValue));
                         }
                         catch (Exception ex)
                         {

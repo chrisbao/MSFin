@@ -19,8 +19,8 @@ namespace SmartLink.Service
                     new SourcePointGroup() { Id = 2, Name = "FY 2016" },
                     new SourcePointGroup() { Id = 3, Name = "FY 2015" },
                     new SourcePointGroup() { Id = 4, Name = "2017 Annual Fiscal Year Report" },
-                    new SourcePointGroup() { Id = 5, Name = "Q4 2016 Quarterly Enarings Report" },
-                    new SourcePointGroup() { Id = 6, Name = "Q3 2016 Quarterly Enarings Report" }
+                    new SourcePointGroup() { Id = 5, Name = "Q4 2016 Quarterly Earnings Report" },
+                    new SourcePointGroup() { Id = 6, Name = "Q3 2016 Quarterly Earnings Report" }
             );
         }
     }

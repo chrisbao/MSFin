@@ -29,7 +29,7 @@ namespace SmartLink.Web.Controllers
         }
 
         /// <summary>
-        /// Get all source point gro
+        /// Get all source point group
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -92,7 +92,7 @@ namespace SmartLink.Web.Controllers
         }
 
         /// <summary>
-        /// get publish status by batchid
+        /// get publish status by batchId
         /// If there is any error in the batch process, then return the error.
         /// If there is any item still processing in the batch process, then return InProgress.
         /// Otherwise return completed.
@@ -140,7 +140,7 @@ namespace SmartLink.Web.Controllers
         }
 
         /// <summary>
-        /// Edit the soruce point.
+        /// Edit the source point.
         /// </summary>
         /// <param name="sourcePointAdded"></param>
         /// <returns></returns>
@@ -156,7 +156,6 @@ namespace SmartLink.Web.Controllers
             try
             {
                 var sourcePoint = _mapper.Map<SourcePoint>(sourcePointAdded);
-
                 return Ok(await _sourceService.EditSourcePointAsync(sourcePointAdded.GroupIds != null ? sourcePointAdded.GroupIds : new int[] { }, sourcePoint));
             }
             catch (Exception ex)

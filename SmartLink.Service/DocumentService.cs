@@ -30,13 +30,15 @@ namespace SmartLink.Service
         }
 
         protected string ClientID { get { return _configService.WebJobClientId; } }
+
         protected string Authority
         {
             get
             {
-                return _configService.AzureAdInstance + _configService.AzureAdTenantId;
+                return _configService.AzureADInstance + _configService.AzureADTenantId;
             }
         }
+
         protected string Resource
         {
             get
@@ -44,6 +46,7 @@ namespace SmartLink.Service
                 return _configService.SharePointUrl;
             }
         }
+
         protected string CertificatedPassword
         {
             get
@@ -51,6 +54,7 @@ namespace SmartLink.Service
                 return _configService.CertificatePassword;
             }
         }
+
         protected ObjectCache LocalCache
         {
             get
@@ -66,7 +70,7 @@ namespace SmartLink.Service
         /// <param name="destinationPoints"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public async Task<DocumentUpdateResult> UpdateBookmrkValueAsync(string destinationFileName, IEnumerable<DestinationPoint> destinationPoints, string value)
+        public async Task<DocumentUpdateResult> UpdateBookmarkValueAsync(string destinationFileName, IEnumerable<DestinationPoint> destinationPoints, string value)
         {
             DocumentUpdateResult retValue = new DocumentUpdateResult() { IsSuccess = true };
             try
