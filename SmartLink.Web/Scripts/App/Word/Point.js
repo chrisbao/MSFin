@@ -52,7 +52,7 @@ var point = (function () {
 
     that.init = function () {
         ///get the document URL.
-        that.filePath = Office.context && Office.context.document && Office.context.document.url ? Office.context.document.url : "https://cand3.sharepoint.com/Shared%20Documents/MaxTest.docx";
+        that.filePath = Office.context && Office.context.document && Office.context.document.url ? Office.context.document.url : "https://cand3.sharepoint.com/Shared%20Documents/Test.docx";
         that.controls = {
             body: $("body"),
             main: $(".main"),
