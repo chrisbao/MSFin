@@ -92,37 +92,4 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 10
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://canviz.visualstudio.com/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = SmartLinkExcel\\SmartLinkExcel.csproj
-		SccProjectName1 = SmartLinkExcel
-		SccLocalPath1 = SmartLinkExcel
-		SccProjectUniqueName2 = SmartLinkWord\\SmartLinkWord.csproj
-		SccProjectName2 = SmartLinkWord
-		SccLocalPath2 = SmartLinkWord
-		SccProjectUniqueName3 = SmartLink.Web\\SmartLink.Web.csproj
-		SccProjectName3 = SmartLink.Web
-		SccLocalPath3 = SmartLink.Web
-		SccProjectUniqueName4 = SmartLink.Entity\\SmartLink.Entity.csproj
-		SccProjectName4 = SmartLink.Entity
-		SccLocalPath4 = SmartLink.Entity
-		SccProjectUniqueName5 = SmartLink.Common\\SmartLink.Common.csproj
-		SccProjectName5 = SmartLink.Common
-		SccLocalPath5 = SmartLink.Common
-		SccProjectUniqueName6 = SmartLink.Service\\SmartLink.Service.csproj
-		SccProjectName6 = SmartLink.Service
-		SccLocalPath6 = SmartLink.Service
-		SccProjectUniqueName7 = SmartLink.Test\\SmartLink.Test.csproj
-		SccProjectName7 = SmartLink.Test
-		SccLocalPath7 = SmartLink.Test
-		SccProjectUniqueName8 = SmartLink.WebJob\\SmartLink.WebJob.csproj
-		SccProjectName8 = SmartLink.WebJob
-		SccLocalPath8 = SmartLink.WebJob
-		SccProjectUniqueName9 = SmartLink.Azure\\SmartLink.Azure.deployproj
-		SccProjectName9 = SmartLink.Azure
-		SccLocalPath9 = SmartLink.Azure
-	EndGlobalSection
 EndGlobal
