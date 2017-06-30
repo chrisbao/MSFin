@@ -87,7 +87,7 @@
 
      - On the application, click *CONFIGURE* in the tabs menu.
 
-     - Find the *Keys* and select the *duration* for the key then click *save* at the button.
+     - Find the *Keys* and select the *duration* for the key then click *save* at the bottom.
 
        ![](Images/savekey.png)
 
