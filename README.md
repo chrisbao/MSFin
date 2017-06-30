@@ -80,8 +80,8 @@
 
 10. Obtain and store the Azure AD tenant ID.
 
-    - Click *VIEW ENDPOINTS* in the bottom tabs.
-    - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
+   - Click *VIEW ENDPOINTS* in the bottom tabs.
+   - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
 
 11. Store the copied client secret.
 
@@ -422,23 +422,20 @@
 
    ![](Images/addestinationpoint.png)
 
-
-
-8. Select the Excel file hosts the source points and select one source point. 
+9. Select the Excel file hosts the source points and select one source point. 
 
    ![](Images/fileexplorer.png)
 
-![](Images/selectsps.png)
+   ![](Images/selectsps.png)
 
-
-
-9. Put the cursor in the word before clicking the add button.
+10. Put the cursor in the word before clicking the add button.
 
    ![](Images/adddp.png)
 
-10. Save the word document and close it. 
+11. Save the word document and close it. 
 
-11. You could refer to the 2 section on [how to view the SQL data](#how-to-view-azure-sql-data) and [how to view data in the storage account](#how-to-view-data-in-the-storage-account).
+12. You could refer to the 2 section on [how to view the SQL data](#how-to-view-azure-sql-data) and [how to view data in the storage account](#how-to-view-data-in-the-storage-account).
+
 
 ## How to view Azure SQL data?
 
