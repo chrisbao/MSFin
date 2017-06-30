@@ -66,18 +66,22 @@
 
 6. In the Add Application wizard, enter a name of *SmartLink.Web* and choose the type *Web Application and/or Web API*. Click the arrow to the next page of the wizard.
 
-7. In the *App Properties* page, enter a *SIGN-ON URL*
+7. In the *App Properties* page, enter a *SIGN-ON URL* 
 
    `https://<websitename>.azurewebsites.net`
 
-8. Enter an *App ID Uri* `https://[your-domain\].onmicrosoft.com/<websitename>`
+   > Note: Sign-ON URL is the URL where you can sign in and use your app. 
+
+8. Enter an *App ID Uri* `https://[your-domain].onmicrosoft.com/<websitename>`
+
+   > Note: The App ID Uri used as a unique logical identifier for your app. The URI must be in a verified custom domain for an external user to grant your app access to their data in Microsoft Azure AD.
 
 9. Hit *Complete* to create the registration.
 
 10. Obtain and store the Azure AD tenant ID.
 
-     - Click *VIEW ENDPOINTS* in the bottom tabs.
-     - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
+    - Click *VIEW ENDPOINTS* in the bottom tabs.
+    - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
 
 11. Store the copied client secret.
 
@@ -178,7 +182,7 @@
 
    - Execute the following command to create the self-certificate. 
 
-     `makecert -n "CN=MyCompanyName MyAppName Cert" -ss my -len 2048`
+     `makecert -n "CN=MyCompanyName MyAppName Cert" -ss my -len 2048 -r -pe `
 
    - Go to the personal certificate store under current user. 
 
@@ -208,7 +212,7 @@
 
 2. Export PFX certificate
 
-   - Export the PFX certificate from the self-certificate (remember to export with the private key)
+   - Export the PFX certificate from the self-certificate
    - Store the password when exporting the PFX certificate.
    - Store the PFX certificate. 
 
@@ -232,7 +236,7 @@
    | **App  setting **   | **Value**                                | **Notes**                                |
    | ------------------- | ---------------------------------------- | :--------------------------------------- |
    | InstrumentationKey  | Application Insight Instrumentation key. | Find it in the application insights      |
-   | ida:WebJobClientId  | The application ID of the AAD App for WebJob | Find it in the AAD App for WebJob.      |
+   | ida:WebJobClientId  | The application ID of the AAD App for WebJob | Find it in the AAD App for WebJob.       |
    | CertificatePassword | The password when exporting the certificate | Step 2 in this [section](#configure-the-communication-between-webjob-and-o365-tenant) |
    | ida:AADInstance     | [https://login.microsoftonline.com/](https://login.microsoftonline.com/) | Fixed value                              |
    | ida:TenantId        | The Azure Tenant ID                      | Step 9 in this [section](#register-the-application-in-azure-active-directory-for-mvc-web-app) |
