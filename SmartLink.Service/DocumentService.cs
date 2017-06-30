@@ -116,7 +116,7 @@ namespace SmartLink.Service
 
                     //Try to use http://stackoverflow.com/questions/6392268/x509certificate-keyset-does-not-exist
                     using (cert.GetRSAPrivateKey()) { }
-                    //switchest are important to work in webjob
+
                     ClientAssertionCertificate cac = new ClientAssertionCertificate(ClientID, cert);
 
                     var authenticationResult = authenticationContext.AcquireTokenAsync(Resource, cac).Result;
