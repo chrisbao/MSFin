@@ -579,13 +579,34 @@
 
 5. Update the [web.config](SmartLink.Web/Web.config).
 
-   | App setting key           | Value                                    | Update [web.config](SmartLink.Web/Web.config) or not | Update [web.debug.config](SmartLink.Web/Web.Debug.config) or not |
-   | ------------------------- | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-   | ida:ClientId              | Client ID value get from step 4          | Yes                                      | Yes                                      |
-   | ida:TenantId              | Tenant ID value get from step 4          | Yes                                      | No                                       |
-   | ida:ClientSecret          | Client Secret value get from step 4      | Yes                                      | No                                       |
-   | ida:PostLogoutRedirectUri | https://localhost:44394/                 | Yes                                      | Yes                                      |
-   | ConsentResource           | `https://<yourtenantname>.sharepoint.com` | Yes                                      | No                                       |
+   - Update app setting in web.config
+
+     | App setting key           | Value                                    | Update [web.config](SmartLink.Web/Web.config) or not | Update [web.debug.config](SmartLink.Web/Web.Debug.config) or not |
+     | ------------------------- | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
+     | ida:ClientId              | Client ID value get from step 4          | Yes                                      | Yes                                      |
+     | ida:TenantId              | Tenant ID value get from step 4          | Yes                                      | No                                       |
+     | ida:ClientSecret          | Client Secret value get from step 4      | Yes                                      | No                                       |
+     | ida:PostLogoutRedirectUri | https://localhost:44394/                 | Yes                                      | Yes                                      |
+     | ConsentResource           | `https://<yourtenantname>.sharepoint.com` | Yes                                      | No                                       |
+
+
+   - Update connectStrings in web.config using the value below
+
+     - Update the **[SQL Server Name]** to the SQL server name created in step 4 in this [section](#create-azure-resources-using-arm-template)
+
+     - Update the **[Database Name]** to databaseName created in step 4 in this [section](#create-azure-resources-using-arm-template)
+
+     - Update the **[User ID]** to administratorLogin created in step 4 in this [section](#create-azure-resources-using-arm-template)
+
+     - Update the **[Password]** to administratorLoginPassword created in step 4 in this [section](#create-azure-resources-using-arm-template)
+
+       ​
+
+     | connectionStrings | value                                    | Update [web.config](SmartLink.Web/Web.config) or not | Update [web.debug.config](SmartLink.Web/Web.Debug.config) or not |
+     | ----------------- | :--------------------------------------- | :--------------------------------------- | ---------------------------------------- |
+     | connectionStrings | connectionString="Data Source=tcp:**[SQL Server Name]**.database.windows.net,1433;Initial Catalog=**[Database Name]**;User Id=**[User ID]**;Password=**[Password]**" providerName="System.Data.SqlClient" | Yes                                      | No                                       |
+
+     > Note: Ensure the client IP is allowed to access this SQL server in Azure Portal.
 
 6. Update the JavaScript file to support the local debug for Excel add-in.
 
