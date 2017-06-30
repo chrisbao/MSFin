@@ -1,9 +1,4 @@
-﻿/*   
- *   * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.  
- *   * See LICENSE in the project root for license information.  
- */
-
-using Microsoft.Azure;
+﻿using Microsoft.Azure;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
@@ -26,7 +21,6 @@ namespace SmartLink.Web
         private static string resourceId = CloudConfigurationManager.GetSetting("ResourceId");
         private static string consentResource = CloudConfigurationManager.GetSetting("ConsentResource");
         private static string authority = aadInstance + tenantId;
-
         /// <summary>
         /// Implement the OPENID authentication and get the access token to access SP site.
         /// </summary>
@@ -50,7 +44,7 @@ namespace SmartLink.Web
                         {
                             var code = context.Code;
                             var redirectUrl = new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path));
-                            var consentRedirectUrl = new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Path) + "Admin/Result");
+                            var consentRedirectUrl = new Uri(HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) + "/Admin/Result");
                             ClientCredential credential = new ClientCredential(clientId, appKey);
                             AuthenticationContext authContext = new AuthenticationContext(authority);
 
@@ -65,6 +59,8 @@ namespace SmartLink.Web
                         }
                     }
                 });
+
+
         }
     }
 }
