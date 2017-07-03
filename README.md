@@ -1,4 +1,4 @@
-# 	      MSFin SmartLink Code Sample
+administratorLoginPasswordMSFin SmartLink Code Sample
 
 **Table of Contents**
 
@@ -16,7 +16,7 @@
 
 [Upload the Excel & Word manifest files](#upload-the-excel--word-manifest-files)
 
-[Install Excel Add-in](#install-excel-add-in)
+[Install Excel Add-in](#install-excel-add-in)	
 
 [Install Word Add-in](#install-word-add-in)
 
@@ -80,8 +80,8 @@
 
 10. Obtain and store the Azure AD tenant ID.
 
-    - Click *VIEW ENDPOINTS* in the bottom tabs.
-    - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
+     - Click *VIEW ENDPOINTS* in the bottom tabs.
+     - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
 
 11. Store the copied client secret.
 
@@ -149,16 +149,16 @@
    | hostingPlanName               | <hostingPlanName>  **For example:**  SmartLinkQAHostPlan | The name of the App Service plan to use for hosting the Web App. |
    | skuName                       | <skuName>  **For example: **  F1         |                                          |
    | skuCapacity                   | <skuCapacity>  **For example:**  1       | sets number of workers for this App Service plan SKU |
-   | administratorLogin            | <administratorLogin>  **For example:**  SmartLinkLogin | This login is used to login to the SQL database. |
-   | administratorLoginPassword    | < administratorLoginPassword >  **For example:** smartlink@qa |                                          |
-   | databaseName                  | <databaseName>  **For example:**  SmartLinkQA | The database name hosted on the SQL Server |
+   | administratorLogin            | **For example:**  SmartLinkLogin         | This login is used to login to the SQL database. |
+   | administratorLoginPassword    | **For example:** smartlink@qa            |                                          |
+   | databaseName                  | **For example:**  SmartLinkQA            | The database name hosted on the SQL Server |
    | collation                     | Leave it as is.                          |                                          |
-   | edition                       | <Edition>  For example: basic            | Specifies the edition for the database. Valid values are:   -- Default  -- None  -- Premium  -- Basic  -- Standard |
+   | edition                       | **For example:** basic                   | Specifies the edition for the database. Valid values are:   -- Default  -- None  -- Premium  -- Basic  -- Standard |
    | maxSizeBytes                  | Leave it a is                            |                                          |
-   | requestedServiceObjectivename | <requestedServiceObjectivename>          | performance level                        |
-   | storageAccountType            | <storageAccountType>  **For example:**  Standard_LRS |                                          |
-   | storageAccountName            | <storageAccountName>  **For example:**  SmartLinkQA |                                          |
-   | appInsightName                | <appInsightName>  **For example:**  msfinsmartlinkqa |                                          |
+   | requestedServiceObjectivename | **For example:** basic                   | performance level                        |
+   | storageAccountType            | **For example:**  Standard_LRS           |                                          |
+   | storageAccountName            | **For example:**  SmartLinkQA            |                                          |
+   | appInsightName                | **For example:**  msfinsmartlinkqa       |                                          |
 
 5. Validate and hit Ok.
 
