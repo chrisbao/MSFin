@@ -80,8 +80,8 @@
 
 10. Obtain and store the Azure AD tenant ID.
 
-     - Click *VIEW ENDPOINTS* in the bottom tabs.
-     - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
+    - Click *VIEW ENDPOINTS* in the bottom tabs.
+    - The GUID after *`Login.microsoftonline.com/`* is the tenant ID and store it.
 
 11. Store the copied client secret.
 
@@ -430,7 +430,7 @@
 
 10. Put the cursor in the word before clicking the add button.
 
-   ![](Images/adddp.png)
+  ![](Images/adddp.png)
 
 11. Save the word document and close it. 
 
@@ -629,7 +629,7 @@
    - Copy the Word file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 55
 
      ```javascript
-     that.filePath = Office.context && Office.context.document && Office.context.document.url ? Office.context.document.url : "https://cand3.sharepoint.com/Shared%20Documents/Test.docx";
+     that.filePath = Office.context && Office.context.document && Office.context.document.url ? Office.context.document.url : "https://<yourtenantname>.sharepoint.com/Shared%20Documents/Test.docx";
      ```
 
 8. Set SmartLinkExcel as StartUp project, and press F5.
