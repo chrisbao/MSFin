@@ -430,7 +430,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 10. Put the cursor in the word before clicking the add button.
 
-  ![](Images/adddp.png)
+   ![](Images/adddp.png)
 
 11. Save the word document and close it. 
 
