@@ -166,13 +166,13 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 6. Uncheck the *Validate only* checkbox and then hit OK to create the Azure resources.
 
-   | **Resource Name**    | **Resource Type**   | **Pricing Level** | **Resource Group**                       |
-   | -------------------- | ------------------- | ----------------- | ---------------------------------------- |
-   | <WebSiteName>        | App Service         | F1                | Resource group created in the step 3 above. |
-   | <SQLServerName>      | SQL Server          | N/A               | Same as above                            |
-   | <databaseName >      | SQL database        | basic             | Same as above                            |
-   | <storageAccountName> | Storage  account    | LRS               | Same as above                            |
-   | <WebSiteName>        | Application insight | basic             | Same as above                            |
+   | **Resource Name**  | **Resource Type**   | **Pricing Level** | **Resource Group**                       |
+   | ------------------ | ------------------- | ----------------- | ---------------------------------------- |
+   | WebSiteName        | App Service         | F1                | Resource group created in the step 3 above. |
+   | SQLServerName      | SQL Server          | N/A               | Same as above                            |
+   | databaseName       | SQL database        | basic             | Same as above                            |
+   | storageAccountName | Storage  account    | LRS               | Same as above                            |
+   | WebSiteName        | Application insight | basic             | Same as above                            |
 
    ​
 
