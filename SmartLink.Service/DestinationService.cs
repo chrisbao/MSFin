@@ -38,19 +38,19 @@ namespace SmartLink.Service
         /// <param name="fileName"></param>
         /// <param name="destinationPoint"></param>
         /// <returns></returns>
-        public async Task<DestinationPoint> AddDestinationPointAsync(string fileName, DestinationPoint destinationPoint)
+        public async Task<DestinationPoint> AddDestinationPointAsync(string fileName, string documentId, DestinationPoint destinationPoint)
         {
             try
             {
 
                 ///Get destination catalog by file server absolute path.
-                var destinationCatalog = _dbContext.DestinationCatalogs.FirstOrDefault(o => o.Name == fileName);
+                var destinationCatalog = _dbContext.DestinationCatalogs.FirstOrDefault(o => o.DocumentId == documentId);
                 bool addDestinationCatalog = (destinationCatalog == null);
                 if (addDestinationCatalog)
                 {
                     try
                     {
-                        destinationCatalog = new DestinationCatalog() { Name = fileName };
+                        destinationCatalog = new DestinationCatalog() { Name = fileName, DocumentId = documentId };
                         _dbContext.DestinationCatalogs.Add(destinationCatalog);
                     }
                     catch (Exception ex)
@@ -118,6 +118,7 @@ namespace SmartLink.Service
                 destinationPoint.ReferencedSourcePoint.PublishedHistories = destinationPoint.ReferencedSourcePoint.PublishedHistories.OrderByDescending(p => p.PublishedDate).ToArray();
                 destinationPoint.ReferencedSourcePoint.SerializeCatalog = true;
                 destinationPoint.ReferencedSourcePoint.Catalog.SerializeSourcePoints = false;
+                destinationPoint.CustomFormats = destinationPoint.CustomFormats.OrderBy(c => c.GroupOrderBy).ToArray();
 
                 await _logService.WriteLogAsync(new LogEntity()
                 {
@@ -161,8 +162,7 @@ namespace SmartLink.Service
             {
                 var destinationPoint = await _dbContext.DestinationPoints
                     .Include(o => o.ReferencedSourcePoint)
-                    .Include(o => o.Catalog)
-                    .FirstOrDefaultAsync(o => o.Id == destinationPointId);
+                    .Include(o => o.Catalog).FirstOrDefaultAsync(o => o.Id == destinationPointId);
 
                 if (destinationPoint != null)
                 {
@@ -259,12 +259,14 @@ namespace SmartLink.Service
         }
 
         /// <summary>
-        /// Get destination catalog by file name
+        /// Get destination catalog by document ID
+        /// Update the document url when it is changed
         /// File name is the absolute path of the file.
         /// </summary>
         /// <param name="fileName"></param>
+        /// <param name="documentId"></param>
         /// <returns></returns>
-        public async Task<DestinationCatalog> GetDestinationCatalogAsync(string fileName)
+        public async Task<DestinationCatalog> GetDestinationCatalogAsync(string fileName, string documentId)
         {
             try
             {
@@ -273,7 +275,7 @@ namespace SmartLink.Service
                     .Include(o => o.DestinationPoints.Select(m => m.ReferencedSourcePoint.Groups))
                     .Include(o => o.DestinationPoints.Select(m => m.ReferencedSourcePoint.Catalog))
                     .Include(o => o.DestinationPoints.Select(m => m.CustomFormats))
-                    .FirstOrDefaultAsync(o => o.Name == fileName);
+                    .FirstOrDefaultAsync(o => o.DocumentId == documentId);
                 if (destinationCatalog != null)
                 {
                     foreach (var sourcePoint in destinationCatalog.DestinationPoints.Select(o => o.ReferencedSourcePoint))
@@ -281,6 +283,16 @@ namespace SmartLink.Service
                         sourcePoint.PublishedHistories = sourcePoint.PublishedHistories.OrderByDescending(p => p.PublishedDate).ToArray();
                         sourcePoint.SerializeCatalog = true;
                         sourcePoint.Catalog.SerializeSourcePoints = false;
+                    }
+                    foreach (var destinationPoint in destinationCatalog.DestinationPoints)
+                    {
+                        destinationPoint.CustomFormats = destinationPoint.CustomFormats.OrderBy(c => c.GroupOrderBy).ToArray();
+                    }
+
+                    if (!destinationCatalog.Name.Equals(fileName))
+                    {
+                        destinationCatalog.Name = fileName;
+                        await _dbContext.SaveChangesAsync();
                     }
                 }
 
@@ -290,7 +302,7 @@ namespace SmartLink.Service
                     Action = Constant.ACTIONTYPE_GET,
                     PointType = Constant.POINTTYPE_DESTINATIONPOINT,
                     ActionType = ActionTypeEnum.AuditLog,
-                    Message = $"Get destination points list by {fileName}"
+                    Message = $"Get destination points list by {documentId}"
                 });
                 return destinationCatalog;
 
@@ -332,13 +344,93 @@ namespace SmartLink.Service
         }
 
         /// <summary>
-        /// Get all custom formats
+        /// Get all custom formats.
         /// </summary>
         /// <returns></returns>
         public async Task<IEnumerable<CustomFormat>> GetCustomFormatsAsync()
         {
-            var customFormats = await _dbContext.CustomFormats.ToArrayAsync();
+            var customFormats = await _dbContext.CustomFormats.Where(c => !c.IsDeleted).ToArrayAsync();
             return customFormats;
+        }
+
+        /// <summary>
+        /// Update the custom format of destination point.
+        /// </summary>
+        /// <param name="destinationPoint"></param>
+        /// <returns></returns>
+        public async Task<DestinationPoint> UpdateDestinationPointCustomFormatAsync(DestinationPoint destinationPoint)
+        {
+            try
+            {
+                var previousDestinationPoint = await _dbContext.DestinationPoints
+                    .Include(o => o.ReferencedSourcePoint)
+                    .Include(o => o.ReferencedSourcePoint.Catalog)
+                    .Include(o => o.ReferencedSourcePoint.PublishedHistories)
+                    .Include(o => o.CustomFormats).FirstAsync(o => o.Id == destinationPoint.Id);
+
+                if (previousDestinationPoint != null)
+                {
+                    previousDestinationPoint.DecimalPlace = destinationPoint.DecimalPlace;
+                    var newFormatIds = destinationPoint.CustomFormats != null ? destinationPoint.CustomFormats.Select(c => c.Id).ToArray() : new int[] { };
+                    var newFormats = _dbContext.CustomFormats.Where(o => newFormatIds.Contains(o.Id));
+                    var deletingFormats = previousDestinationPoint.CustomFormats.Except(newFormats, new Comparer<CustomFormat>((x, y) => x.Id == y.Id)).ToList();
+                    var addingFormats = newFormats.AsEnumerable().Except(previousDestinationPoint.CustomFormats, new Comparer<CustomFormat>((x, y) => x.Id == y.Id));
+
+                    foreach (var item in deletingFormats)
+                    {
+                        previousDestinationPoint.CustomFormats.Remove(item);
+                    }
+
+                    foreach (var item in addingFormats)
+                    {
+                        if (_dbContext.Entry(item).State == EntityState.Detached)
+                            _dbContext.CustomFormats.Attach(item);
+                        previousDestinationPoint.CustomFormats.Add(item);
+                    }
+
+                    await _dbContext.SaveChangesAsync();
+                    await _dbContext.Entry(previousDestinationPoint.ReferencedSourcePoint).ReloadAsync();
+                    foreach (var customFormatItem in previousDestinationPoint.CustomFormats)
+                    {
+                        await _dbContext.Entry(customFormatItem).ReloadAsync();
+                    }
+
+                    previousDestinationPoint.ReferencedSourcePoint.PublishedHistories = previousDestinationPoint.ReferencedSourcePoint.PublishedHistories.OrderByDescending(p => p.PublishedDate).ToArray();
+                    previousDestinationPoint.ReferencedSourcePoint.SerializeCatalog = true;
+                    previousDestinationPoint.ReferencedSourcePoint.Catalog.SerializeSourcePoints = false;
+                    previousDestinationPoint.CustomFormats = previousDestinationPoint.CustomFormats.OrderBy(c => c.GroupOrderBy).ToArray();
+
+                    await _logService.WriteLogAsync(new LogEntity()
+                    {
+                        LogId = "30002",
+                        Action = Constant.ACTIONTYPE_EDIT,
+                        PointType = Constant.POINTTYPE_DESTINATIONPOINT,
+                        ActionType = ActionTypeEnum.AuditLog,
+                        Message = $"Edit destination point."
+                    });
+                }
+
+                return previousDestinationPoint;
+            }
+            catch (ApplicationException ex)
+            {
+                throw ex.InnerException;
+            }
+            catch (Exception ex)
+            {
+                var logEntity = new LogEntity()
+                {
+                    LogId = "20003",
+                    Action = Constant.ACTIONTYPE_ADD,
+                    ActionType = ActionTypeEnum.ErrorLog,
+                    PointType = Constant.POINTTYPE_DESTINATIONPOINT,
+                    Message = ".Net Error",
+                    Detail = ex.ToString()
+                };
+                logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
+                await _logService.WriteLogAsync(logEntity);
+                throw ex;
+            }
         }
     }
 }

@@ -10,7 +10,9 @@ var point = (function () {
     var point = {
         ///The URL of current open excel document.
         filePath: "",
-        /// Define all UI controls.
+        ///The document id of the current open excel document.
+        documentId: "",
+        ///Define all UI controls.
         controls: {},
         ///Define source point groups.
         groups: [],
@@ -28,8 +30,13 @@ var point = (function () {
             publish: "/api/PublishSourcePoints",
             associated: "/api/DestinationPoint?sourcePointId=",
             deleteSelected: "/api/DeleteSelectedSourcePoint",
+            token: "/api/GraphAccessToken",
+            sharePointToken: "/api/SharePointAccessToken",
+            graph: "https://graph.microsoft.com/v1.0"
         },
+        ///The selected source point.
         model: null,
+        ///Determine if it is bulk or single add.
         bulk: false,
         ///Define default search keywords.
         sourcePointKeyword: "",
@@ -38,11 +45,18 @@ var point = (function () {
         ///Define default page size.
         pagerSize: 30,
         ///Default default page total count.
-        pagerCount: 0
+        pagerCount: 0,
+        ///Define the api host and token.
+        api: {
+            host: "",
+            token: "",
+            sharePointToken: ""
+        }
     }, that = point;
     ///Initialize the event handlers & load the source point list.
     that.init = function () {
-        that.filePath = Office.context.document.url.indexOf("E:") > -1 ? "https://cand3.sharepoint.com/Shared%20Documents/Book.xlsx" : Office.context.document.url;
+        ///Get the document URL.
+        that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://cand3.sharepoint.com/Shared%20Documents/Book.xlsx" : Office.context.document.url;
         that.controls = {
             body: $("body"),
             main: $(".main"),
@@ -59,7 +73,10 @@ var point = (function () {
             position: $("#txtLocation"),
             groups: $("#groupWrapper"),
             select: $("#btnLocation"),
+            selectName: $("#btnSelectName"),
             list: $("#listPoints"),
+            documentIdError: $("#lblDocumentIDError"),
+            documentIdReload: $("#btnDocumentIDReload"),
             headerListPoints: $("#headerListPoints"),
             sourcePointName: $("#txtSearchSourcePoint"),
             searchSourcePoint: $("#iSearchSourcePoint"),
@@ -111,8 +128,11 @@ var point = (function () {
         that.controls.bulk.click(function () {
             that.action.bulk();
         });
+        that.controls.selectName.click(function () {
+            that.action.select({ input: that.controls.name });
+        });
         that.controls.select.click(function () {
-            that.action.select();
+            that.action.select({ input: that.controls.position });
         });
         that.controls.save.click(function () {
             that.action.save();
@@ -140,14 +160,20 @@ var point = (function () {
         that.controls.searchSourcePoint.click(function () {
             that.action.searchSourcePoint();
         });
+        that.controls.documentIdReload.click(function () {
+            window.location.reload();
+        });
         that.controls.list.on("click", ".i-history", function () {
             that.action.history($(this).closest(".point-item"));
+            return false;
         });
         that.controls.list.on("click", ".i-delete", function () {
             that.action.del($(this).closest(".point-item").data("id"), $(this).closest(".point-item"));
+            return false;
         });
         that.controls.list.on("click", ".i-edit", function () {
             that.action.edit($(this).closest(".point-item").data("id"), $(this).closest(".point-item"));
+            return false;
         });
         that.controls.list.on("click", ".point-item .i2, .point-item .i3, .point-item .i4, .point-item .i5, .point-item .error-info, .point-item .item-history", function () {
             that.action.goto($(this).closest(".point-item").data("id"), $(this).closest(".point-item"));
@@ -216,17 +242,20 @@ var point = (function () {
         });
         that.utility.height();
         that.action.dft(that.controls.sourcePointName, false);
-        ///load all source points in management page.
-        that.list({ refresh: false, index: 1 }, function (result) {
-            if (result.status == app.status.failed) {
-                ///dipslay the error message if failed to get source point list.
-                that.popup.message({ success: false, title: result.error.statusText });
-            }
+        ///Retrieve the document id via document url.
+        that.document.init(function () {
+            ///Load all source points in management page.
+            that.list({ refresh: false, index: 1 }, function (result) {
+                if (result.status == app.status.failed) {
+                    ///Dipslay the error message if failed to get source point list.
+                    that.popup.message({ success: false, title: result.error.statusText });
+                }
+            });
         });
     };
     ///Load the source point list.
     that.list = function (options, callback) {
-        ///display the processing layer.
+        ///Display the processing layer.
         that.popup.processing(true);
         that.service.list(function (result) {
             that.popup.processing(false);
@@ -236,13 +265,16 @@ var point = (function () {
                     that.utility.pager.init({ refresh: options.refresh, index: options.index });
                     callback({ status: result.status });
                 }
+                else {
+                    that.utility.pager.status({ length: 0 });
+                }
             }
             else {
                 callback({ status: result.status, error: result.error });
             }
         });
     };
-    ///default display when add/edit/bulk add the source point.
+    ///Default display when add/edit/bulk add the source point.
     that.default = function (callback) {
         if (that.groups.length == 0) {
             that.popup.processing(true);
@@ -250,7 +282,7 @@ var point = (function () {
                 if (result.status == app.status.succeeded) {
                     that.popup.processing(false);
                     that.groups = result.data;
-                    that.controls.name.val(that.model ? that.model.Name : "");
+                    that.controls.name.val(that.model ? that.model.NamePosition : "");
                     that.controls.position.val(that.model ? that.model.Position : "");
                     that.ui.groups({ data: that.groups, selected: that.model ? that.model.Groups : [] });
                     that.controls.main.removeClass("manage add edit bulk").addClass(that.model ? "add edit" : (that.bulk ? "add bulk" : "add"));
@@ -264,7 +296,7 @@ var point = (function () {
             });
         }
         else {
-            that.controls.name.val(that.model ? that.model.Name : "");
+            that.controls.name.val(that.model ? that.model.NamePosition : "");
             that.controls.position.val(that.model ? that.model.Position : "");
             that.ui.groups({ data: that.groups, selected: that.model ? that.model.Groups : [] });
             that.controls.main.removeClass("manage add edit bulk").addClass(that.model ? "add edit" : (that.bulk ? "add bulk" : "add"));
@@ -275,7 +307,7 @@ var point = (function () {
     };
     ///The utility methods.
     that.utility = {
-        /// get current source point model.
+        ///Get current source point model.
         model: function (id) {
             var _m = null;
             if (id && that.points) {
@@ -298,7 +330,7 @@ var point = (function () {
             var _v = new Date(str), _d = _v.getDate(), _m = _v.getMonth() + 1, _y = _v.getFullYear(), _h = _v.getHours(), _mm = _v.getMinutes(), _a = _h < 12 ? " AM" : " PM";
             return that.utility.format(_m) + "/" + that.utility.format(_d) + "/" + _y + " " + (_h < 12 ? (_h == 0 ? "12" : that.utility.format(_h)) : (_h == 12 ? _h : _h - 12)) + ":" + that.utility.format(_mm) + "" + _a + " PST";
         },
-        //get current open excel document mode.
+        ///Get current open excel document mode.
         mode: function (callback) {
             if (Office.context.document.mode == Office.DocumentMode.ReadOnly) {
                 that.popup.message({ success: false, title: "Please click \"edit workbook\" button under the excel ribbon." });
@@ -307,7 +339,7 @@ var point = (function () {
                 callback();
             }
         },
-        //get sheet/cell name.
+        ///Get sheet/cell name.
         position: function (p) {
             if (p != null && p != undefined) {
                 var _i = p.lastIndexOf("!"), _s = p.substr(0, _i).replace(new RegExp(/('')/g), '\''), _c = p.substr(_i + 1, p.length);
@@ -323,7 +355,7 @@ var point = (function () {
                 return { sheet: "", cell: "" };
             }
         },
-        //Get the value of the required fields.
+        ///Get the value of the required fields.
         entered: function () {
             var name = $.trim(that.controls.name.val()), position = $.trim(that.controls.position.val()), groups = [];
             that.controls.groups.find("input").each(function (i, d) {
@@ -339,7 +371,7 @@ var point = (function () {
             if (that.model) {
                 var _g = [];
                 $.each(that.model.Groups, function (i, d) { _g.push(d.Id); });
-                callback({ changed: !(that.model.Name == entered.name && that.model.Position == entered.position && _g.sort().toString() == entered.groups.sort().toString()) });
+                callback({ changed: !(that.model.NamePosition == entered.name && that.model.Position == entered.position && _g.sort().toString() == entered.groups.sort().toString()) });
             }
             else {
                 callback({ changed: !(entered.name.length == 0 && entered.position.length == 0 && entered.groups.length == 0) });
@@ -367,14 +399,14 @@ var point = (function () {
                         }
                     });
                 }).catch(function (error) {
-                    callback({ status: app.status.failed, message: "The selected range position is invalid." });
+                    callback({ status: app.status.failed, message: "The selected " + options.title + " position is invalid." });
                 });
             }
             else {
-                callback({ status: app.status.failed, message: "Only 1 cell can be selected." });
+                callback({ status: app.status.failed, message: "Only 1 cell can be selected for " + options.title + "." });
             }
         },
-        ///check if the source point existed or not by source point name.
+        ///Check if the source point existed or not by source point name.
         exist: function (options, callback) {
             var a = [], existed = false;
             if (options.name) {
@@ -390,13 +422,19 @@ var point = (function () {
             }
             callback({ status: existed ? app.status.failed : app.status.succeeded, message: existed ? (options.name + " already exists, please input a different name.") : "" });
         },
-
         ///Get the entered value for the required fields and validate the required fields.
-        /// The source point name could not exceed 255 characters.
-        /// Determine if the position already existed in Azure storage or not.
+        ///The source point name could not exceed 255 characters.
+        ///Determine if the position already existed in Azure storage or not.
         validation: function (callback) {
-            var entered = that.utility.entered(), rangeId = that.model ? that.model.RangeId : app.guid(), name = entered.name, position = entered.position, groups = entered.groups, success = true, values = [];
-            if (!that.bulk && name.length == 0) {
+            var entered = that.utility.entered(),
+                rangeId = that.model ? that.model.RangeId : app.guid(),
+                nameRangeId = that.model ? that.model.NameRangeId : app.guid(),
+                namePosition = entered.name,
+                position = entered.position,
+                groups = entered.groups,
+                success = true,
+                values = [];
+            if (!that.bulk && namePosition.length == 0) {
                 success = false;
                 values.push(["Source Point Name"]);
             }
@@ -408,26 +446,66 @@ var point = (function () {
                 callback({ status: success ? app.status.succeeded : app.status.failed, message: success ? "" : { success: success, title: "Please enter the following required fields:", values: values } });
             }
             else {
-                if (name.length <= 255) {
-                    that.utility.exist({ name: name }, function (result) {
+                if (!that.bulk) {
+                    that.utility.valid({ position: namePosition, title: "source point name" }, function (result) {
                         if (result.status == app.status.succeeded) {
-                            that.utility.valid({ position: position }, function (result) {
-                                if (result.status == app.status.succeeded) {
-                                    callback({
-                                        status: app.status.succeeded,
-                                        data: {
-                                            Id: that.model ? that.model.Id : "",
-                                            Name: name,
-                                            CatalogName: that.filePath,
-                                            RangeId: rangeId,
-                                            Position: position,
-                                            Value: result.data,
-                                            GroupIds: groups
-                                        }
-                                    });
-                                }
-                                else {
-                                    callback({ status: app.status.failed, message: { success: false, title: result.message } });
+                            var name = result.data;
+                            if (name.length > 0 && name.length <= 255) {
+                                that.utility.exist({ name: name }, function (result) {
+                                    if (result.status == app.status.succeeded) {
+                                        that.utility.valid({ position: position, title: "range" }, function (result) {
+                                            if (result.status == app.status.succeeded) {
+                                                callback({
+                                                    status: app.status.succeeded,
+                                                    data: {
+                                                        Id: that.model ? that.model.Id : "",
+                                                        Name: name,
+                                                        CatalogName: that.filePath,
+                                                        DocumentId: that.documentId,
+                                                        RangeId: rangeId,
+                                                        NameRangeId: nameRangeId,
+                                                        NamePosition: namePosition,
+                                                        Position: position,
+                                                        Value: result.data,
+                                                        GroupIds: groups
+                                                    }
+                                                });
+                                            }
+                                            else {
+                                                callback({ status: app.status.failed, message: { success: false, title: result.message } });
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        callback({ status: app.status.failed, message: { success: false, title: result.message } });
+                                    }
+                                });
+                            }
+                            else {
+                                callback({ status: app.status.failed, message: { success: false, title: name.length > 0 ? "The source point name cannot exceed 255 characters." : "The source point name cannot be blank." } });
+                            }
+                        }
+                        else {
+                            callback({ status: app.status.failed, message: { success: false, title: result.message } });
+                        }
+                    });
+                }
+                else {
+                    that.utility.valid({ position: position, title: "range" }, function (result) {
+                        if (result.status == app.status.succeeded) {
+                            callback({
+                                status: app.status.succeeded,
+                                data: {
+                                    Id: that.model ? that.model.Id : "",
+                                    Name: "",
+                                    CatalogName: that.filePath,
+                                    DocumentId: that.documentId,
+                                    RangeId: rangeId,
+                                    NameRangeId: "",
+                                    NamePosition: "",
+                                    Position: position,
+                                    Value: result.data,
+                                    GroupIds: groups
                                 }
                             });
                         }
@@ -436,12 +514,9 @@ var point = (function () {
                         }
                     });
                 }
-                else {
-                    callback({ status: app.status.failed, message: { success: false, title: "The source point name cannot exceed 255 characters." } });
-                }
             }
         },
-        ///get the index of current source point.
+        ///Get the index of current source point.
         index: function (options) {
             var _i = -1;
             $.each(that.points, function (m, n) {
@@ -460,52 +535,66 @@ var point = (function () {
         remove: function (options) {
             that.points.splice(that.utility.index(options), 1);
         },
-        /// Update the source point in the array.
+        ///Update the source point in the array.
         update: function (options) {
             that.points[that.utility.index(options)] = options;
         },
-        ///get an array of selected source points.
+        ///Get an array of selected source points.
         selected: function () {
             var _s = [];
             that.controls.list.find(".point-item .ckb-wrapper input").each(function (i, d) {
                 if ($(d).prop("checked")) {
-                    var _id = $(d).closest(".point-item").data("id"), _rid = $(d).closest(".point-item").data("range");
-                    _s.push({ SourcePointId: _id, RangeId: _rid, CurrentValue: $(d).closest(".point-item").find(".i4").text(), Position: $(d).closest(".point-item").find(".i2 .s-name").data("position") });
+                    _s.push({
+                        SourcePointId: $(d).closest(".point-item").data("id"),
+                        Name: $.trim($(d).closest(".point-item").find(".i2 .s-name").text()),
+                        RangeId: $(d).closest(".point-item").data("range"),
+                        CurrentValue: $(d).closest(".point-item").find(".i4 .s-value").text(),
+                        Position: $(d).closest(".point-item").data("position"),
+                        NameRangeId: $(d).closest(".point-item").data("namerange"),
+                        NamePosition: $(d).closest(".point-item").data("nameposition")
+                    });
                 }
             });
             return _s;
         },
-        //get all filtered source points.
+        ///Get all filtered source points.
         all: function () {
             var _s = [];
             $.each(that.filteredPoints, function (i, d) {
                 _s.push({
                     SourcePointId: d.Id,
+                    Name: d.Name,
                     RangeId: d.RangeId,
                     CurrentValue: d.Value,
-                    Position: d.Position
+                    Position: d.Position,
+                    NameRangeId: d.NameRangeId,
+                    NamePosition: d.NamePosition
                 });
             });
             return _s;
         },
-        ///get the file name.
+        ///Get the file name.
         fileName: function (path) {
             return path.lastIndexOf("/") > -1 ? path.substr(path.lastIndexOf("/") + 1) : (path.lastIndexOf("\\") > -1 ? path.substr(path.lastIndexOf("\\") + 1) : path);
         },
         ///Get latest the range value from Azure storage..
         value: function (options, callback) {
             if (options.index < options.data.length) {
-                that.range.exist(options.data[options.index], function (result) {
-                    if (result.status == app.status.succeeded) {
-                        options.data[options.index].DocumentValue = result.data.text;
-                        options.data[options.index].DocumentPosition = result.data.address;
-                        options.data[options.index].Existed = true;
-                    }
-                    else {
-                        options.data[options.index].Existed = false;
-                    }
-                    options.index++;
-                    that.utility.value(options, callback);
+                that.range.exist({ RangeId: options.data[options.index].NameRangeId }, function (ret) {
+                    that.range.exist({ RangeId: options.data[options.index].RangeId }, function (result) {
+                        if (result.status == app.status.succeeded && ret.status == app.status.succeeded) {
+                            options.data[options.index].DocumentValue = result.data.text;
+                            options.data[options.index].DocumentPosition = result.data.address;
+                            options.data[options.index].DocumentNameValue = ret.data.text;
+                            options.data[options.index].DocumentNamePosition = ret.data.address;
+                            options.data[options.index].Existed = true;
+                        }
+                        else {
+                            options.data[options.index].Existed = false;
+                        }
+                        options.index++;
+                        that.utility.value(options, callback);
+                    });
                 });
             }
             else {
@@ -516,7 +605,7 @@ var point = (function () {
         dirty: function (options, callback) {
             var _f = false;
             $.each(options.data, function (i, d) {
-                if (d.Existed && (d.CurrentValue != d.DocumentValue || d.Position != d.DocumentPosition)) {
+                if (d.Existed && (d.CurrentValue != d.DocumentValue || d.Position != d.DocumentPosition || d.Name != d.DocumentNameValue || d.NamePosition != d.DocumentNamePosition)) {
                     _f = true;
                     return false;
                 }
@@ -525,25 +614,25 @@ var point = (function () {
         },
         ///Paging feature for the source point list.
         pager: {
-            ///initialize the source point list UI.
+            ///Initialize the source point list UI.
             init: function (options) {
                 that.controls.pagerValue.val("");
                 that.pagerIndex = options.index && options.index > 0 ? options.index : 1;
                 that.ui.list({ refresh: options.refresh });
             },
-            //Go to prev page.
+            ///Go to prev page.
             prev: function () {
                 that.controls.pagerValue.val("");
                 that.pagerIndex--;
                 that.ui.list({ refresh: false });
             },
-            //Go to next page.
+            ///Go to next page.
             next: function () {
                 that.controls.pagerValue.val("");
                 that.pagerIndex++;
                 that.ui.list({ refresh: false });
             },
-            //Get the status of paging.
+            ///Get the status of paging.
             status: function (options) {
                 that.pagerCount = Math.ceil(options.length / that.pagerSize);
                 that.controls.pagerTotal.html(options.length);
@@ -553,7 +642,7 @@ var point = (function () {
                 that.pagerIndex == that.pagerCount || that.pagerCount == 0 ? that.controls.pagerNext.addClass("disabled") : that.controls.pagerNext.removeClass("disabled");
             }
         },
-        ///get all addresses for the selected ranges.
+        ///Get all addresses for the selected ranges.
         addresses: function (options, callback) {
             if (options.index == undefined) {
                 options.index = 0;
@@ -575,14 +664,14 @@ var point = (function () {
                     c.load("text,address");
                     return ctx.sync().then(function () {
                         if (c.text && $.trim(c.text[0][0]) != "" && $.trim(c.text[0][0]).length <= 255) {
-                            var _t = $.trim(c.text[0][0]);
+                            var _t = $.trim(c.text[0][0]), _a = c.address;
                             that.utility.exist({ name: _t }, function (result) {
                                 if (result.status == app.status.succeeded) {
                                     var cc = r.getCell(options.cells[2 * options.index + 1].row, options.cells[2 * options.index + 1].cell);
                                     cc.load("text,address");
                                     return ctx.sync().then(function () {
                                         if ($.inArray(_t, options.texts) == -1) {
-                                            options.addresses.push({ title: _t, text: cc.text[0][0], address: cc.address });
+                                            options.addresses.push({ title: _t, text: $.trim(cc.text[0][0]), address: cc.address, nameAddress: _a });
                                             options.texts.push(_t);
                                         }
                                         else {
@@ -613,7 +702,7 @@ var point = (function () {
                 callback(options);
             }
         },
-        //UnSelect all checkboxes.
+        ///UnSelect all checkboxes.
         unSelectAll: function () {
             that.controls.headerListPoints.find(".point-header .ckb-wrapper input").prop("checked", false);
             that.controls.headerListPoints.find(".point-header .ckb-wrapper").removeClass("checked");
@@ -625,15 +714,29 @@ var point = (function () {
                 var _h1 = $("#pager").outerHeight();
                 that.controls.list.css("maxHeight", (_h - 205 - 70 - _h1) + "px");
             }
+        },
+        ///Get an array of paths (server ralative URl splitted by '/' ).
+        path: function () {
+            var _a = that.filePath.split("//")[1], _b = _a.split("/"), _p = [_b[0]];
+            _b.shift();
+            _b.pop();
+            for (var i = 1; i <= _b.length; i++) {
+                var _c = [];
+                for (var n = 0; n < i; n++) {
+                    _c.push(_b[n]);
+                }
+                _p.push(_c.join("/"));
+            }
+            return _p;
         }
     };
     ///Define all the event handlers.
     that.action = {
-        //Body click event to hide the suggested search result.
+        ///Body click event to hide the suggested search result.
         body: function () {
             $(".search-tooltips").hide();
         },
-        // Add source point.
+        ///Add source point.
         add: function () {
             that.utility.mode(function () {
                 that.model = null;
@@ -642,7 +745,7 @@ var point = (function () {
                 that.controls.name.focus();
             });
         },
-        //Bulk Add source point
+        ///Bulk Add source point
         bulk: function () {
             that.utility.mode(function () {
                 that.model = null;
@@ -651,7 +754,7 @@ var point = (function () {
                 that.controls.name.focus();
             });
         },
-        //Back to management page.
+        ///Back to management page.
         back: function () {
             that.utility.mode(function () {
                 that.utility.changed(function (result) {
@@ -673,7 +776,7 @@ var point = (function () {
                 });
             });
         },
-        //Refresh the source points in management page.
+        ///Refresh the source points in management page.
         refresh: function () {
             that.utility.mode(function () {
                 that.points = [];
@@ -687,12 +790,12 @@ var point = (function () {
                 });
             });
         },
-        //Select the source points in management page.
-        select: function () {
+        ///Select the source points in management page.
+        select: function (options) {
             that.utility.mode(function () {
                 that.range.select(function (result) {
                     if (result.status == app.status.succeeded) {
-                        that.controls.position.val(result.data);
+                        options.input.val(result.data);
                     }
                     else {
                         that.popup.message({ success: false, title: result.message });
@@ -700,37 +803,49 @@ var point = (function () {
                 });
             });
         },
-        //Save the source point in 'add/bulk add source point' pages.
+        ///Save the source point in 'add/bulk add source point' pages.
         save: function () {
             that.utility.mode(function () {
                 if (that.model) {
                     that.utility.validation(function (result) {
                         if (result.status == app.status.succeeded) {
-                            that.range.del(result.data, function (ret) {
+                            that.range.del({ RangeId: result.data.NameRangeId }, function (ret) {
                                 if (ret.status == app.status.succeeded) {
-                                    that.range.create(result.data, function (ret) {
+                                    that.range.create({ Position: result.data.NamePosition, RangeId: result.data.NameRangeId }, function (ret) {
                                         if (ret.status == app.status.succeeded) {
-                                            that.popup.processing(true);
-                                            that.service.edit({
-                                                data: result.data
-                                            }, function (result) {
-                                                if (result.status == app.status.succeeded) {
-                                                    that.utility.update(result.data);
-                                                    that.utility.pager.init({ refresh: true, index: that.pagerIndex });
-                                                    that.popup.message({ success: true, title: "Source point update complete." }, function () { that.popup.back(3000); });
+                                            that.range.del({ RangeId: result.data.RangeId }, function (ret) {
+                                                if (ret.status == app.status.succeeded) {
+                                                    that.range.create({ Position: result.data.Position, RangeId: result.data.RangeId }, function (ret) {
+                                                        if (ret.status == app.status.succeeded) {
+                                                            that.popup.processing(true);
+                                                            that.service.edit({ data: result.data }, function (result) {
+                                                                if (result.status == app.status.succeeded) {
+                                                                    that.utility.update(result.data);
+                                                                    that.utility.pager.init({ refresh: true, index: that.pagerIndex });
+                                                                    that.popup.message({ success: true, title: "Source point update complete." }, function () { that.popup.back(3000); });
+                                                                }
+                                                                else {
+                                                                    that.popup.message({ success: false, title: "Edit source point failed." });
+                                                                }
+                                                            });
+                                                        }
+                                                        else {
+                                                            that.popup.message({ success: false, title: "Create range in Excel failed." });
+                                                        }
+                                                    });
                                                 }
                                                 else {
-                                                    that.popup.message({ success: false, title: "Edit source point failed." });
+                                                    that.popup.message({ success: false, title: "Delete the previous range failed." });
                                                 }
                                             });
                                         }
                                         else {
-                                            that.popup.message({ success: false, title: "Create range in Excel failed." });
+                                            that.popup.message({ success: false, title: "Create source point name range in Excel failed." });
                                         }
                                     });
                                 }
                                 else {
-                                    that.popup.message({ success: false, title: "Delete the previous source point failed." });
+                                    that.popup.message({ success: false, title: "Delete the previous source point name range failed." });
                                 }
                             });
                         }
@@ -743,22 +858,29 @@ var point = (function () {
                     that.utility.validation(function (result) {
                         if (result.status == app.status.succeeded) {
                             if (!that.bulk) {
-                                that.range.create(result.data, function (ret) {
+                                that.range.create({ Position: result.data.NamePosition, RangeId: result.data.NameRangeId }, function (ret) {
                                     if (ret.status == app.status.succeeded) {
-                                        that.popup.processing(true);
-                                        that.service.add({ data: result.data }, function (result) {
-                                            if (result.status == app.status.succeeded) {
-                                                that.utility.add(result.data);
-                                                that.utility.pager.init({ refresh: true, index: that.pagerIndex });
-                                                that.popup.message({ success: true, title: "Add new source point succeeded." }, function () { that.popup.back(3000); });
+                                        that.range.create({ Position: result.data.Position, RangeId: result.data.RangeId }, function (ret) {
+                                            if (ret.status == app.status.succeeded) {
+                                                that.popup.processing(true);
+                                                that.service.add({ data: result.data }, function (result) {
+                                                    if (result.status == app.status.succeeded) {
+                                                        that.utility.add(result.data);
+                                                        that.utility.pager.init({ refresh: true, index: that.pagerIndex });
+                                                        that.popup.message({ success: true, title: "Add new source point succeeded." }, function () { that.popup.back(3000); });
+                                                    }
+                                                    else {
+                                                        that.popup.message({ success: false, title: "Add source point failed." });
+                                                    }
+                                                });
                                             }
                                             else {
-                                                that.popup.message({ success: false, title: "Add source point failed." });
+                                                that.popup.message({ success: false, title: "Create range in Excel failed." });
                                             }
                                         });
                                     }
                                     else {
-                                        that.popup.message({ success: false, title: "Create range in Excel failed." });
+                                        that.popup.message({ success: false, title: "Create source point name range in Excel failed." });
                                     }
                                 });
                             }
@@ -793,7 +915,7 @@ var point = (function () {
                 }
             });
         },
-        //Save an array of source points in 'bulk add source point' page.
+        ///Save an array of source points in 'bulk add source point' page.
         bulkAdd: function (options, callback) {
             if (options.index == undefined) {
                 that.popup.processing(true);
@@ -805,19 +927,31 @@ var point = (function () {
                     Id: "",
                     Name: _i.title,
                     CatalogName: options.CatalogName,
+                    DocumentId: options.DocumentId,
                     RangeId: app.guid(),
+                    NameRangeId: app.guid(),
+                    NamePosition: _i.nameAddress,
                     Position: _i.address,
                     Value: _i.text,
                     GroupIds: options.GroupIds
                 };
 
-                that.range.create(_d, function (ret) {
+                that.range.create({ Position: _d.NamePosition, RangeId: _d.NameRangeId }, function (ret) {
                     if (ret.status == app.status.succeeded) {
-                        that.service.add({ data: _d }, function (result) {
-                            if (result.status == app.status.succeeded) {
-                                that.utility.add(result.data);
-                                options.index++;
-                                that.action.bulkAdd(options, callback);
+                        that.range.create({ Position: _d.Position, RangeId: _d.RangeId }, function (ret) {
+                            if (ret.status == app.status.succeeded) {
+                                that.service.add({ data: _d }, function (result) {
+                                    if (result.status == app.status.succeeded) {
+                                        that.utility.add(result.data);
+                                        options.index++;
+                                        that.action.bulkAdd(options, callback);
+                                    }
+                                    else {
+                                        options.index++;
+                                        options.error++;
+                                        that.action.bulkAdd(options, callback);
+                                    }
+                                });
                             }
                             else {
                                 options.index++;
@@ -837,7 +971,7 @@ var point = (function () {
                 callback({ status: options.error > 0 ? app.status.failed : app.status.succeeded, error: options.error, success: options.addresses.length - options.error });
             }
         },
-        //Delete current source point in management page after clicking X icon.
+        ///Delete current source point in management page after clicking X icon.
         del: function (i, o) {
             that.utility.mode(function () {
                 that.popup.confirm({
@@ -862,7 +996,7 @@ var point = (function () {
                 });
             });
         },
-        //Delete the selected source points
+        ///Delete the selected source points
         deleteSelected: function () {
             var _s = that.utility.selected(), _ss = [];
             if (_s && _s.length > 0) {
@@ -903,20 +1037,28 @@ var point = (function () {
                 that.bulk = false;
                 that.model = that.utility.model(i);
                 if (that.model) {
-                    that.range.goto(that.model, function (result) {
+                    that.model.NameRangeId = that.model.NameRangeId && that.model.NameRangeId != null ? that.model.NameRangeId : "";
+                    that.model.NamePosition = that.model.NamePosition && that.model.NamePosition != null ? that.model.NamePosition : "";
+                    that.range.goto({ RangeId: that.model.NameRangeId }, function (result) {
                         if (result.status == app.status.succeeded) {
-                            that.model.Position = result.data.address;
-                            that.default(function () {
-                                that.action.associated();
+                            that.model.NamePosition = result.data.address;
+                            that.range.goto({ RangeId: that.model.RangeId }, function (result) {
+                                if (result.status == app.status.succeeded) {
+                                    that.model.Position = result.data.address;
+                                    that.default(function () { that.action.associated(); });
+                                }
+                                else {
+                                    that.popup.message({ success: false, title: "The range in the Excel has been deleted." });
+                                }
                             });
                         }
                         else {
-                            that.popup.message({ success: false, title: "The point in the Excel has been deleted." });
+                            that.popup.message({ success: false, title: "The source point name range in the Excel has been deleted." });
                         }
                     });
                 }
                 else {
-                    that.popup.message({ success: false, title: "The point has been deleted." });
+                    that.popup.message({ success: false, title: "The source point has been deleted." });
                 }
             });
         },
@@ -1069,9 +1211,16 @@ var point = (function () {
             that.utility.mode(function () {
                 var _m = that.utility.model(i);
                 if (_m) {
-                    that.range.goto(_m, function (result) {
+                    that.range.exist({ RangeId: _m.NameRangeId }, function (result) {
                         if (result.status == app.status.failed) {
-                            that.popup.message({ success: false, title: "The point in the Excel has been deleted." });
+                            that.popup.message({ success: false, title: "The source point name range in the Excel has been deleted." });
+                        }
+                        else {
+                            that.range.goto({ RangeId: _m.RangeId }, function (result) {
+                                if (result.status == app.status.failed) {
+                                    that.popup.message({ success: false, title: "The range in the Excel has been deleted." });
+                                }
+                            });
                         }
                     });
                 }
@@ -1080,6 +1229,7 @@ var point = (function () {
                 }
             });
         },
+        ///Close the popup.
         ok: function () {
             that.controls.popupMain.removeClass("active message process confirm");
         },
@@ -1094,6 +1244,7 @@ var point = (function () {
                 }
             });
         },
+        ///Set the text box to default style and value.
         dft: function (elem, on) {
             var _k = $.trim($(elem).val()), _kd = $(elem).data("default");
             if (on) {
@@ -1108,6 +1259,7 @@ var point = (function () {
                 }
             }
         },
+        ///Display source point result layer after entering the source point keyword in search textbox in source point management page.
         autoComplete2: function () {
             var _e = $.trim(that.controls.sourcePointName.val()), _d = that.points;
             if (_e != "") {
@@ -1117,13 +1269,125 @@ var point = (function () {
                 that.controls.autoCompleteControl2.hide();
             }
         },
+        ///Search the source points by source point name in management page.
         searchSourcePoint: function () {
             that.sourcePointKeyword = $.trim(that.controls.sourcePointName.val()) == that.controls.sourcePointName.data("default") ? "" : $.trim(that.controls.sourcePointName.val());
             that.utility.pager.init({ refresh: true });
         }
     };
 
+    ///Define get document id function.
+    that.document = {
+        ///Initialize get graph and sharepoint access token.
+        init: function (callback) {
+            that.popup.processing(true);
+            that.service.token({ endpoint: that.endpoints.token }, function (result) {
+                if (result.status == app.status.succeeded) {
+                    that.api.token = result.data;
+                    that.api.host = that.utility.path()[0].toLowerCase();
+                    that.service.token({ endpoint: that.endpoints.sharePointToken }, function (result) {
+                        if (result.status == app.status.succeeded) {
+                            that.api.sharePointToken = result.data;
+                            that.document.site(null, callback);
+                        }
+                        else {
+                            that.document.error({ title: "Get sharepoint access token failed." });
+                        }
+                    });
+                }
+                else {
+                    that.document.error({ title: "Get graph access token failed." });
+                }
+            });
+        },
+        ///Get site id.
+        site: function (options, callback) {
+            if (options == null) {
+                options = {
+                    path: that.utility.path().reverse(),
+                    index: 0,
+                    values: [],
+                    webUrls: []
+                };
+            }
+            if (options.index < options.path.length) {
+                that.service.siteCollection({ path: options.path[options.index] }, function (result) {
+                    if (result.status == app.status.succeeded) {
+                        options.values.push(result.data.id);
+                        options.webUrls.push(result.data.webUrl);
+                    }
+                    options.index++;
+                    that.document.site(options, callback);
+                });
+            }
+            else {
+                if (options.values.length > 0) {
+                    that.document.library({ siteId: options.values.shift(), siteUrl: options.webUrls.shift() }, callback);
+                }
+                else {
+                    that.document.error({ title: "Get site url failed." });
+                }
+            }
+        },
+        ///Get library id.
+        library: function (options, callback) {
+            that.service.libraries(options, function (result) {
+                if (result.status == app.status.succeeded) {
+                    var _l = "";
+                    $.each(result.data.value, function (i, d) {
+                        if (d.driveType.toUpperCase() == "DocumentLibrary".toUpperCase() && decodeURI(that.filePath).toUpperCase().indexOf(decodeURI(d.webUrl).toUpperCase()) > -1) {
+                            _l = d.name;
+                            return false;
+                        }
+                    });
+                    if (_l != "") {
+                        that.document.file({ siteId: options.siteId, siteUrl: options.siteUrl, listName: _l, fileName: that.utility.fileName(that.filePath) }, callback);
+                    }
+                    else {
+                        that.document.error({ title: "Get library name failed." });
+                    }
+                }
+                else {
+                    that.document.error({ title: "Get library name failed." });
+                }
+            });
+        },
+        ///Get document id.
+        file: function (options, callback) {
+            that.service.item(options, function (result) {
+                if (result.status == app.status.succeeded) {
+                    var _d = "";
+                    $.each(result.data.value, function (i, d) {
+                        if (decodeURI(that.filePath).toUpperCase() == decodeURI(d.EncodedAbsUrl).toUpperCase() && d.OData__dlc_DocId) {
+                            _d = d.OData__dlc_DocId;
+                            return false;
+                        }
+                    });
+                    if (_d != "") {
+                        that.documentId = _d;
+                        that.popup.processing(false);
+                        callback();
+                    }
+                    else {
+                        that.document.error({ title: "Get file Document ID failed." });
+                    }
+                }
+                else {
+                    that.document.error({ title: "Get file Document ID failed." });
+                }
+            });
+        },
+        ///Dispaly the error message.
+        error: function (options) {
+            that.controls.documentIdError.html("Error message: " + options.title);
+            that.controls.main.addClass("error");
+            that.popup.processing(false);
+        }
+    };
+
+    ///Define all popup features.
     that.popup = {
+        ///Display the message popup.
         message: function (options, callback) {
             if (options.success) {
                 that.controls.popupMessage.removeClass("error").addClass("success");
@@ -1184,7 +1448,7 @@ var point = (function () {
                 noCallback();
             });
         },
-        /// hide the popup in millisecond
+        ///Hide the popup in millisecond.
         hide: function (millisecond) {
             if (millisecond) {
                 setTimeout(function () {
@@ -1194,7 +1458,7 @@ var point = (function () {
                 that.controls.popupMain.removeClass("active message");
             }
         },
-        ///display management page and hide the add/bulk add page.
+        ///Display management page and hide the add/bulk add page.
         back: function (millisecond) {
             if (millisecond) {
                 setTimeout(function () {
@@ -1208,9 +1472,9 @@ var point = (function () {
             }
         }
     };
-    ///Define all range event handlers
+    ///Define all range event handlers.
     that.range = {
-        ///Create the range (source point)
+        ///Create the range (source point).
         create: function (options, callback) {
             Excel.run(function (ctx) {
                 var p = that.utility.position(options.Position), r = ctx.workbook.worksheets.getItem(p.sheet).getRange(p.cell);
@@ -1280,7 +1544,7 @@ var point = (function () {
                         var _r = _b.items[i].getRange();
                         _r.load("text,address");
                         return ctx.sync().then(function () {
-                            _c.push({ id: _b.items[i].id, text: _r.text, address: _r.address });
+                            _c.push({ id: _b.items[i].id, text: $.tirm(_r.text), address: _r.address });
                         });
                     }
                     callback({ status: app.status.succeeded, data: _c });
@@ -1300,6 +1564,7 @@ var point = (function () {
                 cache: false,
                 data: options.data ? options.data : "",
                 dataType: options.dataType,
+                headers: options.headers ? options.headers : "",
                 success: function (data) {
                     callback({ status: app.status.succeeded, data: data });
                 },
@@ -1319,17 +1584,17 @@ var point = (function () {
         add: function (options, callback) {
             that.service.common({ url: that.endpoints.add, type: "POST", data: options.data, dataType: "json" }, callback);
         },
-        ///Update the source point (PUT) in Azure storage
+        ///Update the source point (PUT) in Azure storage.
         edit: function (options, callback) {
             that.service.common({ url: that.endpoints.edit, type: "PUT", data: options.data, dataType: "json" }, callback);
         },
-        ///Get the source point groups
+        ///Get the source point groups.
         groups: function (callback) {
             that.service.common({ url: that.endpoints.groups, type: "GET", dataType: "json" }, callback);
         },
         ///Get a list of source points from Azure storage.
         list: function (callback) {
-            that.service.common({ url: that.endpoints.list + that.filePath, type: "GET", dataType: "json" }, callback);
+            that.service.common({ url: that.endpoints.list + that.filePath + "&documentId=" + that.documentId, type: "GET", dataType: "json" }, callback);
         },
         ///Delete current source point in Azure storage.
         del: function (options, callback) {
@@ -1346,11 +1611,27 @@ var point = (function () {
         ///Delete the selected source points in Azure storage.
         deleteSelected: function (options, callback) {
             that.service.common({ url: that.endpoints.deleteSelected, type: "POST", data: options.data }, callback);
+        },
+        ///Get graph or sharepoint token.
+        token: function (options, callback) {
+            that.service.common({ url: options.endpoint, type: "GET", dataType: "json" }, callback);
+        },
+        ///Get site collection id. 
+        siteCollection: function (options, callback) {
+            that.service.common({ url: that.endpoints.graph + "/sites/" + that.api.host + ":/" + options.path, type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.api.token } }, callback);
+        },
+        ///Get libraries under the current site.
+        libraries: function (options, callback) {
+            that.service.common({ url: that.endpoints.graph + "/sites/" + options.siteId + "/drives", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.api.token } }, callback);
+        },
+        ///Search list item by file name.
+        item: function (options, callback) {
+            that.service.common({ url: options.siteUrl + "/_api/web/lists/getbytitle('" + options.listName + "')/items?$select=FileLeafRef,EncodedAbsUrl,OData__dlc_DocId&$filter=FileLeafRef eq '" + options.fileName + "'", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.api.sharePointToken } }, callback);
         }
     };
-    ///Build the HTML/UI
+    ///Build the HTML/UI.
     that.ui = {
-        //Build the groups checkbox list.
+        ///Build the groups checkbox list.
         groups: function (options) {
             that.controls.groups.html("");
             var _s = [];
@@ -1378,7 +1659,7 @@ var point = (function () {
                 $("<li>" + d + "</li>").appendTo(that.controls.listAssociated);
             });
         },
-        ///build the source point management UI.
+        ///Build the source point management UI.
         list: function (options) {
             try {
                 var _dt = $.extend([], that.points), _d = [], _ss = [];
@@ -1427,52 +1708,67 @@ var point = (function () {
                 });
             }
         },
-        ///build each source point html.
+        ///Build each source point html.
         item: function (options, callback) {
             if (options.index < options.data.length) {
                 var _item = options.data[options.index];
-                that.range.exist(_item, function (result) {
-                    var _s = result.status == app.status.succeeded;
-                    options.data[options.index].Value = _s ? result.data.text : "";
-                    options.data[options.index].Position = _s ? result.data.address : "";
+                that.range.exist({ RangeId: _item.NameRangeId }, function (ret) {
+                    that.range.exist({ RangeId: _item.RangeId }, function (result) {
+                        var _s = result.status == app.status.succeeded, _st = ret.status == app.status.succeeded, _ss = _s && _st;
+                        options.data[options.index].Value = _s ? result.data.text : "";
+                        options.data[options.index].Position = _s ? result.data.address : "";
+                        options.data[options.index].Name = _st ? ret.data.text : "";
+                        options.data[options.index].NamePosition = _st ? ret.data.address : "";
 
-                    if (options.index >= that.pagerSize * (that.pagerIndex - 1) && options.index < that.pagerSize * that.pagerIndex) {
-                        var _v = _s ? result.data.text : "",
-                            _p = _s ? that.utility.position(result.data.address) : {},
-                            _pv = (_item.PublishedHistories && _item.PublishedHistories.length > 0 ? (_item.PublishedHistories[0].Value ? _item.PublishedHistories[0].Value : "") : ""),
-                            _sel = $.inArray(_item.Id, options.selected) > -1;
-                        var _h = '<li class="point-item' + (_s ? "" : " item-error") + '" data-id="' + _item.Id + '" data-range="' + _item.RangeId + '">';
-                        _h += '<div class="point-item-line">';
-                        _h += '<div class="i1"><div class="ckb-wrapper' + (_sel ? " checked" : "") + '"><input type="checkbox" ' + (_sel ? 'checked="checked"' : '') + ' /><i></i></div></div>';
-                        _h += '<div class="i2"><span class="s-name" data-position="' + (_s ? result.data.address : "") + '" title="' + _item.Name + '">' + _item.Name + '</span>';
-                        if (_s) {
-                            _h += '<span title="' + (_p.sheet ? _p.sheet : "") + ':[' + (_p.cell ? _p.cell : "") + ']"><strong>' + (_p.sheet ? _p.sheet : "") + ':</strong>[' + (_p.cell ? _p.cell : "") + ']</span>';
-                        }
-                        _h += '</div>';
-                        _h += '<div class="i3" title="' + _pv + '">' + _pv + '</div>';
-                        _h += '<div class="i4" title="' + (_v ? _v : "") + '">' + (_v ? _v : "") + '</div>';
-                        _h += '<div class="i5"><div class="i-line"><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i><i class="i-edit" title="Edit"></i></div>';
-                        _h += '<div class="i-menu"><a href="javascript:"><span title="Action">...</span><span><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i><i class="i-edit" title="Edit"></i></span></a></div>';
-                        _h += '</div>';
-                        _h += '</div>';
-                        _h += '<div class="item-history"><h6>Publish History</h6><ul class="history-list">';
-                        _h += '<li class="history-header"><div class="h1">Name</div><div class="h2">Value</div><div class="h3">Date</div></li>';
-                        $.each(_item.PublishedHistories, function (m, n) {
-                            if (m < 5) {
-                                _h += '<li class="history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
+                        if (options.index >= that.pagerSize * (that.pagerIndex - 1) && options.index < that.pagerSize * that.pagerIndex) {
+                            var _v = _s ? result.data.text : "",
+                                _n = _st ? ret.data.text : "",
+                                _p = _s ? that.utility.position(result.data.address) : {},
+                                _pn = _st ? that.utility.position(ret.data.address) : {},
+                                _pv = (_item.PublishedHistories && _item.PublishedHistories.length > 0 ? (_item.PublishedHistories[0].Value ? _item.PublishedHistories[0].Value : "") : ""),
+                                _sel = $.inArray(_item.Id, options.selected) > -1,
+                                _pht = _item.PublishedHistories && _item.PublishedHistories.length > 0 ? _item.PublishedHistories : [],
+                                _pi = 0;
+                            var _h = '<li class="point-item' + (_ss ? "" : " item-error") + '" data-id="' + _item.Id + '" data-range="' + _item.RangeId + '" data-position="' + (_s ? result.data.address : "") + '" data-namerange="' + (_st ? _item.NameRangeId : "") + '" data-nameposition="' + (_st ? ret.data.address : "") + '">';
+                            _h += '<div class="point-item-line">';
+                            _h += '<div class="i1"><div class="ckb-wrapper' + (_sel ? " checked" : "") + '"><input type="checkbox" ' + (_sel ? 'checked="checked"' : '') + ' /><i></i></div></div>';
+                            _h += '<div class="i2"><span class="s-name" title="' + _n + '">' + _n + '</span>';
+                            if (_st) {
+                                _h += '<span title="' + (_pn.sheet ? _pn.sheet : "") + ':[' + (_pn.cell ? _pn.cell : "") + ']"><strong>' + (_pn.sheet ? _pn.sheet : "") + ':</strong>[' + (_pn.cell ? _pn.cell : "") + ']</span>';
                             }
-                        });
-                        _h += '</ul>';
-                        _h += '</div>';
-                        _h += '<div class="error-info">';
-                        _h += '<span>Error</span>';
-                        _h += '<p>The source point is invalid. This could be caused by not saving the excel file after creating the source point. Please delete the source point and recreate it.</p>';
-                        _h += '</div>';
-                        _h += '</li>';
-                        that.controls.list.append(_h);
-                    }
-                    options.index++;
-                    that.ui.item(options, callback);
+                            _h += '</div>';
+                            _h += '<div class="i3" title="' + _pv + '">' + _pv + '</div>';
+                            _h += '<div class="i4"><span class="s-value" title="' + _v + '">' + _v + '</span>';
+                            if (_s) {
+                                _h += '<span title="' + (_p.sheet ? _p.sheet : "") + ':[' + (_p.cell ? _p.cell : "") + ']"><strong>' + (_p.sheet ? _p.sheet : "") + ':</strong>[' + (_p.cell ? _p.cell : "") + ']</span>';
+                            }
+                            _h += '</div>';
+                            _h += '<div class="i5"><div class="i-line"><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i><i class="i-edit" title="Edit"></i></div>';
+                            _h += '<div class="i-menu"><a href="javascript:"><span title="Action">...</span><span><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i><i class="i-edit" title="Edit"></i></span></a></div>';
+                            _h += '</div>';
+                            _h += '</div>';
+                            _h += '<div class="item-history"><h6>Publish History</h6><ul class="history-list">';
+                            _h += '<li class="history-header"><div class="h1">Name</div><div class="h2">Value</div><div class="h3">Date</div></li>';
+                            $.each(_pht, function (m, n) {
+                                var __c = $.trim(_pht[m].Value ? _pht[m].Value : ""),
+                                    __p = $.trim(_pht[m > 0 ? m - 1 : m].Value ? _pht[m > 0 ? m - 1 : m].Value : "");
+                                if (_pi < 5 && (m == 0 || __c != __p)) {
+                                    _h += '<li class="history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
+                                    _pi++;
+                                }
+                            });
+                            _h += '</ul>';
+                            _h += '</div>';
+                            _h += '<div class="error-info">';
+                            _h += '<span>Error</span>';
+                            _h += '<p>The source point is invalid. This could be caused by not saving the excel file after creating the source point. Please delete the source point and recreate it.</p>';
+                            _h += '</div>';
+                            _h += '</li>';
+                            that.controls.list.append(_h);
+                        }
+                        options.index++;
+                        that.ui.item(options, callback);
+                    });
                 });
             }
             else {
@@ -1483,19 +1779,24 @@ var point = (function () {
                 }
             }
         },
-        //Remove a row of source point in UI.
+        ///Remove a row of source point in UI.
         remove: function (options) {
             that.controls.list.find("[data-id=" + options.Id + "]").remove();
         },
-        //Build the publish history of the source point.
+        ///Build the publish history of the source point.
         publish: function (options, callback) {
             $.each(options.SourcePoints, function (i, d) {
                 var _e = that.controls.list.find("[data-id=" + d.Id + "]"),
-                    _pv = (d.PublishedHistories && d.PublishedHistories.length > 0 ? (d.PublishedHistories[0].Value ? d.PublishedHistories[0].Value : "") : "");
+                    _pv = (d.PublishedHistories && d.PublishedHistories.length > 0 ? (d.PublishedHistories[0].Value ? d.PublishedHistories[0].Value : "") : ""),
+                    _pht = d.PublishedHistories && d.PublishedHistories.length > 0 ? d.PublishedHistories : [],
+                    _pi = 0;
                 _e.find(".history-list").find(".history-item").remove();
-                $.each(d.PublishedHistories, function (m, n) {
-                    if (m < 5) {
+                $.each(_pht, function (m, n) {
+                    var __c = $.trim(_pht[m].Value ? _pht[m].Value : ""),
+                        __p = $.trim(_pht[m > 0 ? m - 1 : m].Value ? _pht[m > 0 ? m - 1 : m].Value : "");
+                    if (_pi < 5 && (m == 0 || __c != __p)) {
                         _e.find(".history-list").append('<li class="history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>');
+                        _pi++;
                     }
                 });
                 _e.find(".i3").prop("title", _pv).html(_pv);

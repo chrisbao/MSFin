@@ -12,11 +12,13 @@ namespace SmartLink.Service
 {
     public interface ISourceService
     {
-        Task<SourcePoint> AddSourcePointAsync(string fileName, SourcePoint sourcePoint);
+        Task<SourcePoint> AddSourcePointAsync(string fileName, string documentId, SourcePoint sourcePoint);
 
         Task<SourcePoint> EditSourcePointAsync(int[] groupIds, SourcePoint sourcePoint);
 
-        Task<SourceCatalog> GetSourceCatalogAsync(string fileName);
+        Task<SourceCatalog> GetSourceCatalogAsync(string fileName, string documentId);
+
+        Task<SourceCatalog> GetSourceCatalogAsync(string documentId);
 
         Task<int> DeleteSourcePointAsync(Guid sourcePointId);
 
@@ -31,5 +33,9 @@ namespace SmartLink.Service
         Task<IEnumerable<SourceCatalog>> GetAllSourceCatalogAsync();
 
         Task<PublishedHistory> GetPublishHistoryByIdAsync(Guid publishHistoryId);
+
+        Task<IEnumerable<DocumentCheckResult>> GetAllCatalogsAsync();
+
+        Task<IEnumerable<DocumentCheckResult>> UpdateDocumentUrlByIdAsync(IEnumerable<DocumentCheckResult> documents);
     }
 }

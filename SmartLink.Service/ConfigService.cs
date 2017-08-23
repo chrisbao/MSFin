@@ -11,8 +11,10 @@ namespace SmartLink.Service
 {
     public class ConfigService : IConfigService
     {
+        private IEncryptService _encryptService;
         public ConfigService()
         {
+            _encryptService = new EncryptionService();
         }
 
         public string ClientId
@@ -55,19 +57,25 @@ namespace SmartLink.Service
             get { return "http://schemas.microsoft.com/identity/claims/objectidentifier"; }
         }
 
+        /// <summary>
+        /// Return the unencrypted AzureWebJobsStorage connection string.
+        /// </summary>
         public string AzureWebJobsStorage
         {
             get
             {
-                return ConfigurationManager.ConnectionStrings["AzureWebJobsStorage"].ConnectionString;
+                return _encryptService.DecryptString(ConfigurationManager.ConnectionStrings["AzureWebJobsStorage"].ConnectionString);
             }
         }
 
+        /// <summary>
+        /// Return the unencrypted AzureWebJobDashboard connection string.
+        /// </summary>
         public string AzureWebJobDashboard
         {
             get
             {
-                return ConfigurationManager.ConnectionStrings["AzureWebJobsDashboard"].ConnectionString;
+                return _encryptService.DecryptString(ConfigurationManager.ConnectionStrings["AzureWebJobsDashboard"].ConnectionString);
             }
         }
 

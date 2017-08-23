@@ -14,5 +14,9 @@ namespace SmartLink.Entity
         public string CurrentValue { get; set; }
 
         public string Position { get; set; }
+
+        public string Name { get; set; }
+
+        public string NamePosition { get; set; }
     }
 }

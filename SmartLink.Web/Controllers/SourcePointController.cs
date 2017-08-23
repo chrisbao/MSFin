@@ -46,7 +46,7 @@ namespace SmartLink.Web.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("api/SourcePoint")]
-        
+
         public async Task<IHttpActionResult> PostAsync([FromBody]SourcePointForm sourcePointAdded)
         {
             if (!ModelState.IsValid)
@@ -58,7 +58,8 @@ namespace SmartLink.Web.Controllers
             {
                 var sourcePoint = _mapper.Map<SourcePoint>(sourcePointAdded);
                 var catalogName = HttpUtility.UrlDecode(sourcePointAdded.CatalogName);
-                return Ok(await _sourceService.AddSourcePointAsync(catalogName, sourcePoint));
+                var documentId = HttpUtility.UrlDecode(sourcePointAdded.DocumentId);
+                return Ok(await _sourceService.AddSourcePointAsync(catalogName, documentId, sourcePoint));
             }
             catch (Exception ex)
             {
@@ -67,15 +68,29 @@ namespace SmartLink.Web.Controllers
         }
 
         /// <summary>
-        /// get source catalog
+        /// Get source point.
         /// </summary>
         /// <param name="name"></param>
+        /// <param name="documentId"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("api/SourcePointCatalog")]
-        public async Task<IHttpActionResult> GetSourcePointCatalogAsync(string name)
+        public async Task<IHttpActionResult> GetSourcePointCatalog(string name, string documentId)
         {
-            var retValue = await _sourceService.GetSourceCatalogAsync(name);
+            var retValue = await _sourceService.GetSourceCatalogAsync(HttpUtility.UrlDecode(name), HttpUtility.UrlDecode(documentId));
+            return Ok(retValue);
+        }
+
+        /// <summary>
+        /// get source catalog by document id.
+        /// </summary>
+        /// <param name="documentId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/SourcePointCatalog")]
+        public async Task<IHttpActionResult> GetSourcePointCatalogAsync(string documentId)
+        {
+            var retValue = await _sourceService.GetSourceCatalogAsync(HttpUtility.UrlDecode(documentId));
             return Ok(retValue);
         }
 

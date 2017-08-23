@@ -12,9 +12,9 @@ namespace SmartLink.Service
 {
     public interface IDestinationService
     {
-        Task<DestinationPoint> AddDestinationPointAsync(string fileName, DestinationPoint destinationPoint);
+        Task<DestinationPoint> AddDestinationPointAsync(string fileName, string documentId, DestinationPoint destinationPoint);
 
-        Task<DestinationCatalog> GetDestinationCatalogAsync(string fileName);
+        Task<DestinationCatalog> GetDestinationCatalogAsync(string fileName, string documentId);
 
         Task<IEnumerable<DestinationPoint>> GetDestinationPointBySourcePointAsync(Guid sourcePointId);
 
@@ -23,5 +23,7 @@ namespace SmartLink.Service
         Task DeleteSelectedDestinationPointAsync(IEnumerable<Guid> seletedDestinationPointIds);
 
         Task<IEnumerable<CustomFormat>> GetCustomFormatsAsync();
+
+        Task<DestinationPoint> UpdateDestinationPointCustomFormatAsync(DestinationPoint destinationPoint);
     }
 }

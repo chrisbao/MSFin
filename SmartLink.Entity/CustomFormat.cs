@@ -22,6 +22,14 @@ namespace SmartLink.Entity
 
         public string Description { get; set; }
 
+        public int OrderBy { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        public string GroupName { get; set; }
+
+        public int GroupOrderBy { get; set; }
+
         [JsonIgnore]
         public virtual ICollection<DestinationPoint> DestinationPoints { get; set; }
     }

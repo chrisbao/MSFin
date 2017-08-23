@@ -21,6 +21,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartLink.WebJob", "SmartLi
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "SmartLink.Azure", "SmartLink.Azure\SmartLink.Azure.deployproj", "{EF8E33E0-3784-476F-86EC-3EB0CBD06A3D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartLink.EncryptTool", "SmartLink.EncryptTool\SmartLink.EncryptTool.csproj", "{E01E9A1A-1BFE-4986-BD76-228D967EBC85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartLink.DocumentWebJob", "SmartLink.DocumentWebJob\SmartLink.DocumentWebJob.csproj", "{3F788594-2240-4874-9D86-95EA76D39D7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartLinkPowerPoint", "SmartLinkPowerPoint\SmartLinkPowerPoint.csproj", "{8C34563D-BA95-4DA7-8A59-3CD4F1F10BB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +94,27 @@ Global
 		{EF8E33E0-3784-476F-86EC-3EB0CBD06A3D}.Dev|Any CPU.Build.0 = Dev|Any CPU
 		{EF8E33E0-3784-476F-86EC-3EB0CBD06A3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF8E33E0-3784-476F-86EC-3EB0CBD06A3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E01E9A1A-1BFE-4986-BD76-228D967EBC85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E01E9A1A-1BFE-4986-BD76-228D967EBC85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E01E9A1A-1BFE-4986-BD76-228D967EBC85}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{E01E9A1A-1BFE-4986-BD76-228D967EBC85}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{E01E9A1A-1BFE-4986-BD76-228D967EBC85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E01E9A1A-1BFE-4986-BD76-228D967EBC85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F788594-2240-4874-9D86-95EA76D39D7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F788594-2240-4874-9D86-95EA76D39D7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F788594-2240-4874-9D86-95EA76D39D7C}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F788594-2240-4874-9D86-95EA76D39D7C}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{3F788594-2240-4874-9D86-95EA76D39D7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F788594-2240-4874-9D86-95EA76D39D7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C34563D-BA95-4DA7-8A59-3CD4F1F10BB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C34563D-BA95-4DA7-8A59-3CD4F1F10BB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C34563D-BA95-4DA7-8A59-3CD4F1F10BB6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8C34563D-BA95-4DA7-8A59-3CD4F1F10BB6}.Dev|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C34563D-BA95-4DA7-8A59-3CD4F1F10BB6}.Dev|Any CPU.Build.0 = Debug|Any CPU
+		{8C34563D-BA95-4DA7-8A59-3CD4F1F10BB6}.Dev|Any CPU.Deploy.0 = Debug|Any CPU
+		{8C34563D-BA95-4DA7-8A59-3CD4F1F10BB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C34563D-BA95-4DA7-8A59-3CD4F1F10BB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C34563D-BA95-4DA7-8A59-3CD4F1F10BB6}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

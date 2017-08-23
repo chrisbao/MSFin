@@ -26,6 +26,8 @@ namespace SmartLink.Entity
 
         public string Name { get; set; }
 
+        public string DocumentId { get; set; }
+
         public ICollection<SourcePoint> SourcePoints { get; set; }
 
         public SourceCatalog()

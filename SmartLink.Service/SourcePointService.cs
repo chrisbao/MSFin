@@ -40,17 +40,17 @@ namespace SmartLink.Service
         /// <param name="fileName"></param>
         /// <param name="sourcePoint"></param>
         /// <returns></returns>
-        public async Task<SourcePoint> AddSourcePointAsync(string fileName, SourcePoint sourcePoint)
+        public async Task<SourcePoint> AddSourcePointAsync(string fileName, string documentId, SourcePoint sourcePoint)
         {
             try
             {
-                var sourceCatalog = _dbContext.SourceCatalogs.FirstOrDefault(o => o.Name == fileName);
+                var sourceCatalog = _dbContext.SourceCatalogs.FirstOrDefault(o => o.DocumentId == documentId);
                 bool addSourceCatalog = (sourceCatalog == null);
                 if (addSourceCatalog)
                 {
                     try
                     {
-                        sourceCatalog = new SourceCatalog() { Name = fileName };
+                        sourceCatalog = new SourceCatalog() { Name = fileName, DocumentId = documentId };
                         _dbContext.SourceCatalogs.Add(sourceCatalog);
                     }
                     catch (Exception ex)
@@ -148,6 +148,8 @@ namespace SmartLink.Service
                     previousSourcePoint.Position = sourcePoint.Position;
                     previousSourcePoint.RangeId = sourcePoint.RangeId;
                     previousSourcePoint.Value = sourcePoint.Value;
+                    previousSourcePoint.NamePosition = sourcePoint.NamePosition;
+                    previousSourcePoint.NameRangeId = sourcePoint.NameRangeId;
 
                     //var newGroups = groupIds.Select(o => new SourcePointGroup() { Id = o });
                     var newGroups = _dbContext.SourcePointGroups.Where(o => groupIds.Contains(o.Id));
@@ -298,15 +300,74 @@ namespace SmartLink.Service
         }
 
         /// <summary>
-        /// get the source catalog by file name
+        /// Get the source catalog by document id
+        /// Update the document url when it is changed
+        /// File name is the absolute path of the file.
         /// </summary>
         /// <param name="fileName"></param>
+        /// <param name="documentId"></param>
         /// <returns></returns>
-        public async Task<SourceCatalog> GetSourceCatalogAsync(string fileName)
+        public async Task<SourceCatalog> GetSourceCatalogAsync(string fileName, string documentId)
         {
             try
             {
-                var sourceCatalog = await _dbContext.SourceCatalogs.Where(o => o.Name == fileName).FirstOrDefaultAsync();
+                var sourceCatalog = await _dbContext.SourceCatalogs.Where(o => o.DocumentId == documentId).FirstOrDefaultAsync();
+                if (sourceCatalog != null)
+                {
+                    var sourcePoint = await _dbContext.SourcePoints.Where(o => o.Status == SourcePointStatus.Created && o.CatalogId == sourceCatalog.Id)
+                        .Include(o => o.DestinationPoints)
+                        .Include(o => o.Groups)
+                        .Include(o => o.PublishedHistories).OrderByDescending(o => o.Name).ToArrayAsync();
+                    foreach (var item in sourcePoint)
+                    {
+                        item.PublishedHistories = item.PublishedHistories.OrderByDescending(p => p.PublishedDate).ToArray();
+                    }
+                    sourceCatalog.SourcePoints = sourcePoint;
+
+                    if (!sourceCatalog.Name.Equals(fileName))
+                    {
+                        sourceCatalog.Name = fileName;
+                        await _dbContext.SaveChangesAsync();
+                    }
+
+                    await _logService.WriteLogAsync(new LogEntity()
+                    {
+                        LogId = "30001",
+                        Action = Constant.ACTIONTYPE_GET,
+                        PointType = Constant.POINTTYPE_SOURCECATALOG,
+                        ActionType = ActionTypeEnum.AuditLog,
+                        Message = $"Get source catalog named {sourceCatalog.Name}"
+                    });
+                }
+                return sourceCatalog;
+            }
+            catch (Exception ex)
+            {
+                var logEntity = new LogEntity()
+                {
+                    LogId = "30004",
+                    Action = Constant.ACTIONTYPE_GET,
+                    ActionType = ActionTypeEnum.ErrorLog,
+                    PointType = Constant.POINTTYPE_SOURCECATALOG,
+                    Message = ".Net Error",
+                    Detail = ex.ToString()
+                };
+                logEntity.Subject = $"{logEntity.LogId} - {logEntity.Action} - {logEntity.PointType} - Error";
+                await _logService.WriteLogAsync(logEntity);
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Get all source point catalog by document id.
+        /// </summary>
+        /// <param name="documentId"></param>
+        /// <returns></returns>
+        public async Task<SourceCatalog> GetSourceCatalogAsync(string documentId)
+        {
+            try
+            {
+                var sourceCatalog = await _dbContext.SourceCatalogs.Where(o => o.DocumentId == documentId).FirstOrDefaultAsync();
                 if (sourceCatalog != null)
                 {
                     var sourcePoint = await _dbContext.SourcePoints.Where(o => o.Status == SourcePointStatus.Created && o.CatalogId == sourceCatalog.Id)
@@ -379,6 +440,8 @@ namespace SmartLink.Service
                 {
                     sourcePoint.Value = publishSourcePointForms.First(o => o.SourcePointId == sourcePoint.Id).CurrentValue;
                     sourcePoint.Position = publishSourcePointForms.First(o => o.SourcePointId == sourcePoint.Id).Position;
+                    sourcePoint.Name = publishSourcePointForms.First(o => o.SourcePointId == sourcePoint.Id).Name;
+                    sourcePoint.NamePosition = publishSourcePointForms.First(o => o.SourcePointId == sourcePoint.Id).NamePosition;
                     var history = _mapper.Map<PublishedHistory>(sourcePoint);
                     history.PublishedDate = DateTime.Now.ToUniversalTime().ToPSTDateTime();
                     history.PublishedUser = currentUser.Username;
@@ -523,6 +586,57 @@ namespace SmartLink.Service
                 publishHistory.SourcePoint.Catalog.SerializeSourcePoints = false;
             }
             return publishHistory;
+        }
+
+        /// <summary>
+        /// Get all source point and destination point catalogs.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<DocumentCheckResult>> GetAllCatalogsAsync()
+        {
+            var sourceCatalogs = await _dbContext.SourceCatalogs.Where(o => !string.IsNullOrEmpty(o.DocumentId)).ToListAsync();
+            var destinationCatalogs = await _dbContext.DestinationCatalogs.Where(o => !string.IsNullOrEmpty(o.DocumentId)).ToListAsync();
+            var catalog = new List<DocumentCheckResult>();
+            catalog.AddRange(sourceCatalogs.Select(o => new DocumentCheckResult() { DocumentId = o.DocumentId, DocumentType = DocumentTypes.SourcePoint }).ToList());
+            catalog.AddRange(destinationCatalogs.Select(o => new DocumentCheckResult() { DocumentId = o.DocumentId, DocumentType = DocumentTypes.DestinationPoint }).ToList());
+            return catalog;
+        }
+
+        /// <summary>
+        /// Update document url by document id.
+        /// </summary>
+        /// <param name="documents"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<DocumentCheckResult>> UpdateDocumentUrlByIdAsync(IEnumerable<DocumentCheckResult> documents)
+        {
+            foreach (var document in documents)
+            {
+                if (document.DocumentType == DocumentTypes.SourcePoint)
+                {
+                    var catalog = await _dbContext.SourceCatalogs.Where(o => o.DocumentId == document.DocumentId).FirstOrDefaultAsync();
+                    if (catalog != null && !catalog.Name.Equals(document.DocumentUrl, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        document.IsUpdated = true;
+                        document.Message = string.Format("DocumentId: {0}, Updated from {1} to {2}", document.DocumentId, catalog.Name, document.DocumentUrl);
+                        catalog.Name = document.DocumentUrl;
+                    }
+                }
+                else if (document.DocumentType == DocumentTypes.DestinationPoint)
+                {
+                    var catalog = await _dbContext.DestinationCatalogs.Where(o => o.DocumentId == document.DocumentId).Include(o => o.DestinationPoints).FirstOrDefaultAsync();
+                    if (catalog != null && !catalog.Name.Equals(document.DocumentUrl, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        document.IsUpdated = true;
+                        document.Message = string.Format("DocumentId: {0}, Updated from {1} to {2}", document.DocumentId, catalog.Name, document.DocumentUrl);
+                        catalog.Name = document.DocumentUrl;
+                    }
+                }
+            }
+            if (documents.Any(o => o.IsUpdated))
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            return documents;
         }
     }
 

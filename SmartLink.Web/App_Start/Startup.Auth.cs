@@ -1,4 +1,9 @@
-﻿using Microsoft.Azure;
+﻿/*   
+ *   * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.  
+ *   * See LICENSE in the project root for license information.  
+ */
+
+using Microsoft.Azure;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
@@ -19,8 +24,9 @@ namespace SmartLink.Web
         private static string postLogoutRedirectUri = CloudConfigurationManager.GetSetting("ida:PostLogoutRedirectUri");
         private static string appKey = CloudConfigurationManager.GetSetting("ida:ClientSecret");
         private static string resourceId = CloudConfigurationManager.GetSetting("ResourceId");
-        private static string consentResource = CloudConfigurationManager.GetSetting("ConsentResource");
+        private static string sharePointUrl = CloudConfigurationManager.GetSetting("SharePointUrl");
         private static string authority = aadInstance + tenantId;
+
         /// <summary>
         /// Implement the OPENID authentication and get the access token to access SP site.
         /// </summary>
@@ -50,10 +56,13 @@ namespace SmartLink.Web
 
                             string userObjectID = context.AuthenticationTicket.Identity.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value;
                             UserIdentifier userIdentifier = new UserIdentifier(userObjectID, UserIdentifierType.UniqueId);
-                            AuthenticationHelper.consentUrl = authContext.GetAuthorizationRequestURL(consentResource, clientId, consentRedirectUrl, userIdentifier, "prompt=admin_consent").ToString();
+                            AuthenticationHelper.consentUrl = authContext.GetAuthorizationRequestURL(sharePointUrl, clientId, consentRedirectUrl, userIdentifier, "prompt=admin_consent").ToString();
 
                             AuthenticationResult result = authContext.AcquireTokenByAuthorizationCode(code, redirectUrl, credential, resourceId);
                             AuthenticationHelper.token = result.AccessToken;
+
+                            AuthenticationResult spResult = authContext.AcquireTokenByAuthorizationCode(code, redirectUrl, credential, sharePointUrl);
+                            AuthenticationHelper.sharePointToken = spResult.AccessToken;
 
                             return Task.FromResult(0);
                         }

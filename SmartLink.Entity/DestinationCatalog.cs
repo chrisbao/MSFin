@@ -25,6 +25,8 @@ namespace SmartLink.Entity
 
         public string Name { get; set; }
 
+        public string DocumentId { get; set; }
+
         public ICollection<DestinationPoint> DestinationPoints { get; set; }
 
         public DestinationCatalog()

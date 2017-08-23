@@ -7,6 +7,8 @@ namespace SmartLink.Web.ViewModel
 {
     public class DestinationPointForm
     {
+        public string Id { get; set; }
+
         public string CatalogName { get; set; }
 
         public string RangeId { get; set; }
@@ -14,5 +16,9 @@ namespace SmartLink.Web.ViewModel
         public string SourcePointId { get; set; }
 
         public int[] CustomFormatIds { get; set; }
+
+        public int? DecimalPlace { get; set; }
+
+        public string DocumentId { get; set; }
     }
 }

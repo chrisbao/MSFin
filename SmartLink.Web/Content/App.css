@@ -84,7 +84,7 @@ ul, li {
     margin-right: 10px;
 }
 
-.header .n-add i {
+.header .n-add i, .header .n-select i {
     float: left;
     width: 15px;
     height: 18px;
@@ -160,11 +160,11 @@ ul, li {
     float: right;
 }
 
-.header .n-add, .header .n-publish, .header .n-add, .header .n-highlight, .header .n-refresh, .header .n-publishall, .header .n-bulk {
+.header .n-add, .header .n-publish, .header .n-add, .header .n-highlight, .header .n-refresh, .header .n-publishall, .header .n-bulk, .header .n-select {
     padding-right: 20px;
 }
 
-.add .n-add, .add .n-publish, .add .n-refresh, .add .n-highlight, .add .n-publishall, .add .n-delete, .add .header .n-bulk, .add .content-header .manage-header {
+.add .n-add, .add .n-publish, .add .n-refresh, .add .n-highlight, .add .n-publishall, .add .n-delete, .add .header .n-bulk, .add .content-header .manage-header, .add .n-select {
     display: none;
 }
 
@@ -172,8 +172,12 @@ ul, li {
     display: none;
 }
 
-.add .manage-point, .manage .add-point {
+.add .manage-point, .manage .add-point, .add .document-error, .manage .document-error, .manage.error .header, .manage.error .manage-point {
     display: none;
+}
+
+.manage.error .document-error {
+    display: block;
 }
 
 .content {
@@ -278,7 +282,7 @@ ul, li {
     display: none;
 }
 
-#error-message.word-mode, #error-message.word-version, #error-message.excel-mode, #error-message.excel-version {
+#error-message.word-mode, #error-message.word-version, #error-message.excel-mode, #error-message.excel-version, #error-message.powerpoint-mode {
     display: block;
 }
 
@@ -295,6 +299,10 @@ ul, li {
 }
 
 #error-message.excel-version .excel, #error-message.excel-version .excel .version {
+    display: block;
+}
+
+#error-message.powerpoint-mode .powerpoint, #error-message.powerpoint-mode .powerpoint .mode {
     display: block;
 }
 
@@ -744,12 +752,12 @@ ul, li {
     overflow: hidden;
 }
 
-#word-addin.add .add-point-second div span {
+#word-addin.add .add-point-second .add-point-files span {
     float: left;
     width: 100%;
 }
 
-#word-addin.add .add-point-second div span:first-child {
+#word-addin.add .add-point-second .add-point-files span:first-child {
     font-size: 14px;
     font-weight: 600;
     background-image: url(../Images/list-style.png);
@@ -758,24 +766,85 @@ ul, li {
     padding-left: 16px;
 }
 
-#word-addin.add .add-point-second div span:last-child {
+#word-addin.add .add-point-second .add-point-files span:last-child {
     font-size: 12px;
     padding-left: 16px;
     padding-top: 5px;
 }
 
-#word-addin.add .add-point-second div span:last-child strong {
+#word-addin.add .add-point-second .add-point-files span:last-child strong {
     margin-right: 5px;
 }
 
-#word-addin.add .add-point-second .add-point-format {
-    position: relative;
-    width: 100%;
-    height: auto;
+/* Styles of custom format */
+#word-addin h4.add-point-source {
+    padding-bottom: 5px;
 }
 
-#word-addin.add .add-point-second .add-point-format > a {
+.add-point-preview, .add-point-place {
+    width: 100%;
+    font-size: 16px;
+    display: table-row;
+    height: 25px;
+    vertical-align: middle;
+}
+
+.add-point-place {
+    display: none;
+}
+
+.selected-number .add-point-place {
+    display: block;
+}
+
+.add-point-preview label, .add-point-place label {
+    display: table-cell;
+    padding-right: 10px;
+    margin: 0;
+}
+
+.add-point-preview span, .add-point-place span {
+    display: table-cell;
+}
+
+.add-point-preview span {
+    font-weight: 600;
+}
+
+.add-point-place i {
     display: inline-block;
+    width: 14px;
+    height: 15px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.add-point-place i.i-increase {
+    background-image: url(../Images/icon-increase.png);
+    margin-right: 10px;
+}
+
+.add-point-place i.i-decrease {
+    background-image: url(../Images/icon-decrease.png);
+}
+
+.add-point-format {
+    width: 100%;
+    height: auto;
+    padding: 0;
+    margin: 0 0 0 0;
+    float: left;
+}
+
+.add-point-format .add-point-select {
+    position: relative;
+    width: 100%;
+    margin: 5px 0 0 0;
+    float: left;
+}
+
+.add-point-select > a {
+    float: left;
     width: 100%;
     height: 30px;
     font-size: 13px;
@@ -792,7 +861,7 @@ ul, li {
     overflow: hidden;
 }
 
-#word-addin.add .add-point-second .add-point-format > i {
+.add-point-select > i {
     position: absolute;
     width: 41px;
     height: 30px;
@@ -804,83 +873,130 @@ ul, li {
     background-repeat: no-repeat;
 }
 
-#word-addin.add .add-point-second .add-point-format ul {
+.add-point-select > ul {
     position: absolute;
     top: 30px;
     left: 0;
     width: 100%;
-    height: auto;
     border: 1px #ccc solid;
     border-top: 0;
-    max-height: 144px;
+    padding: 2px 5px;
+    max-height: 100px;
     overflow-y: auto;
     overflow-x: hidden;
     display: none;
 }
 
-#word-addin.add .add-point-second .add-point-format ul.active {
+.add-point-select > ul.active {
     display: block;
 }
 
-#word-addin.add .add-point-second .add-point-format ul li {
-    padding: 2px 10px 2px 36px;
+.add-point-select > ul .value-number, .add-point-select > ul .value-date {
+    display: none;
+}
+
+.selected-number .add-point-select > ul .value-number, .selected-date .add-point-select > ul .value-date {
+    display: block;
+}
+
+.selected-date .add-point-select > ul .value-string, .selected-date .add-point-select > ul .value-number {
+    display: none;
+}
+
+.add-point-select > ul li label {
     font-size: 13px;
-    line-height: 20px;
-    position: relative;
-    overflow: hidden;
+    font-weight: 600;
+    display: inline-block;
+    width: 100%;
+    padding: 0 0 2px 0;
+    margin: 0;
+    border-bottom: 1px #ccc solid;
+}
+
+.add-point-select > ul ul {
+    margin: 0;
+}
+
+.add-point-select > ul ul li {
+    font-size: 13px;
+    padding: 2px 0 2px 21px;
+    line-height: 16px;
     cursor: pointer;
+    position: relative;
 }
 
-#word-addin.add .add-point-second .add-point-format ul li.drp-header {
-    font-weight: bold;
-    border-bottom: 1px #ccc dashed;
-}
-
-#word-addin.add .add-point-second .add-point-format ul li:hover {
+.add-point-select ul ul li:hover {
     background-color: #CDE6F7;
 }
 
-#word-addin.add .add-point-second .add-point-format ul li.checked {
+.add-point-select ul ul li.checked {
     background-color: #0078d7;
 }
 
-#word-addin.add .add-point-second .add-point-format ul li.checked a {
+.add-point-select ul ul li.checked a {
     color: #fff;
 }
 
-#word-addin.add .add-point-second .add-point-format ul li div {
+.add-point-select ul ul li div {
     position: absolute;
     padding: 0;
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     border: 2px #ccc solid;
     top: 4px;
-    left: 10px;
+    left: 0;
     padding: 1px;
     background-color: #fff;
 }
 
-#word-addin.add .add-point-second .add-point-format ul li div i {
+.add-point-select ul ul li div i {
     float: left;
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
 }
 
-#word-addin.add .add-point-second .add-point-format ul li.checked div i {
+.add-point-select ul ul li.checked div i {
     background-color: #000;
 }
 
-#word-addin.add .add-point-second .add-point-format ul li a {
+.add-point-select ul li.drp-descriptor, .add-point-select ul li.drp-descriptor ul li {
+    display: none;
+}
+
+.add-point-select ul.convert1 li.drp-descriptor, .add-point-select ul.convert1 li.drp-descriptor ul li:nth-child(1),
+.add-point-select ul.convert2 li.drp-descriptor, .add-point-select ul.convert2 li.drp-descriptor ul li:nth-child(2),
+.add-point-select ul.convert3 li.drp-descriptor, .add-point-select ul.convert3 li.drp-descriptor ul li:nth-child(3),
+.add-point-select ul.convert4 li.drp-descriptor, .add-point-select ul.convert4 li.drp-descriptor ul li:nth-child(4) {
+    display: block;
+}
+
+.add-point-select ul li.drp-radio ul li div, .add-point-select ul li.drp-radio ul li.checked div i {
+    border-radius: 8px;
+}
+
+.add-point-select ul li a {
     display: inline-block;
     color: #000000;
     text-decoration: none;
 }
 
-#word-addin.add .add-point-second .add-point-format ul li input {
-    opacity: 1;
+/* Style of PowerPoint add-in */
+#powerpoint-addin.manage .point-list .point-header .point-header-line, #powerpoint-addin.manage .point-list .point-item .point-item-line {
+    padding-left: 0;
+    padding-right: 26px;
 }
 
-#word-addin.add.step-first #btnCancel, #word-addin.add.step-first #btnAdd, #word-addin.add.step-first .add-point-second, #word-addin.add.step-second #btnNext, #word-addin.add.step-second .add-point-first {
+#powerpoint-addin.manage .point-list .i3 {
+    width: 32%;
+}
+
+#powerpoint-addin.manage .point-list .i5 {
+    width: 26px;
+}
+
+/* End style of custom format */
+
+#word-addin.add.step-first #btnCancel, #word-addin.add.step-first #btnAdd, #word-addin.add.step-first .add-point-second, #word-addin.add.step-second #btnNext, #word-addin.edit #btnNext, #word-addin.edit #btnAdd, #word-addin.add.step-first #btnSave, #word-addin.add.step-second #btnSave, #word-addin.add.step-second .add-point-first, #word-addin.edit .add-point-first, #word-addin.edit .add-point-info {
     display: none;
 }
 
@@ -983,6 +1099,7 @@ ul, li {
     font-size: 14px;
     padding: 10px 20px 10px 20px;
     position: relative;
+    cursor: pointer;
 }
 
 .manage .point-list .point-item .point-item-line {
@@ -1091,16 +1208,17 @@ ul, li {
     cursor: pointer;
 }
 
-.manage .point-list .point-item .i2 span {
-    display: inline-block;
+.manage .point-list .point-item .i2 span, .manage .point-list .point-item .i4 span {
+    float: left;
     width: 100%;
+    padding-bottom: 2px;
 }
 
 .manage .point-list .point-item .i2 span:first-child {
     font-weight: bold;
 }
 
-.manage .point-list .point-item .i2 span:nth-child(2), .manage .point-list .point-item .i2 span:nth-child(3) {
+.manage .point-list .point-item .i2 span:nth-child(2), .manage .point-list .point-item .i2 span:nth-child(3), .manage .point-list .point-item .i4 span:nth-child(2) {
     font-size: 10px;
 }
 
@@ -1145,10 +1263,26 @@ ul, li {
     cursor: pointer;
 }
 
+.manage .point-list .point-item .item-format {
+    float: left;
+    font-size: 11px;
+    padding: 2px 0 0 26px;
+    width: 100%;
+}
+
+.manage .point-list .point-item .item-format span {
+    width: 100%;
+    float: left;
+}
+
+.manage .point-list .point-item .item-format strong {
+    padding-right: 5px;
+}
+
 .manage .point-list .point-item .item-history {
     float: left;
     width: 100%;
-    margin: 10px 0 0 0;
+    margin: 5px 0 0 0;
     background: #333333;
     color: #fff;
     font-size: 11px;
@@ -1242,7 +1376,6 @@ ul, li {
 }
 
 #word-addin.manage .point-list .point-item .point-item-line, #word-addin.manage .point-list .point-header .point-header-line {
-    padding-right: 58px;
 }
 
 #word-addin.manage .point-list .point-item:nth-child(2n+2) {
@@ -1254,7 +1387,6 @@ ul, li {
 }
 
 #word-addin.manage .point-list .point-item .i5 .i-delete {
-    margin-left: 0;
 }
 
 #word-addin.manage .point-list .i2 {
@@ -1266,7 +1398,6 @@ ul, li {
 }
 
 #word-addin.manage .point-list .i5 {
-    width: 48px;
 }
 
 #word-addin.manage .point-list .point-item .i4 {
@@ -1358,11 +1489,14 @@ ul, li {
 
 /* text overflow ellipsis */
 .manage .point-list .point-item .i2 span,
+.manage .point-list .point-item .i4 span,
 .manage .point-list .point-item .i3,
 .manage .point-list .point-item .i4,
 .manage .point-list .item-history .history-list .history-item .h1,
 .manage .point-list .item-history .history-list .history-item .h2,
-.manage .point-list .item-history .history-list .history-item .h3 {
+.manage .point-list .item-history .history-list .history-item .h3,
+.manage .point-list .point-item .item-format .item-formatted,
+.manage .point-list .point-item .item-format .item-formats {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -1390,6 +1524,29 @@ ul, li {
 .search-tooltips li.active {
     background-color: #0078d7;
     color: #fff;
+}
+
+.manage .content.document-error {
+    padding-left: 50px;
+    padding-right: 50px;
+    font-size: 14px;
+}
+
+.manage .content.document-error span, .manage .content.document-error p, .manage .content.document-error a {
+    display: inline-block;
+    width: 100%;
+    padding-bottom: 5px;
+}
+
+.manage .content.document-error p {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+}
+
+.manage .content.document-error a {
+    color: #0078d7;
+    margin-top: 5px;
 }
 
 /* Popup styles */
@@ -1806,7 +1963,7 @@ ul, li {
         width: 80%;
     }
 
-    .manage .point-list .i3, #word-addin.manage .point-list .i3 {
+    .manage .point-list .i3, #word-addin.manage .point-list .i3, #powerpoint-addin.manage .point-list .i3 {
         width: 20%;
     }
 

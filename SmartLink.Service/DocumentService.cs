@@ -66,22 +66,31 @@ namespace SmartLink.Service
         /// <summary>
         /// Update the bookmark value by destination points in the specific word file.
         /// </summary>
-        /// <param name="destinationFileName"></param>
+        /// <param name="documentId"></param>
         /// <param name="destinationPoints"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public async Task<DocumentUpdateResult> UpdateBookmarkValueAsync(string destinationFileName, IEnumerable<DestinationPoint> destinationPoints, string value)
+        public async Task<DocumentUpdateResult> UpdateBookmarkValueAsync(string documentId, IEnumerable<DestinationPoint> destinationPoints, string value)
         {
             DocumentUpdateResult retValue = new DocumentUpdateResult() { IsSuccess = true };
             try
             {
                 string authHeader = GetAuthorizationHeader();
-                FileContextInfo fileContextInfo = await GetFileContextInfoAsync(authHeader, destinationFileName);
-                var stream = await GetFileStreamAsync(authHeader, destinationFileName, fileContextInfo);
-                stream.Seek(0, SeekOrigin.Begin);
-                UpdateStream(destinationPoints, value, stream, retValue);
-                await UploadStreamAsync(authHeader, destinationFileName, stream, fileContextInfo);
-                return retValue;
+                DocumentCheckResult documentResult = await GetDocumentUrlByIdAsync(new DocumentCheckResult() { DocumentId = documentId });
+                if (documentResult.IsSuccess)
+                {
+                    FileContextInfo fileContextInfo = await GetFileContextInfoAsync(authHeader, documentResult.DocumentUrl);
+                    var stream = await GetFileStreamAsync(authHeader, documentResult.DocumentUrl, fileContextInfo);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    UpdateStream(destinationPoints, value, stream, retValue);
+                    await UploadStreamAsync(authHeader, documentResult.DocumentUrl, stream, fileContextInfo);
+                    return retValue;
+                }
+                else
+                {
+                    retValue.IsSuccess = false;
+                    retValue.Message.Add(documentResult.Message);
+                }
             }
             catch (Exception ex)
             {
@@ -156,8 +165,8 @@ namespace SmartLink.Service
                 {
                     int foundTimes = 0;
                     var position = destinationPoint.RangeId;
-                    var formats = destinationPoint.CustomFormats.ToList();
-                    var formattedValue = GetFormattedValue(value, formats);
+                    var formats = destinationPoint.CustomFormats.OrderBy(c => c.GroupOrderBy).ToList();
+                    var formattedValue = GetFormattedValue(value, formats, destinationPoint.DecimalPlace);
 
                     //Update value in sdtBlock
                     foundTimes += UpdateValueInSdtBlock(formattedValue, wordDoc, position);
@@ -418,8 +427,9 @@ namespace SmartLink.Service
         /// </summary>
         /// <param name="value"></param>
         /// <param name="formats"></param>
+        /// <param name="decimalPlace"></param>
         /// <returns></returns>
-        static private string GetFormattedValue(string value, List<CustomFormat> formats)
+        static private string GetFormattedValue(string value, List<CustomFormat> formats, int? decimalPlace)
         {
             var originalValue = value;
             var hasDollar = originalValue.IndexOf("$") > -1;
@@ -431,164 +441,243 @@ namespace SmartLink.Service
 
             foreach (var format in formats)
             {
-                if (format.Name == "ConvertToHundreds")
+                if (!format.IsDeleted)
                 {
-                    if (isNumeric)
+                    if (format.Name == "ConvertToHundreds")
                     {
-                        value = (Convert.ToDecimal(valueWithOutSymbol) / 100).ToString();
-                        if (hasComma)
+                        if (isNumeric)
                         {
-                            value = AddComma(value);
-                        }
-                        if (hasDollar)
-                        {
-                            value = "$" + value;
-                        }
-                    }
-                }
-                else if (format.Name == "ConvertToThousands")
-                {
-                    if (isNumeric)
-                    {
-                        value = (Convert.ToDecimal(valueWithOutSymbol) / 1000).ToString();
-                        if (hasComma)
-                        {
-                            value = AddComma(value);
-                        }
-                        if (hasDollar)
-                        {
-                            value = "$" + value;
+                            value = (Convert.ToDecimal(valueWithOutSymbol) / 100).ToString();
+                            if (hasComma)
+                            {
+                                value = ToThousandsString(value);
+                            }
+                            if (hasDollar)
+                            {
+                                value = "$" + value;
+                            }
                         }
                     }
-                }
-                else if (format.Name == "ConvertToMillions")
-                {
-                    if (isNumeric)
+                    else if (format.Name == "ConvertToThousands")
                     {
-                        value = (Convert.ToDecimal(valueWithOutSymbol) / 1000000).ToString();
-                        if (hasComma)
+                        if (isNumeric)
                         {
-                            value = AddComma(value);
-                        }
-                        if (hasDollar)
-                        {
-                            value = "$" + value;
-                        }
-                    }
-                }
-                else if (format.Name == "ConvertToBillions")
-                {
-                    if (isNumeric)
-                    {
-                        value = (Convert.ToDecimal(valueWithOutSymbol) / 1000000000).ToString();
-                        if (hasComma)
-                        {
-                            value = AddComma(value);
-                        }
-                        if (hasDollar)
-                        {
-                            value = "$" + value;
+                            value = (Convert.ToDecimal(valueWithOutSymbol) / 1000).ToString();
+                            if (hasComma)
+                            {
+                                value = ToThousandsString(value);
+                            }
+                            if (hasDollar)
+                            {
+                                value = "$" + value;
+                            }
                         }
                     }
-                }
-                else if (format.Name == "AddDecimalPlace")
-                {
-                    if (isNumeric)
+                    else if (format.Name == "ConvertToMillions")
                     {
-                        if (value.IndexOf(".") > -1)
+                        if (isNumeric)
                         {
-                            value = value + "0";
-                        }
-                        else
-                        {
-                            value = value + ".0";
-                        }
-                    }
-                }
-                else if (format.Name == "ShowNegativesAsPositives")
-                {
-                    var tempValue = value.Replace("$", "").Replace("-", "").Replace("%", "").Replace("(", "").Replace(")", "");
-                    if (Regex.IsMatch(tempValue, @"^[+-]?\d*[.]?\d*$"))
-                    {
-                        value = tempValue;
-                        if (hasPercent)
-                        {
-                            value = value + "%";
-                        }
-                        if (hasDollar)
-                        {
-                            value = "$" + value;
+                            value = (Convert.ToDecimal(valueWithOutSymbol) / 1000000).ToString();
+                            if (hasComma)
+                            {
+                                value = ToThousandsString(value);
+                            }
+                            if (hasDollar)
+                            {
+                                value = "$" + value;
+                            }
                         }
                     }
-                }
-                else if (format.Name == "IncludeThousandDescriptor")
-                {
-                    if (isNumeric)
+                    else if (format.Name == "ConvertToBillions")
                     {
-                        value = value + " thousand";
+                        if (isNumeric)
+                        {
+                            value = (Convert.ToDecimal(valueWithOutSymbol) / 1000000000).ToString();
+                            if (hasComma)
+                            {
+                                value = ToThousandsString(value);
+                            }
+                            if (hasDollar)
+                            {
+                                value = "$" + value;
+                            }
+                        }
                     }
-                }
-                else if (format.Name == "IncludeMillionDescriptor")
-                {
-                    if (isNumeric)
+                    else if (format.Name == "AddDecimalPlace")
                     {
-                        value = value + " million";
+                        if (isNumeric)
+                        {
+                            if (value.IndexOf(".") > -1)
+                            {
+                                value = value + "0";
+                            }
+                            else
+                            {
+                                value = value + ".0";
+                            }
+                        }
                     }
-                }
-                else if (format.Name == "IncludeBillionDescriptor")
-                {
-                    if (isNumeric)
-                    {
-                        value = value + " billion";
-                    }
-                }
-                else if (format.Name == "IncludeDollarSymbol")
-                {
-                    if (value.IndexOf("$") == -1)
-                    {
-                        value = "$" + value;
-                    }
-                }
-                else if (format.Name == "ExcludeDollarSymbol")
-                {
-                    if (value.IndexOf("$") > -1)
-                    {
-                        value = value.Replace("$", "");
-                    }
-                }
-                else if (format.Name == "DateShowLongDateFormat")
-                {
-                    if (isDate)
-                    {
-                        var date = Convert.ToDateTime(value);
-                        value = GetMonth(date.Month - 1) + " " + date.Day + ", " + date.Year;
-                    }
-                }
-                else if (format.Name == "DateShowYearOnly")
-                {
-                    if (isDate)
-                    {
-                        var date = Convert.ToDateTime(value);
-                        value = date.Year.ToString();
-                    }
-                }
-                else if (format.Name == "ConvertNegativeSymbolToParenthesis")
-                {
-                    if (value.IndexOf("-") > -1)
+                    else if (format.Name == "ShowNegativesAsPositives")
                     {
                         var h = value.IndexOf("$") > -1;
-                        var tempValue = value.Replace("$", "").Replace("-", "").Replace("(", "").Replace(")", "");
-                        value = "(" + tempValue + ")";
-                        if (h)
+                        var p = value.IndexOf("%") > -1;
+                        var hasHundred = value.IndexOf("hundred") > -1;
+                        var hasThousand = value.IndexOf("thousand") > -1;
+                        var hasMillion = value.IndexOf("million") > -1;
+                        var hasBillion = value.IndexOf("billion") > -1;
+                        var tempValue = value.Replace("$", "").Replace("-", "").Replace("%", "").Replace("(", "").Replace(")", "").Replace("hundred", "").Replace("thousand", "").Replace("million", "").Replace("billion", "").Trim();
+                        if (Regex.IsMatch(tempValue, @"^[+-]?\d*[.]?\d*$"))
+                        {
+                            value = tempValue;
+                            if (p)
+                            {
+                                value = value + "%";
+                            }
+                            if (h)
+                            {
+                                value = "$" + value;
+                            }
+                            if (hasHundred)
+                            {
+                                value = value + " hundred";
+                            }
+                            else if (hasThousand)
+                            {
+                                value = value + " thousand";
+                            }
+                            else if (hasMillion)
+                            {
+                                value = value + " million";
+                            }
+                            else if (hasBillion)
+                            {
+                                value = value + " billion";
+                            }
+                        }
+                    }
+                    else if (format.Name == "IncludeHundredDescriptor")
+                    {
+                        if (isNumeric)
+                        {
+                            value = value + " hundred";
+                        }
+                    }
+                    else if (format.Name == "IncludeThousandDescriptor")
+                    {
+                        if (isNumeric)
+                        {
+                            value = value + " thousand";
+                        }
+                    }
+                    else if (format.Name == "IncludeMillionDescriptor")
+                    {
+                        if (isNumeric)
+                        {
+                            value = value + " million";
+                        }
+                    }
+                    else if (format.Name == "IncludeBillionDescriptor")
+                    {
+                        if (isNumeric)
+                        {
+                            value = value + " billion";
+                        }
+                    }
+                    else if (format.Name == "IncludeDollarSymbol")
+                    {
+                        if (value.IndexOf("$") == -1)
                         {
                             value = "$" + value;
                         }
                     }
+                    else if (format.Name == "ExcludeDollarSymbol")
+                    {
+                        if (value.IndexOf("$") > -1)
+                        {
+                            value = value.Replace("$", "");
+                        }
+                    }
+                    else if (format.Name == "DateShowLongDateFormat")
+                    {
+                        if (isDate)
+                        {
+                            var date = Convert.ToDateTime(value);
+                            value = GetMonth(date.Month - 1) + " " + date.Day + ", " + date.Year;
+                        }
+                    }
+                    else if (format.Name == "DateShowYearOnly")
+                    {
+                        if (isDate)
+                        {
+                            var date = Convert.ToDateTime(value);
+                            value = date.Year.ToString();
+                        }
+                    }
+                    else if (format.Name == "ConvertNegativeSymbolToParenthesis")
+                    {
+                        var h = value.IndexOf("$") > -1;
+                        var hasHundred = value.IndexOf("hundred") > -1;
+                        var hasThousand = value.IndexOf("thousand") > -1;
+                        var hasMillion = value.IndexOf("million") > -1;
+                        var hasBillion = value.IndexOf("billion") > -1;
+                        if (value.IndexOf("-") > -1)
+                        {
+                            var tempValue = value.Replace("$", "").Replace("-", "").Replace("(", "").Replace(")", "").Replace("hundred", "").Replace("thousand", "").Replace("million", "").Replace("billion", "").Trim();
+                            value = "(" + tempValue + ")";
+                            if (h)
+                            {
+                                value = "$" + value;
+                            }
+                            if (hasHundred)
+                            {
+                                value = value + " hundred";
+                            }
+                            else if (hasThousand)
+                            {
+                                value = value + " thousand";
+                            }
+                            else if (hasMillion)
+                            {
+                                value = value + " million";
+                            }
+                            else if (hasBillion)
+                            {
+                                value = value + " billion";
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (decimalPlace.HasValue)
+            {
+                var _hasComma = value.IndexOf(",") > -1;
+                var _value = value.Replace("$", "").Replace(",", "").Replace("-", "").Replace("%", "").Replace("(", "").Replace(")", "").Replace("hundred", "").Replace("thousand", "").Replace("million", "").Replace("billion", "").Trim();
+                if (Regex.IsMatch(_value, @"^[+-]?\d*[.]?\d*$"))
+                {
+                    var _format = "#0";
+                    for (int i = 0; i < decimalPlace.Value; i++)
+                    {
+                        if (i == 0)
+                        {
+                            _format += ".";
+                        }
+                        _format += "0";
+                    }
+                    var _fromNumber = _hasComma ? ToThousandsString(_value) : _value;
+                    var _newNumber = Convert.ToDecimal(_value).ToString(_format);
+                    var _toNumber = _hasComma ? ToThousandsString(_newNumber) : _newNumber;
+                    value = value.Replace(_fromNumber, _toNumber);
                 }
             }
             return value;
         }
 
+        /// <summary>
+        /// Verify the value is a Date.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         static private bool IsDate(string value)
         {
             var flag = false;
@@ -604,24 +693,79 @@ namespace SmartLink.Service
             return flag;
         }
 
-        static private string AddComma(string value)
+        /// <summary>
+        /// Convert the value to thousands string.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        static private string ToThousandsString(string value)
         {
-            string newstr = string.Empty;
-            Regex r = new Regex(@"(\d+?)(\d{3})*(\.\d+|$)");
-            Match m = r.Match(value);
-            newstr += m.Groups[1].Value;
-            for (int i = 0; i < m.Groups[2].Captures.Count; i++)
-            {
-                newstr += "," + m.Groups[2].Captures[i].Value;
-            }
-            newstr += m.Groups[3].Value;
-            return newstr;
+            var decimalLength = value.Split('.').Length > 1 ? value.Split('.')[1].Length : 0;
+            return Convert.ToDecimal(value).ToString("N" + decimalLength);
         }
 
+        /// <summary>
+        /// Get the month.
+        /// </summary>
+        /// <param name="month"></param>
+        /// <returns></returns>
         static private string GetMonth(int month)
         {
             var _m = new string[12] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
             return _m[month];
+        }
+
+        /// <summary>
+        /// Get document url by id.
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public async Task<DocumentCheckResult> GetDocumentUrlByIdAsync(DocumentCheckResult result)
+        {
+            string url = string.Empty;
+            try
+            {
+                string authHeader = GetAuthorizationHeader();
+                using (var client = new WebClient())
+                {
+                    client.Headers.Add(HttpRequestHeader.Authorization, authHeader);
+                    client.Headers.Add(HttpRequestHeader.Accept, "application/json");
+                    var downloadString = await client.DownloadStringTaskAsync(new Uri(Resource + "/_api/search/query?querytext='DlcDocId:" + result.DocumentId + "'&t=" + (new Random()).Next()));
+                    var json = JObject.Parse(downloadString);
+
+                    foreach (JObject jO in (JArray)json["PrimaryQueryResult"]["RelevantResults"]["Table"]["Rows"])
+                    {
+                        foreach (JObject jA in (JArray)jO["Cells"])
+                        {
+                            if (jA["Key"].Value<string>() == "Path")
+                            {
+                                url = jA["Value"].Value<string>();
+                                break;
+                            }
+                        }
+                        if (!string.IsNullOrEmpty(url))
+                        {
+                            break;
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        result.IsSuccess = true;
+                        result.DocumentUrl = url;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "Didn't find the document with ID: " + result.DocumentId;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.Message = ex.Message;
+            }
+            return result;
         }
     }
 }

@@ -139,7 +139,20 @@ namespace SmartLink.Service.Tests
             var destinationPoints = (new List<DestinationPoint>()); //4148 tag
             destinationPoints.Add(new DestinationPoint() { Id = Guid.Parse("bf21e129-09f7-4809-b8f6-794859cb33a2"),RangeId= "6df20cc4 - 1e0b - 2cdc - 699e-3f4e8d902670" });
 
-            var value = "6%";
+            destinationPoints.FirstOrDefault().CustomFormats.Add(
+                new CustomFormat() { Name = "ConvertToHundreds" }
+            );
+            destinationPoints.FirstOrDefault().CustomFormats.Add(
+                new CustomFormat() { Name = "IncludeBillionDescriptor" }
+            );
+            destinationPoints.FirstOrDefault().CustomFormats.Add(
+                new CustomFormat() { Name = "IncludeDollarSymbol" }
+            );
+            destinationPoints.FirstOrDefault().CustomFormats.Add(
+                new CustomFormat() { Name = "ConvertNegativeSymbolToParenthesis" }
+            );
+
+            var value = "-12,000,000";
             using (var stream = new FileStream("DK - Press Release FY17Q2_4.docx", FileMode.Open))
             {
                 var result = new DocumentUpdateResult();

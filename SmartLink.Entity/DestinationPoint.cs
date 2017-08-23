@@ -42,6 +42,8 @@ namespace SmartLink.Entity
 
         public virtual ICollection<CustomFormat> CustomFormats { get; set; }
 
+        public int? DecimalPlace { get; set; } = null;
+
         public DestinationPoint()
         {
             CustomFormats = new List<CustomFormat>();

@@ -63,6 +63,7 @@
     <Compile Include="CustomFormat.cs" />
     <Compile Include="DestinationCatalog.cs" />
     <Compile Include="DestinationPoint.cs" />
+    <Compile Include="DocumentCheckResult.cs" />
     <Compile Include="DocumentUpdateResult.cs" />
     <Compile Include="LogEntity.cs" />
     <Compile Include="PublishedMessage.cs" />

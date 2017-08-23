@@ -10,6 +10,7 @@ namespace SmartLink.Common
         public const int AZURETABLE_BATCH_COUNT = 100;
         public const string PUBLISH_QUEUE_NAME = "publishqueue";
         public const string PUBLISH_TABLE_NAME = "publishtable";
+        public const string CHECK_TABLE_NAME = "checkdocumenttable";
 
         static public readonly string POINTTYPE_SOURCEPOINT = "Source Point";
         static public readonly string POINTTYPE_SOURCEPOINTHISTORY = "Source Point history";

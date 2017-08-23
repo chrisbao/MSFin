@@ -43,6 +43,11 @@ namespace SmartLink.Entity
 
         public SourcePointStatus Status { get; set; }
 
+        public string NamePosition { get; set; }
+
+        [StringLength(255)]
+        public string NameRangeId { get; set; }
+
         public Guid CatalogId { get; set; }
 
         [ForeignKey("CatalogId")]
@@ -54,7 +59,7 @@ namespace SmartLink.Entity
 
         [JsonIgnore]
         public virtual ICollection<DestinationPoint> DestinationPoints { get; set; }
-        
+
         [NotMapped]
         [JsonIgnore]
         public bool SerializeCatalog { get; set; } = false;

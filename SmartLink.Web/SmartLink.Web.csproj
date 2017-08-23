@@ -253,6 +253,7 @@
     <Compile Include="Controllers\DestinationPointController.cs" />
     <Compile Include="Controllers\ExcelController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PowerPointController.cs" />
     <Compile Include="Controllers\SourcePointController.cs" />
     <Compile Include="Controllers\WordController.cs" />
     <Compile Include="Global.asax.cs">
@@ -285,15 +286,19 @@
     <Content Include="Images\edit.png" />
     <Content Include="Images\error.png" />
     <Content Include="Images\excel-cell.png" />
+    <Content Include="Images\icon-decrease.png" />
     <Content Include="Images\icon-file.png" />
     <Content Include="Images\icon-folder.png" />
+    <Content Include="Images\icon-increase.png" />
     <Content Include="Images\icon-library.png" />
     <Content Include="Images\icon-site.png" />
     <Content Include="Images\list-style.png" />
     <Content Include="Images\loading.gif" />
     <Content Include="Images\logo-l.png" />
     <Content Include="Images\logo-s.png" />
+    <Content Include="Images\logo.png" />
     <Content Include="Images\mode-excel.png" />
+    <Content Include="Images\mode-powerpoint.png" />
     <Content Include="Images\mode-word.png" />
     <Content Include="Images\publish-all.png" />
     <Content Include="Images\publish.png" />
@@ -312,6 +317,7 @@
     <Content Include="Images\w-up-ss.png" />
     <Content Include="Scripts\App\App.js" />
     <Content Include="Scripts\App\Excel\Point.js" />
+    <Content Include="Scripts\App\PowerPoint\Point.js" />
     <Content Include="Scripts\App\SignIn.js" />
     <Content Include="Scripts\App\Word\Point.js" />
     <Content Include="Scripts\bignumber.min.js" />
@@ -629,6 +635,7 @@
     <Content Include="Views\Excel\Point.cshtml" />
     <Content Include="Views\Word\Point.cshtml" />
     <Content Include="Views\Admin\Consent.cshtml" />
+    <Content Include="Views\PowerPoint\Point.cshtml" />
     <None Include="Web.Dev.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -702,6 +709,8 @@
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
   <Import Project="..\packages\Microsoft.Web.WebJobs.Publish.1.0.12\tools\webjobs.targets" Condition="Exists('..\packages\Microsoft.Web.WebJobs.Publish.1.0.12\tools\webjobs.targets')" />
+  <Import Project="..\packages\Microsoft.Web.WebJobs.Publish.1.0.10\tools\webjobs.targets" Condition="Exists('..\packages\Microsoft.Web.WebJobs.Publish.1.0.10\tools\webjobs.targets')" />
+  <Import Project="..\packages\Microsoft.Web.WebJobs.Publish.1.0.13\tools\webjobs.targets" Condition="Exists('..\packages\Microsoft.Web.WebJobs.Publish.1.0.13\tools\webjobs.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

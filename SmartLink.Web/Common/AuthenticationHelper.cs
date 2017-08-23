@@ -13,9 +13,16 @@ namespace SmartLink.Web.Common
 
         public static string consentUrl;
 
+        public static string sharePointToken;
+
         public static Task<string> AcquireTokenAsync()
         {
              return Task.FromResult(token);
+        }
+
+        public static Task<string> AcquireSharePointTokenAsync()
+        {
+            return Task.FromResult(sharePointToken);
         }
     }
 }

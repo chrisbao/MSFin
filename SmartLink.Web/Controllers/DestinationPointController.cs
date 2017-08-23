@@ -40,7 +40,8 @@ namespace SmartLink.Web.Controllers
             {
                 var destinationPoint = _mapper.Map<DestinationPoint>(destinationPointAdded);
                 var catalogName = HttpUtility.UrlDecode(destinationPointAdded.CatalogName);
-                return Ok(await _destinationService.AddDestinationPointAsync(catalogName, destinationPoint));
+                var documentId = HttpUtility.UrlDecode(destinationPointAdded.DocumentId);
+                return Ok(await _destinationService.AddDestinationPointAsync(catalogName, documentId, destinationPoint));
             }
             catch (Exception ex)
             {
@@ -66,9 +67,9 @@ namespace SmartLink.Web.Controllers
 
         [HttpGet]
         [Route("api/DestinationPointCatalog")]
-        public async Task<IHttpActionResult> GetDestinationPointCatalog(string name)
+        public async Task<IHttpActionResult> GetDestinationPointCatalog(string name, string documentId)
         {
-            var retValue = await _destinationService.GetDestinationCatalogAsync(name);
+            var retValue = await _destinationService.GetDestinationCatalogAsync(HttpUtility.UrlDecode(name), documentId);
             return Ok(retValue);
         }
 
@@ -93,6 +94,34 @@ namespace SmartLink.Web.Controllers
         public async Task<IHttpActionResult> GetCustomFormats()
         {
             var retValue = await _destinationService.GetCustomFormatsAsync();
+            return Ok(retValue);
+        }
+
+        [HttpPut]
+        [Route("api/UpdateDestinationPointCustomFormat")]
+        public async Task<IHttpActionResult> UpdateDestinationPointCustomFormat([FromBody]DestinationPointForm destinationPointAdded)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid posted data.");
+            }
+
+            try
+            {
+                var destinationPoint = _mapper.Map<DestinationPoint>(destinationPointAdded);
+                return Ok(await _destinationService.UpdateDestinationPointCustomFormatAsync(destinationPoint));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("api/SharePointAccessToken")]
+        public async Task<IHttpActionResult> GetSharePointAccessToken()
+        {
+            var retValue = await AuthenticationHelper.AcquireSharePointTokenAsync();
             return Ok(retValue);
         }
     }

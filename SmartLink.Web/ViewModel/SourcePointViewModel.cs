@@ -26,5 +26,11 @@ namespace SmartLink.Web.ViewModel
         public DateTime Created { get; set; }
 
         public int[] GroupIds { get; set; }
+
+        public string NameRangeId { get; set; }
+
+        public string NamePosition { get; set; }
+
+        public string DocumentId { get; set; }
     }
 }

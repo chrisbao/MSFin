@@ -3,7 +3,6 @@
     *   * See LICENSE in the project root for license information.
 *@
 
-
 @{
     Layout = null;
 }
@@ -45,9 +44,11 @@
             <div class="content-header">
                 <div class="add-header">
                     <h3 class="title-add" title="Add Destination Point">Add Destination Point</h3>
+                    <h3 class="title-edit" title="Update Custom Format">Update Custom Format</h3>
                     <div class="btnWrapper">
                         <button id="btnCancel">Cancel</button>
                         <button id="btnAdd">Add</button>
+                        <button id="btnSave">Save</button>
                         <button id="btnNext">NEXT</button>
                     </div>
                 </div>
@@ -123,22 +124,37 @@
                 </div>
             </div>
             <div class="add-point-second">
-                <h4 class="add-point-source i-success">Selected Source Point<i></i></h4>
-                <div class="add-point-files">
-                    <span id="selectedName"></span>
-                    <span id="selectedFile"></span>
+                <div class="add-point-info">
+                    <h4 class="add-point-source i-success">Selected Source Point<i></i></h4>
+                    <div class="add-point-files">
+                        <span id="selectedName"></span>
+                        <span id="selectedFile"></span>
+                    </div>
+                    <h4 class="add-point-cursor">Next, place your cursor in the document where you want the source value displayed, then click "Add".<i></i></h4>
                 </div>
-                <h4 class="add-point-cursor">Next, place your cursor in the document where you want the source value displayed, then click "Add".<i></i></h4>
-                <h4 class="add-point-source">Select Custom Format<i></i></h4>
-                <div class="add-point-format">
-                    <a id="btnSelectFormat" href="javascript:"></a>
-                    <i id="iconSelectFormat"></i>
-                    <ul id="listFormats"></ul>
+                <div class="add-point-customformat">
+                    <h4 class="add-point-source">Select Custom Format<i></i></h4>
+                    <div class="add-point-preview">
+                        <label>Preview:</label><span id="lbPreviewValue"></span>
+                    </div>
+                    <div id="addCustomFormat" class="add-point-format">
+                        <div class="add-point-place">
+                            <label>Decimal place:</label>
+                            <span><i class="i-increase" title="Increase decimal places"></i><i class="i-decrease" title="Decrease decimal places"></i></span>
+                        </div>
+                        <div class="add-point-select">
+                            <a id="btnSelectFormat" href="javascript:"></a>
+                            <i id="iconSelectFormat"></i>
+                            <ul id="listFormats">
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="content manage-point">
-            <ul id="listPoints" class="point-list"></ul>
+            <ul id="listPoints" class="point-list">
+            </ul>
             <div class="clear"></div>
             <div id="pager">
                 <div>
@@ -153,6 +169,11 @@
                 <i id="tlpClose" title="Close"></i>
                 <div>The document is not in sync with the catalog, please click refresh to synchronize.</div>
             </div>
+        </div>
+        <div class="content document-error">
+            <p>Load document ID failed.</p>
+            <span id="lblDocumentIDError"></span>
+            <a id="btnDocumentIDReload" href="javascript:">Click to reload document ID</a>
         </div>
         <div class="footer">
             <i></i><span>Smart Link</span>

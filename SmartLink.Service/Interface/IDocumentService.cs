@@ -11,6 +11,7 @@ namespace SmartLink.Service
 {
     public interface IDocumentService
     {
-        Task<DocumentUpdateResult> UpdateBookmarkValueAsync(string destinationFileName, IEnumerable<DestinationPoint> destinationPoints, string value);
+        Task<DocumentUpdateResult> UpdateBookmarkValueAsync(string documentId, IEnumerable<DestinationPoint> destinationPoints, string value);
+        Task<DocumentCheckResult> GetDocumentUrlByIdAsync(DocumentCheckResult result);
     }
 }

@@ -87,19 +87,22 @@
         <div class="content add-point">
             <div class="point-item input-wrapper source-name">
                 <label>Source Point Name<em>*</em></label>
-                <input type="text" id="txtName" />
+                <div class="select-range">
+                    <input type="text" id="txtName" />
+                    <a href="javascript:" id="btnSelectName" title="Select source point name"></a>
+                </div>
             </div>
-            <div class="point-item input-wrapper select-group">
-                <label>Assign to Groups:</label>
-                <ul id="groupWrapper"></ul>
-            </div>
-            <h4>Set Location</h4>
+            <h4 style="display: none;">Set Location</h4>
             <div class="point-item input-wrapper">
                 <label>Select range:<em>*</em></label>
                 <div class="select-range">
                     <input type="text" id="txtLocation" />
-                    <a href="javascript:" id="btnLocation"></a>
+                    <a href="javascript:" id="btnLocation" title="Select range"></a>
                 </div>
+            </div>
+            <div class="point-item input-wrapper select-group">
+                <label>Assign to Groups:</label>
+                <ul id="groupWrapper"></ul>
             </div>
             <div class="point-associated">
                 <h4>Files associated with this Source Point:</h4>
@@ -107,7 +110,8 @@
             </div>
         </div>
         <div class="content manage-point">
-            <ul id="listPoints" class="point-list"></ul>
+            <ul id="listPoints" class="point-list">
+            </ul>
             <div class="clear"></div>
             <div id="pager">
                 <div>
@@ -118,6 +122,11 @@
                     <input type="text" id="pagerValue" /><button id="pagerGo">GO</button>
                 </div>
             </div>
+        </div>
+        <div class="content document-error">
+            <p>Load document ID failed.</p>
+            <span id="lblDocumentIDError"></span>
+            <a id="btnDocumentIDReload" href="javascript:">Click to reload document ID</a>
         </div>
         <div class="footer">
             <i></i><span>Smart Link</span>

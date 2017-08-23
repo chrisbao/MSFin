@@ -11,24 +11,29 @@ var point = (function () {
     var point = {
         ///The URL of current open excel document.
         filePath: "",
-        /// Define all UI controls.
+        ///The document id of the current open excel document.
+        documentId: "",
+        ///Define all UI controls.
         controls: {},
-        ///
+        ///The selected source point catalog.
         file: null,
-        ///
+        ///The selected source point.
         selected: null,
+        ///The selected destination point.
+        model: null,
         ///Define source point groups.
         groups: [],
         ///Define the destination points. 
         points: [],
-        ///
+        ///The keyword in add destination point page.
         keyword: "",
-        ///
+        ///The keyword in destination point list page.
         sourcePointKeyword: "",
-        //the background color for the highlighted destination ponit.
+        ///The background color for the highlighted destination ponit.
         highlightColor: "#66FF00",
-        //highlight the destination point or not
+        ///Highlight the destination point or not
         highlighted: false,
+        ///Determine if it is first time load page or not.
         firstLoad: true,
         ///Define default page index 
         pagerIndex: 0,
@@ -39,20 +44,28 @@ var point = (function () {
         ///Define all service endpoints.
         endpoints: {
             add: "/api/DestinationPoint",
-            catalog: "/api/SourcePointCatalog?name=",
+            catalog: "/api/SourcePointCatalog?documentId=",
             groups: "/api/SourcePointGroup",
             list: "/api/DestinationPointCatalog?name=",
             del: "/api/DestinationPoint?id=",
             deleteSelected: "/api/DeleteSelectedDestinationPoint",
             token: "/api/GraphAccessToken",
-            graph: "https://graph.microsoft.com/beta",
-            customFormat: "/api/CustomFormats"
+            sharePointToken: "/api/SharePointAccessToken",
+            graph: "https://graph.microsoft.com/v1.0",
+            customFormat: "/api/CustomFormats",
+            updateCustomFormat: "/api/UpdateDestinationPointCustomFormat"
         },
+        ///Define the api host and token.
+        api: {
+            host: "",
+            token: "",
+            sharePointToken: ""
+        }
     }, that = point;
 
     that.init = function () {
-        ///get the document URL.
-        that.filePath = Office.context && Office.context.document && Office.context.document.url ? Office.context.document.url : "https://cand3.sharepoint.com/Shared%20Documents/Test.docx";
+        ///Get the document URL.
+        that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://cand3.sharepoint.com/Shared%20Documents/Test.docx" : Office.context.document.url;
         that.controls = {
             body: $("body"),
             main: $(".main"),
@@ -64,6 +77,7 @@ var point = (function () {
             next: $("#btnNext"),
             cancel: $("#btnCancel"),
             save: $("#btnAdd"),
+            update: $("#btnSave"),
             file: $("#txtFile"),
             fileTrigger: $("#btnOpenBrowse"),
             keyword: $("#txtKeyword"),
@@ -82,6 +96,8 @@ var point = (function () {
             searchSourcePoint: $("#iSearchSourcePoint"),
             autoCompleteControl2: $("#autoCompleteWrap2"),
             list: $("#listPoints"),
+            documentIdError: $("#lblDocumentIDError"),
+            documentIdReload: $("#btnDocumentIDReload"),
             headerListPoints: $("#headerListPoints"),
             moveUp: $("#btnMoveUp"),
             moveDown: $("#btnMoveDown"),
@@ -90,6 +106,10 @@ var point = (function () {
             formatBtn: $("#btnSelectFormat"),
             formatIcon: $("#iconSelectFormat"),
             formatList: $("#listFormats"),
+            previewValue: $("#lbPreviewValue"),
+            decimalIncrease: $(".i-increase"),
+            decimalDecrease: $(".i-decrease"),
+            addCustomFormat: $("#addCustomFormat"),
             popupMain: $("#popupMain"),
             popupErrorOK: $("#btnErrorOK"),
             popupMessage: $("#popupMessage"),
@@ -117,7 +137,7 @@ var point = (function () {
             pagerValue: $("#pagerValue"),
             pagerGo: $("#pagerGo")
         };
-        ///define the event handlers.
+        ///Define the event handlers.
         that.highlighted = that.utility.highlight.get();
         that.controls.highlight.find("span").html(that.highlighted ? "Highlight Off" : "Highlight On");
         that.controls.highlight.prop("title", that.highlighted ? "Highlight Off" : "Highlight On");
@@ -146,7 +166,12 @@ var point = (function () {
             that.action.cancel();
         });
         that.controls.save.click(function () {
+            that.controls.save.blur();
             that.action.save();
+        });
+        that.controls.update.click(function () {
+            that.controls.update.blur();
+            that.action.update();
         });
         that.controls.file.click(function () {
             that.browse.init();
@@ -222,40 +247,62 @@ var point = (function () {
             that.controls.tooltipMessage.removeClass("active");
         });
         that.controls.formatBtn.click(function () {
+            that.utility.formatHeight();
             that.controls.formatList.hasClass("active") ? that.controls.formatList.removeClass("active") : that.controls.formatList.addClass("active");
             return false;
         });
         that.controls.formatIcon.click(function () {
+            that.utility.formatHeight();
             that.controls.formatList.hasClass("active") ? that.controls.formatList.removeClass("active") : that.controls.formatList.addClass("active");
             return false;
         });
-        that.controls.formatList.on("click", "li", function () {
-            var _ck = $(this).hasClass("checked");
+        that.controls.formatList.on("click", "ul > li", function () {
+            var _ck = $(this).hasClass("checked"), _sg = $(this).closest(".drp-radio").length > 0, _cn = $(this).data("name");
+            if (_sg) {
+                $(this).closest("ul").find("li").removeClass("checked")
+            }
             _ck ? $(this).removeClass("checked") : $(this).addClass("checked");
-            if ($(this).hasClass("drp-header")) {
-                if (_ck) {
-                    that.controls.formatList.find("li").removeClass("checked");
-                }
-                else {
-                    that.controls.formatList.find("li").addClass("checked");
-                }
-            }
-            else {
-                if (_ck) {
-                    if (that.controls.formatList.find("li.drp-item.checked").length == 0) {
-                        that.controls.formatList.find("li.drp-header").removeClass("checked");
-                    }
-                }
-                else {
-                    if (that.controls.formatList.find("li.drp-item.checked").length == that.controls.formatList.find("li.drp-item").length) {
-                        that.controls.formatList.find("li.drp-header").addClass("checked");
-                    }
+            if (_cn == "ConvertToThousands" || _cn == "ConvertToMillions" || _cn == "ConvertToBillions" || _cn == "ConvertToHundreds") {
+                that.controls.formatList.removeClass("convert1 convert2 convert3 convert4");
+                that.controls.formatList.find(".drp-descriptor li.checked").removeClass("checked");
+                if (!_ck) {
+                    var _tn = _cn == "ConvertToThousands" ? "IncludeThousandDescriptor" : (_cn == "ConvertToMillions" ? "IncludeMillionDescriptor" : (_cn == "ConvertToBillions" ? "IncludeBillionDescriptor" : (_cn == "ConvertToHundreds" ? "IncludeHundredDescriptor" : "")));
+                    var _cl = _cn == "ConvertToThousands" ? "convert2" : (_cn == "ConvertToMillions" ? "convert3" : (_cn == "ConvertToBillions" ? "convert4" : (_cn == "ConvertToHundreds" ? "convert1" : "")));
+                    that.controls.formatList.addClass(_cl);
+                    that.controls.formatList.find("ul > li[data-name=" + _tn + "]").addClass("checked");
                 }
             }
-            that.action.selectedFormats();
+            that.action.selectedFormats($(this));
             return false;
         });
+        that.controls.decimalIncrease.click(function () {
+            var _p = that.controls.formatBtn.prop("place"), _v = that.format.remove(that.controls.previewValue.text());
+            if (_p == "") {
+                _p = that.format.getDecimalLength(_v);
+            }
+            _p = parseInt(_p);
+            that.controls.formatBtn.prop("place", ++_p);
+            that.format.preview();
+        });
+        that.controls.decimalDecrease.click(function () {
+            var _p = that.controls.formatBtn.prop("place"), _v = that.format.remove(that.controls.previewValue.text());
+            if (_p == "") {
+                _p = that.format.getDecimalLength(_v);
+            }
+            _p = parseInt(_p);
+            if (_p > 0) {
+                that.controls.formatBtn.prop("place", --_p);
+                that.format.preview();
+            }
+        });
+        that.controls.documentIdReload.click(function () {
+            window.location.reload();
+        });
 
+        that.controls.list.on("click", ".i-edit", function () {
+            that.action.edit($(this).closest(".point-item"));
+            return false;
+        });
         that.controls.list.on("click", ".i-history", function () {
             that.action.history($(this).closest(".point-item"));
             return false;
@@ -264,7 +311,7 @@ var point = (function () {
             that.action.del($(this).closest(".point-item"));
             return false;
         });
-        that.controls.list.on("click", ".point-item .i2, .point-item .i3, .point-item .i5, .point-item .error-info, .point-item .item-history", function (e) {
+        that.controls.list.on("click", ".point-item .i2, .point-item .i3, .point-item .i5, .point-item .error-info, .point-item .item-history, .point-item .item-format", function (e) {
             that.action.goto($(this).closest(".point-item"));
         });
         that.controls.main.on("change", ".ckb-wrapper input", function (e) {
@@ -339,13 +386,19 @@ var point = (function () {
         });
         $(window).resize(function () {
             that.utility.height();
+            that.utility.formatHeight();
         });
         that.utility.height();
         that.action.dft(that.controls.sourcePointName, false);
-        that.list({ refresh: false, index: 1 }, function (result) {
-            if (result.status == app.status.failed) {
-                that.popup.message({ success: false, title: result.error.statusText });
-            }
+        ///Retrieve the document ID via document URL
+        that.document.init(function () {
+            ///Load all destination points in management page.
+            that.list({ refresh: false, index: 1 }, function (result) {
+                if (result.status == app.status.failed) {
+                    ///Dipslay the error message if failed to get destination point list.
+                    that.popup.message({ success: false, title: result.error.statusText });
+                }
+            });
         });
     };
     ///Load the destination point list.
@@ -359,13 +412,16 @@ var point = (function () {
                     that.utility.pager.init({ refresh: options.refresh, index: options.index });
                     callback({ status: result.status });
                 }
+                else {
+                    that.utility.pager.status({ length: 0 });
+                }
             }
             else {
                 callback({ status: result.status, error: result.error });
             }
         });
     };
-    ///default display when add destination point.
+    ///Default display when add destination point.
     that.default = function () {
         if (that.groups.length == 0) {
             that.popup.processing(true);
@@ -388,10 +444,10 @@ var point = (function () {
             that.controls.main.removeClass("manage").addClass("add");
         }
     };
-    ///load source points after selecting the file in the file explorer.
+    ///Load source points after selecting the file in the file explorer.
     that.files = function (options) {
         that.popup.processing(true);
-        that.service.catalog({ path: options.path }, function (result) {
+        that.service.catalog({ documentId: options.documentId }, function (result) {
             if (result.status == app.status.succeeded) {
                 that.popup.processing(false);
                 that.file = result.data;
@@ -405,7 +461,7 @@ var point = (function () {
     };
     ///The utility methods.
     that.utility = {
-        /// get current destination point.
+        ///Get current destination point.
         model: function (id) {
             var _m = null;
             if (id && that.points) {
@@ -432,7 +488,7 @@ var point = (function () {
         mode: function (callback) {
             callback();
         },
-        //get sheet/cell name.
+        ///Get sheet/cell name.
         position: function (p) {
             if (p != null && p != undefined) {
                 var _i = p.lastIndexOf("!"), _s = p.substr(0, _i).replace(new RegExp(/('')/g), '\''), _c = p.substr(_i + 1, p.length);
@@ -458,7 +514,7 @@ var point = (function () {
             });
             return { file: file != fd ? file : "", keyword: keyword != kd ? keyword : "", groups: groups };
         },
-        ///get the index of current destination point.
+        ///Get the index of current destination point.
         index: function (options) {
             var _i = -1;
             $.each(that.points, function (m, n) {
@@ -468,6 +524,10 @@ var point = (function () {
                 }
             });
             return _i;
+        },
+        ///Update the destination point in the array.
+        update: function (options) {
+            that.points[that.utility.index(options)] = options;
         },
         ///Add destination point to the points array.
         add: function (options) {
@@ -493,11 +553,11 @@ var point = (function () {
             }
             return _f;
         },
-        ///get the file name.
+        ///Get the file name.
         fileName: function (path) {
             return path.lastIndexOf("/") > -1 ? path.substr(path.lastIndexOf("/") + 1) : (path.lastIndexOf("\\") > -1 ? path.substr(path.lastIndexOf("\\") + 1) : path);
         },
-        /// get/set the highlighted destination points.
+        ///Get/set the highlighted destination points.
         highlight: {
             get: function () {
                 try {
@@ -518,7 +578,7 @@ var point = (function () {
                 }
             }
         },
-        //convert the val tostring and remove the blank space at the start or end of the word.
+        //Convert the val tostring and remove the blank space at the start or end of the word.
         toString: function (val) {
             if (val != undefined && val != null) {
                 return $.trim(val.toString());
@@ -527,25 +587,25 @@ var point = (function () {
         },
         ///Paging feature for the destination point list.
         pager: {
-            ///initialize the destination point list UI.
+            ///Initialize the destination point list UI.
             init: function (options) {
                 that.controls.pagerValue.val("");
                 that.pagerIndex = options.index ? options.index : 1;
                 that.ui.list({ refresh: options.refresh });
             },
-            //Go to prev page.
+            ///Go to prev page.
             prev: function () {
                 that.controls.pagerValue.val("");
                 that.pagerIndex--;
                 that.ui.list({ refresh: false });
             },
-            //Go to next page.
+            ///Go to next page.
             next: function () {
                 that.controls.pagerValue.val("");
                 that.pagerIndex++;
                 that.ui.list({ refresh: false });
             },
-            //Get the status of paging.
+            ///Get the status of paging.
             status: function (options) {
                 that.pagerCount = Math.ceil(options.length / that.pagerSize);
                 that.controls.pagerTotal.html(options.length);
@@ -555,7 +615,7 @@ var point = (function () {
                 that.pagerIndex == that.pagerCount || that.pagerCount == 0 ? that.controls.pagerNext.addClass("disabled") : that.controls.pagerNext.removeClass("disabled");
             }
         },
-        //Sort the destination point in managment page by the conntent controls in word document.
+        ///Sort the destination point in managment page by the conntent controls in word document.
         order: function (callback) {
             var _d = $.extend([], that.points);
             that.range.all(function (result) {
@@ -578,7 +638,7 @@ var point = (function () {
                 callback({ status: app.status.succeeded, data: _d });
             });
         },
-        //return current selected destination points in management page.
+        ///Return current selected destination points in management page.
         selected: function () {
             var _s = [];
             that.controls.list.find(".point-item .ckb-wrapper input").each(function (i, d) {
@@ -589,7 +649,7 @@ var point = (function () {
             });
             return _s;
         },
-        //Caculate the height for the destination point list in management page or add destination page dymamically and set the scroll bar accordingly.. 
+        ///Caculate the height for the destination point list in management page or add destination page dymamically and set the scroll bar accordingly.. 
         height: function () {
             if (that.controls.main.hasClass("add")) {
                 var _h = that.controls.main.outerHeight();
@@ -605,13 +665,12 @@ var point = (function () {
                 that.controls.list.css("maxHeight", (_h - 192 - 70 - _h1) + "px");
             }
         },
-        //Uncheck all selected destination points.
+        ///Uncheck all selected destination points.
         unSelectAll: function () {
             that.controls.headerListPoints.find(".point-header .ckb-wrapper input").prop("checked", false);
             that.controls.headerListPoints.find(".point-header .ckb-wrapper").removeClass("checked");
         },
-            
-        //Get an array of paths (server ralative URl splitted by '/' )
+        ///Get an array of paths (server ralative URl splitted by '/' )
         path: function () {
             var _a = that.filePath.split("//")[1], _b = _a.split("/"), _p = [_b[0]];
             _b.shift();
@@ -624,16 +683,24 @@ var point = (function () {
                 _p.push(_c.join("/"));
             }
             return _p;
+        },
+        ///Calculate the height custom format display area.
+        formatHeight: function () {
+            if (that.controls.main.hasClass("add")) {
+                var _a = that.controls.main.outerHeight();
+                var _h = that.controls.formatBtn.offset().top;
+                that.controls.formatList.css("maxHeight", (_a - _h - 96) + "px");
+            }
         }
     };
-
+    ///Define all the event handlers.
     that.action = {
-        ///hide the tooltip and hide the custom format dropdown list.
+        ///Hide the tooltip and hide the custom format dropdown list.
         body: function () {
             $(".search-tooltips").hide();
             that.controls.formatList.removeClass("active");
         },
-        ///add destination point.
+        ///Add destination point.
         add: function () {
             that.utility.mode(function () {
                 that.file = null;
@@ -641,9 +708,9 @@ var point = (function () {
                 that.default();
             });
         },
-        ///go to destination management page.
+        ///Go to destination management page.
         back: function () {
-            that.controls.main.removeClass("add step-first step-second").addClass("manage");
+            that.controls.main.removeClass("add edit step-first step-second").addClass("manage");
         },
         ///Set the default value for the control.
         dft: function (elem, on) {
@@ -660,13 +727,14 @@ var point = (function () {
                 }
             }
         },
-        ///display toggle for the filter groups 
+        ///Display toggle for the filter groups 
         filter: function () {
             that.controls.filterMain.hasClass("open-filter") ? that.controls.filterMain.removeClass("open-filter") : that.controls.filterMain.addClass("open-filter");
         },
         ///Set the selected excel file name in file textbox and display the source points
         select: function (options) {
             that.controls.file.val(options.name).removeClass("input-default");
+            that.controls.selectedFile.html("<strong>Source file:</strong>" + options.name + "");
             that.ui.select();
             that.selected = null;
             that.ui.sources({ data: that.file, selected: [], keyword: "" });
@@ -680,7 +748,7 @@ var point = (function () {
             that.selected = null;
             that.ui.sources({ data: that.file, selected: _e.groups, keyword: _e.keyword });
         },
-        ///select the checkbox.
+        ///Select the checkbox.
         checked: function (o) {
             if (o.get(0).checked) {
                 o.closest(".ckb-wrapper").addClass("checked");
@@ -691,7 +759,7 @@ var point = (function () {
             that.selected = null;
             that.ui.sources({ data: that.file, selected: that.utility.entered().groups, keyword: that.keyword });
         },
-        ///enable the next button after selecting the source point search result.
+        ///Enable the next button after selecting the source point search result.
         choose: function (o) {
             var _i = o.data("id");
             if (!that.selected || (that.selected && that.selected.Id != _i)) {
@@ -700,10 +768,10 @@ var point = (function () {
                 o.addClass("selected");
             }
             that.controls.selectedName.html(o.data("name"));
-            that.controls.selectedFile.html("<strong>Source file:</strong>" + o.data("file") + "");
+            that.controls.formatBtn.prop("original", o.data("value"));
             that.ui.status({ next: true });
         },
-        ///display the second step when add destination point.
+        ///Display the second step when add destination point.
         next: function () {
             if (!that.controls.next.hasClass("disabled")) {
                 that.ui.status({ next: false, cancel: true, save: true });
@@ -723,10 +791,15 @@ var point = (function () {
                 }
             });
         },
-        //Display the step 1.
+        ///Display the step 1.
         cancel: function () {
-            that.ui.status({ next: true });
-            that.controls.main.removeClass("step-second").addClass("step-first");
+            if (that.controls.main.hasClass("edit")) {
+                that.action.back();
+            }
+            else {
+                that.ui.status({ next: true });
+                that.controls.main.removeClass("step-second").addClass("step-first");
+            }
         },
         ///Add new destination point.
         save: function () {
@@ -734,17 +807,18 @@ var point = (function () {
                 var _s = that.controls.formatBtn.prop("selected"), _n = that.controls.formatBtn.prop("name"),
                     _f = (typeof (_n) != "undefined" && _n != "") ? _n.split(",") : [],
                     _c = (typeof (_s) != "undefined" && _s != "") ? _s.split(",") : [],
-                    _fa = [];
+                    _fa = [],
+                    _x = that.controls.formatBtn.prop("place");
                 $.each(_f, function (_a, _b) {
                     _fa.push({ Name: _b });
                 });
-                var _v = that.format.convert({ value: that.selected.Value, formats: _fa });
-                var _json = $.extend({}, that.selected, { RangeId: app.guid(), CatalogName: that.filePath, CustomFormatIds: _c, Value: _v });
+                var _v = that.format.convert({ value: that.selected.Value, formats: _fa, decimal: _x });
+                var _json = $.extend({}, that.selected, { RangeId: app.guid(), CatalogName: that.filePath, CustomFormatIds: _c, Value: _v, DecimalPlace: _x });
 
                 that.range.create(_json, function (ret) {
                     if (ret.status == app.status.succeeded) {
                         that.popup.processing(true);
-                        that.service.add({ data: { CatalogName: _json.CatalogName, RangeId: _json.RangeId, SourcePointId: _json.Id, CustomFormatIds: _json.CustomFormatIds } }, function (result) {
+                        that.service.add({ data: { CatalogName: _json.CatalogName, DocumentId: that.documentId, RangeId: _json.RangeId, SourcePointId: _json.Id, CustomFormatIds: _json.CustomFormatIds, DecimalPlace: _json.DecimalPlace } }, function (result) {
                             if (result.status == app.status.succeeded) {
                                 that.utility.add(result.data);
                                 that.utility.pager.init({ refresh: false, index: that.pagerIndex });
@@ -761,7 +835,41 @@ var point = (function () {
                 });
             });
         },
-        ///highlight all destination point in word document.
+        ///Update destination point.
+        update: function () {
+            that.utility.mode(function () {
+                var _s = that.controls.formatBtn.prop("selected"), _n = that.controls.formatBtn.prop("name"), _o = that.controls.formatBtn.prop("original"),
+                    _f = (typeof (_n) != "undefined" && _n != "") ? _n.split(",") : [],
+                    _c = (typeof (_s) != "undefined" && _s != "") ? _s.split(",") : [],
+                    _fa = [],
+                    _x = that.controls.formatBtn.prop("place");
+                $.each(_f, function (_a, _b) {
+                    _fa.push({ Name: _b });
+                });
+                var _v = that.format.convert({ value: _o, formats: _fa, decimal: _x });
+                var _json = $.extend({}, {}, { Id: that.model.Id, RangeId: that.model.RangeId, CustomFormatIds: _c, Value: _v, DecimalPlace: _x });
+
+                that.range.edit(_json, function (ret) {
+                    if (ret.status == app.status.succeeded) {
+                        that.popup.processing(true);
+                        that.service.update({ data: { Id: _json.Id, CustomFormatIds: _json.CustomFormatIds, DecimalPlace: _json.DecimalPlace } }, function (result) {
+                            if (result.status == app.status.succeeded) {
+                                that.utility.update(result.data);
+                                that.utility.pager.init({ refresh: false, index: that.pagerIndex });
+                                that.popup.message({ success: true, title: "Update destination point custom format succeeded." }, function () { that.popup.back(3000); });
+                            }
+                            else {
+                                that.popup.message({ success: false, title: "Update destination point custom format failed." });
+                            }
+                        });
+                    }
+                    else {
+                        that.popup.message({ success: false, title: "Update range in Word failed." });
+                    }
+                });
+            });
+        },
+        ///Highlight all destination point in word document.
         highlightAll: function () {
             that.popup.processing(true);
             that.utility.order(function (result) {
@@ -769,7 +877,7 @@ var point = (function () {
                 that.action.highlight(options);
             });
         },
-        ///highligh one destination point in word document.
+        ///Highligh one destination point in word document.
         highlight: function (options) {
             if (options.index < options.data.length) {
                 that.range.highlight(options.data[options.index], function (result) {
@@ -792,7 +900,7 @@ var point = (function () {
                 });
             }
         },
-        ///delete the destination point after clicking X icon.
+        ///Delete the destination point after clicking X icon.
         del: function (o) {
             that.utility.mode(function () {
                 var _i = o.data("id"), _rid = o.data("range");
@@ -821,7 +929,7 @@ var point = (function () {
                 });
             });
         },
-        ///delete selected destination point after clicking the delete button.
+        ///Delete selected destination point after clicking the delete button.
         deleteSelected: function () {
             var _s = that.utility.selected(), _ss = [], _sr = [];
             if (_s && _s.length > 0) {
@@ -859,7 +967,31 @@ var point = (function () {
                 that.popup.message({ success: false, title: "Please select destination point." });
             }
         },
-        ///toggle source point published history. 
+        ///Edit the custom format.
+        edit: function (o) {
+            that.utility.mode(function () {
+                var _i = $(o).data("id");
+                that.model = that.utility.model(_i);
+                if (that.model) {
+                    that.range.goto({ RangeId: $(o).data("range") }, function (result) {
+                        if (result.status == app.status.succeeded) {
+                            that.controls.main.removeClass("manage add edit step-first step-second").addClass("add edit");
+                            that.controls.formatBtn.prop("original", that.model.ReferencedSourcePoint.Value ? that.model.ReferencedSourcePoint.Value : "");
+                            that.action.customFormat({ selected: that.model }, function () {
+                                that.format.preview();
+                            });
+                        }
+                        else {
+                            that.popup.message({ success: false, title: "The point in the Word has been deleted." });
+                        }
+                    });
+                }
+                else {
+                    that.popup.message({ success: false, title: "The destination point has been deleted." });
+                }
+            });
+        },
+        ///Toggle source point published history. 
         history: function (o) {
             o.hasClass("item-more") ? o.removeClass("item-more") : o.addClass("item-more");
         },
@@ -902,11 +1034,11 @@ var point = (function () {
                 that.action.goto(that.controls.list.find(">li").eq(_i));
             }
         },
-        ///close the popup.
+        ///Close the popup.
         ok: function () {
             that.controls.popupMain.removeClass("active message process confirm");
         },
-        ///open the source ponit file in a new window.
+        ///Open the source ponit file in a new window.
         open: function (o) {
             var _p = $(o).data("path");
             if (_p) {
@@ -947,69 +1079,82 @@ var point = (function () {
             that.utility.pager.init({ refresh: true });
         },
         ///Get the selected formats.
-        selectedFormats: function () {
+        selectedFormats: function (_that) {
             var _fi = [], _fd = [], _fn = [];
-            that.controls.formatList.find("li").each(function (i, d) {
-                if (!$(this).hasClass("drp-header") && $(this).hasClass("checked")) {
+            that.controls.formatList.find("ul > li").each(function (i, d) {
+                if ($(this).hasClass("checked")) {
                     _fi.push($(this).data("id"));
                     _fd.push($.trim($(this).text()));
                     _fn.push($.trim($(this).data("name")));
+                    if ($.trim($(_that).data("name")).indexOf("ConvertTo") > -1) {
+                        that.controls.formatBtn.prop("place", "");
+                    }
                 }
             });
             that.controls.formatBtn.html(_fd.length > 0 ? _fd.join(", ") : "None");
+            that.controls.formatBtn.prop("title", _fd.length > 0 ? _fd.join(", ") : "None");
             that.controls.formatBtn.prop("selected", _fi.join(","));
             that.controls.formatBtn.prop("name", _fn.join(","));
+            that.format.preview();
         },
-        ///get custom formats list and display in the add destination point 2nd step.
-        customFormat: function () {
+        ///Get custom formats list and display in the add destination point 2nd step.
+        customFormat: function (options, callback) {
             that.popup.processing(true);
             that.service.customFormat(function (result) {
                 that.popup.processing(false);
                 if (result.status == app.status.succeeded) {
                     if (result.data) {
-                        that.ui.customFormat({ data: result.data });
+                        that.ui.customFormat({ data: result.data, selected: options ? options.selected : null }, callback);
                     }
                 }
                 else {
-                    that.ui.customFormat();
+                    that.ui.customFormat({ selected: options ? options.selected : null }, callback);
                     that.popup.message({ success: false, title: "Load custom format failed." });
                 }
             });
         }
     };
-    ///file explorer
+    ///File explorer.
     that.browse = {
-        accessToken: "",
-        host: "",
         path: [],
+        ///Initialize the default UI.
         init: function () {
-            that.browse.accessToken = "";
+            that.api.token = "";
             that.browse.path = [];
             that.browse.popup.dft();
             that.browse.popup.show();
             that.browse.popup.processing(true);
             that.browse.token();
         },
-        //Get the graph access token
+        ///Get the graph and sharepoint access token.
         token: function () {
-            that.service.token(function (result) {
+            that.service.token({ endpoint: that.endpoints.token }, function (result) {
                 if (result.status == app.status.succeeded) {
-                    that.browse.accessToken = result.data;
-                    that.browse.host = that.utility.path()[0].toLowerCase();
-                    that.browse.siteCollection();
+                    that.api.token = result.data;
+                    that.api.host = that.utility.path()[0].toLowerCase();
+                    that.service.token({ endpoint: that.endpoints.sharePointToken }, function (result) {
+                        if (result.status == app.status.succeeded) {
+                            that.api.sharePointToken = result.data;
+                            that.browse.siteCollection();
+                        }
+                        else {
+                            that.document.error({ title: "Get sharepoint access token failed." });
+                        }
+                    });
                 }
                 else {
                     that.browse.popup.message("Get graph access token failed.");
                 }
             });
         },
-        ///get available site colletion ID.
+        ///Get available site colletion ID.
         siteCollection: function (options) {
             if (typeof (options) == "undefined") {
                 options = {
                     path: that.utility.path().reverse(),
                     index: 0,
-                    values: []
+                    values: [],
+                    webUrls: []
                 };
             }
             if (options.index < options.path.length) {
@@ -1017,6 +1162,7 @@ var point = (function () {
                     if (result.status == app.status.succeeded) {
                         if (typeof (result.data.siteCollection) != "undefined") {
                             options.values.push(result.data.id);
+                            options.webUrls.push(result.data.webUrl);
                         }
                         options.index++;
                         that.browse.siteCollection(options);
@@ -1034,36 +1180,36 @@ var point = (function () {
             }
             else {
                 if (options.values.length > 0) {
-                    that.browse.sites({ siteId: options.values.shift() });
+                    that.browse.sites({ siteId: options.values.shift(), siteUrl: options.webUrls.shift() });
                 }
                 else {
                     that.browse.popup.message("Get site collection ID failed.");
                 }
             }
         },
-        ///get all subsites under current site collection.
+        ///Get all subsites under current site collection.
         sites: function (options) {
             that.service.sites(options, function (result) {
                 if (result.status == app.status.succeeded) {
                     var _s = [];
                     $.each(result.data.value, function (i, d) {
-                        _s.push({ id: d.id, name: d.name, type: "site" });
+                        _s.push({ id: d.id, name: d.name, type: "site", siteUrl: d.webUrl });
                     });
-                    that.browse.libraries({ siteId: options.siteId, sites: _s });
+                    that.browse.libraries({ siteId: options.siteId, siteUrl: options.siteUrl, sites: _s });
                 }
                 else {
                     that.browse.popup.message("Get sites failed.");
                 }
             });
         },
-        ///get all document libraries under all webs.
+        ///Get all document libraries under all webs.
         libraries: function (options) {
             that.service.libraries(options, function (result) {
                 if (result.status == app.status.succeeded) {
                     var _l = options.sites ? options.sites : [];
                     $.each(result.data.value, function (i, d) {
-                        if (d.list.template.toUpperCase() == "DocumentLibrary".toUpperCase()) {
-                            _l.push({ id: d.id, name: decodeURI(d.name), type: "library", siteId: options.siteId, url: d.webUrl });
+                        if (d.driveType.toUpperCase() == "DocumentLibrary".toUpperCase()) {
+                            _l.push({ id: d.id, name: decodeURI(d.name), type: "library", siteId: options.siteId, siteUrl: options.siteUrl, url: d.webUrl });
                         }
                     });
                     that.browse.display({ data: _l });
@@ -1073,8 +1219,7 @@ var point = (function () {
                 }
             });
         },
-
-        /// get all folders or excel files under the document library.
+        ///Get all folders or excel files under the document library.
         items: function (options) {
             if (options.inFolder) {
                 that.service.itemsInFolder(options, function (result) {
@@ -1083,11 +1228,11 @@ var point = (function () {
                         $.each(result.data.value, function (i, d) {
                             var _u = d.webUrl, _n = d.name, _nu = decodeURI(_n);
                             if (d.folder) {
-                                _fd.push({ id: d.id, name: _nu, type: "folder", url: _u, siteId: options.siteId, listId: options.listId });
+                                _fd.push({ id: d.id, name: _nu, type: "folder", url: _u, siteId: options.siteId, siteUrl: options.siteUrl, listId: options.listId, listName: options.listName });
                             }
                             else if (d.file) {
                                 if (_n.toUpperCase().indexOf(".XLSX") > 0) {
-                                    _fi.push({ id: d.id, name: _nu, type: "file", url: _u, siteId: options.siteId, listId: options.listId });
+                                    _fi.push({ id: d.id, name: _nu, type: "file", url: _u, siteId: options.siteId, siteUrl: options.siteUrl, listId: options.listId, listName: options.listName });
                                 }
                             }
                         });
@@ -1108,11 +1253,11 @@ var point = (function () {
                         $.each(result.data.value, function (i, d) {
                             var _u = d.webUrl, _n = d.name, _nu = decodeURI(_n);
                             if (d.folder) {
-                                _fd.push({ id: d.id, name: _nu, type: "folder", url: _u, siteId: options.siteId, listId: options.listId });
+                                _fd.push({ id: d.id, name: _nu, type: "folder", url: _u, siteId: options.siteId, siteUrl: options.siteUrl, listId: options.listId, listName: options.listName });
                             }
                             else if (d.file) {
                                 if (_n.toUpperCase().indexOf(".XLSX") > 0) {
-                                    _fi.push({ id: d.id, name: _nu, type: "file", url: _u, siteId: options.siteId, listId: options.listId });
+                                    _fi.push({ id: d.id, name: _nu, type: "file", url: _u, siteId: options.siteId, siteUrl: options.siteUrl, listId: options.listId, listName: options.listName });
                                 }
                             }
                         });
@@ -1127,59 +1272,81 @@ var point = (function () {
                 });
             }
         },
-        ///display site/library/folder/file in the file explorer popup.
+        ///Get document id by file name.
+        file: function (options) {
+            that.service.item(options, function (result) {
+                if (result.status == app.status.succeeded) {
+                    var _d = "";
+                    $.each(result.data.value, function (i, d) {
+                        if (decodeURI(options.url).toUpperCase() == decodeURI(d.EncodedAbsUrl).toUpperCase() && d.OData__dlc_DocId) {
+                            _d = d.OData__dlc_DocId;
+                            return false;
+                        }
+                    });
+                    if (_d != "") {
+                        that.browse.popup.hide();
+                        that.files($.extend({}, { documentId: _d }, options));
+                    }
+                    else {
+                        that.browse.popup.message("Get file Document ID failed.");
+                    }
+                }
+                else {
+                    that.browse.popup.message("Get file Document ID failed.");
+                }
+            });
+        },
+        ///Display site/library/folder/file in the file explorer popup.
         display: function (options) {
             that.controls.popupBrowseList.html("");
             $.each(options.data, function (i, d) {
                 var _h = "";
                 if (d.type == "site") {
-                    _h = '<li class="i-site" data-id="' + d.id + '" data-type="site">' + d.name + '</li>';
+                    _h = '<li class="i-site" data-id="' + d.id + '" data-type="site" data-siteurl="' + d.siteUrl + '">' + d.name + '</li>';
                 }
                 else if (d.type == "library") {
-                    _h = '<li class="i-library" data-id="' + d.id + '" data-site="' + d.siteId + '" data-url="' + d.url + '" data-type="library">' + d.name + '</li>';
+                    _h = '<li class="i-library" data-id="' + d.id + '" data-site="' + d.siteId + '" data-url="' + d.url + '" data-type="library" data-siteurl="' + d.siteUrl + '" data-listname="' + d.name + '">' + d.name + '</li>';
                 }
                 else if (d.type == "folder") {
-                    _h = '<li class="i-folder" data-id="' + d.id + '" data-site="' + d.siteId + '" data-list="' + d.listId + '" data-url="' + d.url + '" data-type="folder">' + d.name + '</li>';
+                    _h = '<li class="i-folder" data-id="' + d.id + '" data-site="' + d.siteId + '" data-list="' + d.listId + '" data-url="' + d.url + '" data-type="folder" data-siteurl="' + d.siteUrl + '" data-listname="' + d.listName + '">' + d.name + '</li>';
                 }
                 else if (d.type == "file") {
-                    _h = '<li class="i-file" data-id="' + d.id + '" data-site="' + d.siteId + '" data-list="' + d.listId + '" data-url="' + d.url + '" data-type="file">' + d.name + '</li>';
+                    _h = '<li class="i-file" data-id="' + d.id + '" data-site="' + d.siteId + '" data-list="' + d.listId + '" data-url="' + d.url + '" data-type="file" data-siteurl="' + d.siteUrl + '" data-listname="' + d.listName + '">' + d.name + '</li>';
                 }
                 that.controls.popupBrowseList.append(_h);
             });
+            if (options.data.length == 0) {
+                that.controls.popupBrowseList.html("No items found.");
+            }
             that.browse.popup.processing(false);
         },
         ///Navigate the file explorer.
         select: function (elem) {
             var _t = $(elem).data("type");
-            ///select Sharepoint site.
             if (_t == "site") {
-                that.browse.path.push({ type: "site", id: $(elem).data("id") });
+                that.browse.path.push({ type: "site", id: $(elem).data("id"), siteUrl: $(elem).data("siteurl") });
                 that.browse.popup.nav();
                 that.browse.popup.processing(true);
-                that.browse.sites({ siteId: $(elem).data("id") });
+                that.browse.sites({ siteId: $(elem).data("id"), siteUrl: $(elem).data("siteurl") });
             }
-            ///select document library. 
             else if (_t == "library") {
-                that.browse.path.push({ type: "library", id: $(elem).data("id"), site: $(elem).data("site"), url: $(elem).data("url") });
+                that.browse.path.push({ type: "library", id: $(elem).data("id"), site: $(elem).data("site"), url: $(elem).data("url"), siteUrl: $(elem).data("siteurl"), listName: $(elem).data("listname") });
                 that.browse.popup.nav();
                 that.browse.popup.processing(true);
-                that.browse.items({ inFolder: false, siteId: $(elem).data("site"), listId: $(elem).data("id") });
+                that.browse.items({ inFolder: false, siteId: $(elem).data("site"), siteUrl: $(elem).data("siteurl"), listId: $(elem).data("id"), listName: $(elem).data("listname") });
             }
-            ///select folder.
             else if (_t == "folder") {
-                that.browse.path.push({ type: "folder", id: $(elem).data("id"), site: $(elem).data("site"), list: $(elem).data("list"), url: $(elem).data("url") });
+                that.browse.path.push({ type: "folder", id: $(elem).data("id"), site: $(elem).data("site"), siteUrl: $(elem).data("siteurl"), list: $(elem).data("list"), url: $(elem).data("url"), listName: $(elem).data("listname") });
                 that.browse.popup.nav();
                 that.browse.popup.processing(true);
-                that.browse.items({ inFolder: true, siteId: $(elem).data("site"), listId: $(elem).data("list"), itemId: $(elem).data("id") });
+                that.browse.items({ inFolder: true, siteId: $(elem).data("site"), siteUrl: $(elem).data("siteurl"), listId: $(elem).data("list"), listName: $(elem).data("listname"), itemId: $(elem).data("id") });
             }
             else {
-                ///select the excel file.
-                that.browse.popup.hide();
-                that.files({ path: that.browse.path[that.browse.path.length - 1].url + "/" + encodeURI($(elem).text()), name: $(elem).text() });
+                that.browse.popup.processing(true);
+                that.browse.file({ siteUrl: $(elem).data("siteurl"), listName: $(elem).data("listname"), name: $.trim($(elem).text()), url: that.browse.path[that.browse.path.length - 1].url + "/" + encodeURI($(elem).text()), fileName: $.trim($(elem).text()) });
             }
         },
-
-        ///display the file explorer popup.
+        ///Display the file explorer popup.
         popup: {
             ///Reset to popup default state (an empty popup)
             dft: function () {
@@ -1188,15 +1355,15 @@ var point = (function () {
                 that.controls.popupBrowseMessage.html("").hide();
                 that.controls.popupBrowseLoading.hide();
             },
-            ///show the file explorer popup.
+            ///Show the file explorer popup.
             show: function () {
                 that.controls.popupMain.removeClass("message process confirm").addClass("active browse");
             },
-            ////hide the explorer popup
+            ///Hide the explorer popup
             hide: function () {
                 that.controls.popupMain.removeClass("active message process confirm browse");
             },
-            ///display the loading before popup displays.
+            ///Display the loading before popup displays.
             processing: function (show) {
                 if (show) {
                     that.controls.popupBrowseLoading.show();
@@ -1205,27 +1372,27 @@ var point = (function () {
                     that.controls.popupBrowseLoading.hide();
                 }
             },
-            ///display the prompted message in the popup.
+            ///Display the prompted message in the popup.
             message: function (txt) {
                 that.controls.popupBrowseMessage.html(txt).show();
                 that.browse.popup.processing(false);
             },
-            ///go back
+            ///Go back
             back: function () {
                 that.browse.path.pop();
                 if (that.browse.path.length > 0) {
                     var _ip = that.browse.path[that.browse.path.length - 1];
                     if (_ip.type == "site") {
                         that.browse.popup.processing(true);
-                        that.browse.sites({ siteId: _ip.id });
+                        that.browse.sites({ siteId: _ip.id, siteUrl: _ip.siteUrl });
                     }
                     else if (_ip.type == "library") {
                         that.browse.popup.processing(true);
-                        that.browse.items({ inFolder: false, siteId: _ip.site, listId: _ip.id });
+                        that.browse.items({ inFolder: false, siteId: _ip.site, listId: _ip.id, siteUrl: _ip.siteUrl, listName: _ip.listName });
                     }
                     else if (_ip.type == "folder") {
                         that.browse.popup.processing(true);
-                        that.browse.items({ inFolder: true, siteId: _ip.site, listId: _ip.list, itemId: _ip.id });
+                        that.browse.items({ inFolder: true, siteId: _ip.site, listId: _ip.list, itemId: _ip.id, siteUrl: _ip.siteUrl, listName: _ip.listName });
                     }
                 }
                 else {
@@ -1234,13 +1401,121 @@ var point = (function () {
                 }
                 that.browse.popup.nav();
             },
-            ///display the back button or not.
+            ///Display the back button or not.
             nav: function () {
                 that.browse.path.length > 0 ? that.controls.popupBrowseBack.show() : that.controls.popupBrowseBack.hide();
             }
         }
     };
-
+    ///Define get document id function.
+    that.document = {
+        ///Initialize get graph and sharepoint access token.
+        init: function (callback) {
+            that.popup.processing(true);
+            that.service.token({ endpoint: that.endpoints.token }, function (result) {
+                if (result.status == app.status.succeeded) {
+                    that.api.token = result.data;
+                    that.api.host = that.utility.path()[0].toLowerCase();
+                    that.service.token({ endpoint: that.endpoints.sharePointToken }, function (result) {
+                        if (result.status == app.status.succeeded) {
+                            that.api.sharePointToken = result.data;
+                            that.document.site(null, callback);
+                        }
+                        else {
+                            that.document.error({ title: "Get sharepoint access token failed." });
+                        }
+                    });
+                }
+                else {
+                    that.document.error({ title: "Get graph access token failed." });
+                }
+            });
+        },
+        ///Get site id.
+        site: function (options, callback) {
+            if (options == null) {
+                options = {
+                    path: that.utility.path().reverse(),
+                    index: 0,
+                    values: [],
+                    webUrls: []
+                };
+            }
+            if (options.index < options.path.length) {
+                that.service.siteCollection({ path: options.path[options.index] }, function (result) {
+                    if (result.status == app.status.succeeded) {
+                        options.values.push(result.data.id);
+                        options.webUrls.push(result.data.webUrl);
+                    }
+                    options.index++;
+                    that.document.site(options, callback);
+                });
+            }
+            else {
+                if (options.values.length > 0) {
+                    that.document.library({ siteId: options.values.shift(), siteUrl: options.webUrls.shift() }, callback);
+                }
+                else {
+                    that.document.error({ title: "Get site url failed." });
+                }
+            }
+        },
+        ///Get library id.
+        library: function (options, callback) {
+            that.service.libraries(options, function (result) {
+                if (result.status == app.status.succeeded) {
+                    var _l = "";
+                    $.each(result.data.value, function (i, d) {
+                        if (d.driveType.toUpperCase() == "DocumentLibrary".toUpperCase() && decodeURI(that.filePath).toUpperCase().indexOf(decodeURI(d.webUrl).toUpperCase()) > -1) {
+                            _l = d.name;
+                            return false;
+                        }
+                    });
+                    if (_l != "") {
+                        that.document.file({ siteId: options.siteId, siteUrl: options.siteUrl, listName: _l, fileName: that.utility.fileName(that.filePath) }, callback);
+                    }
+                    else {
+                        that.document.error({ title: "Get library name failed." });
+                    }
+                }
+                else {
+                    that.document.error({ title: "Get library name failed." });
+                }
+            });
+        },
+        ///Get document id.
+        file: function (options, callback) {
+            that.service.item(options, function (result) {
+                if (result.status == app.status.succeeded) {
+                    var _d = "";
+                    $.each(result.data.value, function (i, d) {
+                        if (decodeURI(that.filePath).toUpperCase() == decodeURI(d.EncodedAbsUrl).toUpperCase() && d.OData__dlc_DocId) {
+                            _d = d.OData__dlc_DocId;
+                            return false;
+                        }
+                    });
+                    if (_d != "") {
+                        that.documentId = _d;
+                        that.popup.processing(false);
+                        callback();
+                    }
+                    else {
+                        that.document.error({ title: "Get file Document ID failed." });
+                    }
+                }
+                else {
+                    that.document.error({ title: "Get file Document ID failed." });
+                }
+            });
+        },
+        ///Dispaly the error message.
+        error: function (options) {
+            that.controls.documentIdError.html("Error message: " + options.title);
+            that.controls.main.addClass("error");
+            that.popup.processing(false);
+        }
+    };
+    ///Define custom format function.
     that.format = {
         ///Change the original value to formatted value.
         convert: function (options) {
@@ -1250,130 +1525,169 @@ var point = (function () {
                 _d = that.format.hasDollar(_v),
                 _c = that.format.hasComma(_v),
                 _p = that.format.hasPercent(_v),
-                _m = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                _m = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                _x = options.decimal;
             $.each(_f, function (_a, _b) {
-                if (_b.Name == "ConvertToHundreds") {
-                    if (that.format.isNumber(_v)) {
-                        var _l = that.format.getDecimalLength(_v);
-                        _v = new BigNumber(that.format.toNumber(_v)).div(100).toString();
-                        _v = that.format.AddDecimal(_v, _l);
-                        if (_c) {
-                            _v = that.format.addComma(_v);
+                if (!_b.IsDeleted) {
+                    if (_b.Name == "ConvertToHundreds") {
+                        if (that.format.isNumber(_v)) {
+                            var _l = that.format.getDecimalLength(_v);
+                            _v = new BigNumber(that.format.toNumber(_v)).div(100).toString();
+                            _v = that.format.addDecimal(_v, _l);
+                            if (_c) {
+                                _v = that.format.addComma(_v);
+                            }
+                            if (_d) {
+                                _v = that.format.addDollar(_v);
+                            }
                         }
-                        if (_d) {
+                    }
+                    else if (_b.Name == "ConvertToThousands") {
+                        if (that.format.isNumber(_v)) {
+                            var _l = that.format.getDecimalLength(_v);
+                            _v = new BigNumber(that.format.toNumber(_v)).div(1000).toString();
+                            _v = that.format.addDecimal(_v, _l);
+                            if (_c) {
+                                _v = that.format.addComma(_v);
+                            }
+                            if (_d) {
+                                _v = that.format.addDollar(_v);
+                            }
+                        }
+                    }
+                    else if (_b.Name == "ConvertToMillions") {
+                        if (that.format.isNumber(_v)) {
+                            var _l = that.format.getDecimalLength(_v);
+                            _v = new BigNumber(that.format.toNumber(_v)).div(1000000).toString();
+                            _v = that.format.addDecimal(_v, _l);
+                            if (_c) {
+                                _v = that.format.addComma(_v);
+                            }
+                            if (_d) {
+                                _v = that.format.addDollar(_v);
+                            }
+                        }
+                    }
+                    else if (_b.Name == "ConvertToBillions") {
+                        if (that.format.isNumber(_v)) {
+                            var _l = that.format.getDecimalLength(_v);
+                            _v = new BigNumber(that.format.toNumber(_v)).div(1000000000).toString();
+                            _v = that.format.addDecimal(_v, _l);
+                            if (_c) {
+                                _v = that.format.addComma(_v);
+                            }
+                            if (_d) {
+                                _v = that.format.addDollar(_v);
+                            }
+                        }
+                    }
+                    else if (_b.Name == "ShowNegativesAsPositives") {
+                        var _h = that.format.hasDollar(_v),
+                            _p = that.format.hasPercent(_v),
+                            _hh = _v.toString().indexOf("hundred") > -1,
+                            _ht = _v.toString().indexOf("thousand") > -1,
+                            _hm = _v.toString().indexOf("million") > -1,
+                            _hb = _v.toString().indexOf("billion") > -1;
+                        var _tt = $.trim(_v.toString().replace(/\$/g, "").replace(/-/g, "").replace(/%/g, "").replace(/\(/g, "").replace(/\)/g, "").replace(/hundred/g, "").replace(/thousand/g, "").replace(/million/g, "").replace(/billion/g, ""));
+                        if (that.format.isNumber(_tt)) {
+                            _v = _tt;
+                            if (_p) {
+                                _v = _v + "%";
+                            }
+                            if (_h) {
+                                _v = that.format.addDollar(_v);
+                            }
+                            if (_hh) {
+                                _v = _v + " hundred";
+                            }
+                            else if (_ht) {
+                                _v = _v + " thousand";
+                            }
+                            else if (_hm) {
+                                _v = _v + " million";
+                            }
+                            else if (_hb) {
+                                _v = _v + " billion";
+                            }
+                        }
+                    }
+                    else if (_b.Name == "IncludeHundredDescriptor") {
+                        if (that.format.isNumber(_v)) {
+                            _v = _v + " hundred";
+                        }
+                    }
+                    else if (_b.Name == "IncludeThousandDescriptor") {
+                        if (that.format.isNumber(_v)) {
+                            _v = _v + " thousand";
+                        }
+                    }
+                    else if (_b.Name == "IncludeMillionDescriptor") {
+                        if (that.format.isNumber(_v)) {
+                            _v = _v + " million";
+                        }
+                    }
+                    else if (_b.Name == "IncludeBillionDescriptor") {
+                        if (that.format.isNumber(_v)) {
+                            _v = _v + " billion";
+                        }
+                    }
+                    else if (_b.Name == "IncludeDollarSymbol") {
+                        if (!that.format.hasDollar(_v)) {
                             _v = that.format.addDollar(_v);
                         }
                     }
-                }
-                else if (_b.Name == "ConvertToThousands") {
-                    if (that.format.isNumber(_v)) {
-                        var _l = that.format.getDecimalLength(_v);
-                        _v = new BigNumber(that.format.toNumber(_v)).div(1000).toString();
-                        _v = that.format.AddDecimal(_v, _l);
-                        if (_c) {
-                            _v = that.format.addComma(_v);
-                        }
-                        if (_d) {
-                            _v = that.format.addDollar(_v);
+                    else if (_b.Name == "ExcludeDollarSymbol") {
+                        if (that.format.hasDollar(_v)) {
+                            _v = that.format.removeDollar(_v);
                         }
                     }
-                }
-                else if (_b.Name == "ConvertToMillions") {
-                    if (that.format.isNumber(_v)) {
-                        var _l = that.format.getDecimalLength(_v);
-                        _v = new BigNumber(that.format.toNumber(_v)).div(1000000).toString();
-                        _v = that.format.AddDecimal(_v, _l);
-                        if (_c) {
-                            _v = that.format.addComma(_v);
-                        }
-                        if (_d) {
-                            _v = that.format.addDollar(_v);
+                    else if (_b.Name == "DateShowLongDateFormat") {
+                        if (that.format.isDate(_v)) {
+                            var _tt = new Date(_v);
+                            _v = _m[_tt.getMonth()] + " " + _tt.getDate() + ", " + _tt.getFullYear();
                         }
                     }
-                }
-                else if (_b.Name == "ConvertToBillions") {
-                    if (that.format.isNumber(_v)) {
-                        var _l = that.format.getDecimalLength(_v);
-                        _v = new BigNumber(that.format.toNumber(_v)).div(1000000000).toString();
-                        _v = that.format.AddDecimal(_v, _l);
-                        if (_c) {
-                            _v = that.format.addComma(_v);
-                        }
-                        if (_d) {
-                            _v = that.format.addDollar(_v);
+                    else if (_b.Name == "DateShowYearOnly") {
+                        if (that.format.isDate(_v)) {
+                            var _tt = new Date(_v);
+                            _v = _tt.getFullYear();
                         }
                     }
-                }
-                else if (_b.Name == "AddDecimalPlace") {
-                    if (that.format.isNumber(_v)) {
-                        if (_v.indexOf(".") > -1) {
-                            _v = _v + "0";
-                        }
-                        else {
-                            _v = _v + ".0";
-                        }
-                    }
-                }
-                else if (_b.Name == "ShowNegativesAsPositives") {
-                    var _tt = _v.toString().replace(/\$/g, "").replace(/-/g, "").replace(/%/g, "").replace(/\(/g, "").replace(/\)/g, "");
-                    if (that.format.isNumber(_tt)) {
-                        _v = _tt;
-                        if (_p) {
-                            _v = _v + "%";
-                        }
-                        if (_d) {
-                            _v = that.format.addDollar(_v);
-                        }
-                    }
-                }
-                else if (_b.Name == "IncludeThousandDescriptor") {
-                    if (that.format.isNumber(_v)) {
-                        _v = _v + " thousand";
-                    }
-                }
-                else if (_b.Name == "IncludeMillionDescriptor") {
-                    if (that.format.isNumber(_v)) {
-                        _v = _v + " million";
-                    }
-                }
-                else if (_b.Name == "IncludeBillionDescriptor") {
-                    if (that.format.isNumber(_v)) {
-                        _v = _v + " billion";
-                    }
-                }
-                else if (_b.Name == "IncludeDollarSymbol") {
-                    if (!that.format.hasDollar(_v)) {
-                        _v = that.format.addDollar(_v);
-                    }
-                }
-                else if (_b.Name == "ExcludeDollarSymbol") {
-                    if (that.format.hasDollar(_v)) {
-                        _v = that.format.removeDollar(_v);
-                    }
-                }
-                else if (_b.Name == "DateShowLongDateFormat") {
-                    if (that.format.isDate(_v)) {
-                        var _tt = new Date(_v);
-                        _v = _m[_tt.getMonth()] + " " + _tt.getDate() + ", " + _tt.getFullYear();
-                    }
-                }
-                else if (_b.Name == "DateShowYearOnly") {
-                    if (that.format.isDate(_v)) {
-                        var _tt = new Date(_v);
-                        _v = _tt.getFullYear();
-                    }
-                }
-                else if (_b.Name == "ConvertNegativeSymbolToParenthesis") {
-                    var _h = that.format.hasDollar(_v);
-                    if (_v.indexOf("-") > -1) {
-                        var _tt = _v.toString().replace(/\$/g, "").replace(/-/g, "").replace(/\(/g, "").replace(/\)/g, "");
-                        _v = "(" + _tt + ")";
-                        if (_h) {
-                            _v = that.format.addDollar(_v);
+                    else if (_b.Name == "ConvertNegativeSymbolToParenthesis") {
+                        var _h = that.format.hasDollar(_v),
+                            _hh = _v.toString().indexOf("hundred") > -1,
+                            _ht = _v.toString().indexOf("thousand") > -1,
+                            _hm = _v.toString().indexOf("million") > -1,
+                            _hb = _v.toString().indexOf("billion") > -1;
+                        if (_v.indexOf("-") > -1) {
+                            var _tt = $.trim(_v.toString().replace(/\$/g, "").replace(/-/g, "").replace(/\(/g, "").replace(/\)/g, "").replace(/hundred/g, "").replace(/thousand/g, "").replace(/million/g, "").replace(/billion/g, ""));
+                            _v = "(" + _tt + ")";
+                            if (_h) {
+                                _v = that.format.addDollar(_v);
+                            }
+                            if (_hh) {
+                                _v = _v + " hundred";
+                            }
+                            else if (_ht) {
+                                _v = _v + " thousand";
+                            }
+                            else if (_hm) {
+                                _v = _v + " million";
+                            }
+                            else if (_hb) {
+                                _v = _v + " billion";
+                            }
                         }
                     }
                 }
             });
+            if (_x != null && _x.toString() != "") {
+                var __a = that.format.hasComma(_v), __b = that.format.remove(_v);
+                if (that.format.isNumber(__b)) {
+                    var __c = __a ? that.format.addComma(__b) : __b, __d = "" + new BigNumber(__b).toFixed(_x) + "", __e = __a ? that.format.addComma(__d) : __d;
+                    _v = _v.replace(__c, __e)
+                }
+            }
             return _v;
         },
         ///Remove the '$' & ',' at the start of the word.
@@ -1416,15 +1730,17 @@ var point = (function () {
         },
         ///add ',' when reach thousand. 
         addComma: function (_v) {
-            return _v && (_v.toString().indexOf('.') != -1 ? _v.toString().replace(/(\d)(?=(\d{3})+\.)/g, function ($0, $1) {
-                return $1 + ",";
-            }) : _v.toString().replace(/(\d)(?=(\d{3}))/g, function ($0, $1) {
-                return $1 + ",";
-            }));
+            var __s = _v.toString().split(".");
+            __s[0] = __s[0].replace(new RegExp('(\\d)(?=(\\d{3})+$)', 'ig'), "$1,");
+            return __s.join(".");
         },
         ///Determine if contain '%' or not in word.
         hasPercent: function (_v) {
             return _v.toString().indexOf("%") > -1;
+        },
+        ///Remove all '&', ',', '-', '%', '(', ')', 'hundred', 'thousand', 'million', and 'billion' with empty in word.
+        remove: function (_v) {
+            return $.trim(_v.toString().replace(/\$/g, "").replace(/,/g, "").replace(/-/g, "").replace(/%/g, "").replace(/\(/g, "").replace(/\)/g, "").replace(/hundred/g, "").replace(/thousand/g, "").replace(/million/g, "").replace(/billion/g, ""));
         },
         ///Get the length of decimal place 
         getDecimalLength: function (_v) {
@@ -1437,17 +1753,29 @@ var point = (function () {
             }
         },
         ///Add decimal place.
-        AddDecimal: function (_v, _l) {
+        addDecimal: function (_v, _l) {
             var _dl = that.format.getDecimalLength(_v);
             if (_l > 0 && _dl == 0) {
-                _v = new BigNumber(_v).toFixed(_l);
+                _v = "" + new BigNumber(_v).toFixed(_l) + "";
             }
             return _v;
+        },
+        ///Preview the formated value.
+        preview: function () {
+            var _v = that.controls.formatBtn.prop("original");
+            var _n = that.controls.formatBtn.prop("name");
+            var _f = (typeof (_n) != "undefined" && _n != "") ? _n.split(",") : [], _fa = [];
+            var _x = that.controls.formatBtn.prop("place");
+            $.each(_f, function (_a, _b) {
+                _fa.push({ Name: _b });
+            });
+            var _fd = that.format.convert({ value: _v, formats: _fa, decimal: _x });
+            that.controls.previewValue.html(_fd);
         }
     };
-
+    ///Define all popup features.
     that.popup = {
-        ///dispay the message in the popup.
+        ///Dispay the message in the popup.
         message: function (options, callback) {
             if (options.success) {
                 that.controls.popupMessage.removeClass("error").addClass("success");
@@ -1508,7 +1836,7 @@ var point = (function () {
                 noCallback();
             });
         },
-        ///diplay the file explorer.
+        ///Diplay the file explorer.
         browse: function (show) {
             if (!show) {
                 that.controls.popupMain.removeClass("active browse");
@@ -1517,7 +1845,7 @@ var point = (function () {
                 that.controls.popupMain.removeClass("message process confirm").addClass("active browse");
             }
         },
-        ///hide the popup.
+        ///Hide the popup.
         hide: function (millisecond) {
             if (millisecond) {
                 setTimeout(function () {
@@ -1527,7 +1855,7 @@ var point = (function () {
                 that.controls.popupMain.removeClass("active message");
             }
         },
-        ///go to destination management page.
+        ///Go to destination management page.
         back: function (millisecond) {
             if (millisecond) {
                 setTimeout(function () {
@@ -1587,7 +1915,7 @@ var point = (function () {
                 callback({ status: app.status.failed, message: error.message });
             });
         },
-        ///
+        ///Set the higtlight color to the selected content control.
         highlight: function (options, callback) {
             Word.run(function (ctx) {
                 var r = ctx.document.contentControls.getByTag(options.RangeId);
@@ -1623,6 +1951,7 @@ var point = (function () {
                 callback({ status: app.status.failed, message: error.message });
             });
         },
+        ///Delete the content control.
         del: function (options, callback) {
             Word.run(function (ctx) {
                 var r = ctx.document.contentControls.getByTag(options.RangeId);
@@ -1642,6 +1971,7 @@ var point = (function () {
                 callback({ status: app.status.failed, message: error.message });
             });
         },
+        ///Delete the selected content control.
         delSelected: function (options, callback) {
             if (options.index < options.data.length) {
                 var _rid = options.data[options.index];
@@ -1670,6 +2000,7 @@ var point = (function () {
                 callback();
             }
         },
+        ///Get all control controls.
         all: function (callback) {
             Word.run(function (ctx) {
                 var _cc = ctx.document.contentControls, _ar = [];
@@ -1686,6 +2017,7 @@ var point = (function () {
                 callback({ status: app.status.failed, message: error.message });
             });
         },
+        ///Return the index valoe of the array.
         index: function (options) {
             var _i = -1;
             $.each(options.data, function (i, d) {
@@ -1697,8 +2029,9 @@ var point = (function () {
             return _i;
         }
     };
-
+    ///Default actions to interact with service.
     that.service = {
+        ///Define a general request sent to service end and return the callback result.
         common: function (options, callback) {
             $.ajax({
                 url: options.url,
@@ -1722,51 +2055,69 @@ var point = (function () {
                 }
             });
         },
-
+        ///Add destination point (POST) to Azure storage.
         add: function (options, callback) {
             that.service.common({ url: that.endpoints.add, type: "POST", data: options.data, dataType: "json" }, callback);
         },
+        ///Update the destination point (PUT) in Azure storage.
         edit: function (options, callback) {
             that.service.common({ url: that.endpoints.edit, type: "PUT", data: options.data, dataType: "json" }, callback);
         },
+        ///Get source point by catalog document id.
         catalog: function (options, callback) {
-            that.service.common({ url: that.endpoints.catalog + options.path, type: "GET", dataType: "json" }, callback);
+            that.service.common({ url: that.endpoints.catalog + options.documentId, type: "GET", dataType: "json" }, callback);
         },
+        ///Get the source point groups.
         groups: function (callback) {
             that.service.common({ url: that.endpoints.groups, type: "GET", dataType: "json" }, callback);
         },
+        ///Get a list of destination points from Azure storage.
         list: function (callback) {
-            that.service.common({ url: that.endpoints.list + that.filePath, type: "GET", dataType: "json" }, callback);
+            that.service.common({ url: that.endpoints.list + that.filePath + "&documentId=" + that.documentId, type: "GET", dataType: "json" }, callback);
         },
+        ///Delete current destination point in Azure storage.
         del: function (options, callback) {
             that.service.common({ url: that.endpoints.del + options.Id, type: "DELETE" }, callback);
         },
+        ///Delete the selected destination points in Azure storage.
         deleteSelected: function (options, callback) {
             that.service.common({ url: that.endpoints.deleteSelected, type: "POST", data: options.data }, callback);
         },
-        token: function (callback) {
-            that.service.common({ url: that.endpoints.token, type: "GET", dataType: "json" }, callback);
+        ///Get graph or sharepoint token.
+        token: function (options, callback) {
+            that.service.common({ url: options.endpoint, type: "GET", dataType: "json" }, callback);
         },
-        hostName: function (callback) {
-            that.service.common({ url: that.endpoints.graph + "/sites/root", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.browse.accessToken } }, callback);
-        },
+        ///Get site collection id. 
         siteCollection: function (options, callback) {
-            that.service.common({ url: that.endpoints.graph + "/sites/" + that.browse.host + ":/" + options.path, type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.browse.accessToken } }, callback);
+            that.service.common({ url: that.endpoints.graph + "/sites/" + that.api.host + ":/" + options.path, type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.api.token } }, callback);
         },
+        ///Get all subsites under the site collection.
         sites: function (options, callback) {
-            that.service.common({ url: that.endpoints.graph + "/sites/" + options.siteId + "/sites", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.browse.accessToken } }, callback);
+            that.service.common({ url: that.endpoints.graph + "/sites/" + options.siteId + "/sites", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.api.token } }, callback);
         },
+        ///Get libraries under the current site.
         libraries: function (options, callback) {
-            that.service.common({ url: that.endpoints.graph + "/sites/" + options.siteId + "/lists", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.browse.accessToken } }, callback);
+            that.service.common({ url: that.endpoints.graph + "/sites/" + options.siteId + "/drives", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.api.token } }, callback);
         },
+        ///Get items under the selected library.
         items: function (options, callback) {
-            that.service.common({ url: that.endpoints.graph + "/sites/" + options.siteId + "/lists/" + options.listId + "/drive/root/children", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.browse.accessToken } }, callback);
+            that.service.common({ url: that.endpoints.graph + "/sites/" + options.siteId + "/drives/" + options.listId + "/root/children", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.api.token } }, callback);
         },
+        ///Get items under the selected folder.
         itemsInFolder: function (options, callback) {
-            that.service.common({ url: that.endpoints.graph + "/sites/" + options.siteId + "/lists/" + options.listId + "/drive/items/" + options.itemId + "/children", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.browse.accessToken } }, callback);
+            that.service.common({ url: that.endpoints.graph + "/sites/" + options.siteId + "/drives/" + options.listId + "/items/" + options.itemId + "/children", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.api.token } }, callback);
         },
+        ///Search list item by file name.
+        item: function (options, callback) {
+            that.service.common({ url: options.siteUrl + "/_api/web/lists/getbytitle('" + options.listName + "')/items?$select=FileLeafRef,EncodedAbsUrl,OData__dlc_DocId&$filter=FileLeafRef eq '" + options.fileName + "'", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.api.sharePointToken } }, callback);
+        },
+        ///Get custom formats from Azure storage.
         customFormat: function (callback) {
             that.service.common({ url: that.endpoints.customFormat, type: "GET", dataType: "json" }, callback);
+        },
+        ///Update the destination point custom formats(PUT) in Azure storage.
+        update: function (options, callback) {
+            that.service.common({ url: that.endpoints.updateCustomFormat, type: "PUT", data: options.data, dataType: "json" }, callback);
         }
     };
 
@@ -1776,7 +2127,7 @@ var point = (function () {
             that.controls.file.val("");
             that.controls.keyword.val("");
         },
-        ///set the default value for file & eyword textboxes.
+        ///Set the default value for file & eyword textboxes.
         dft: function () {
             var _f = $.trim(that.controls.file.val()), _fd = that.controls.file.data("default"), _k = $.trim(that.controls.keyword.val()), _kd = that.controls.keyword.data("default");
             if (_f == "" || _f == _fd) {
@@ -1799,7 +2150,7 @@ var point = (function () {
             that.ui.dft();
             that.controls.filterList.find("input").removeAttr("checked");
         },
-        ///display the default screen when add destination point.
+        ///Display the default screen when add destination point.
         reset: function () {
             that.ui.clear();
             that.ui.dft();
@@ -1808,7 +2159,7 @@ var point = (function () {
             that.controls.stepFirstMain.removeClass("selected-file");
             that.controls.filterMain.removeClass("open-filter");
         },
-        ///build filter by groups HTML
+        ///Build filter by groups HTML
         groups: function (options) {
             that.controls.filterList.html("");
             $.each(options, function (i, d) {
@@ -1884,7 +2235,7 @@ var point = (function () {
                         var __i = that.range.index({ data: result.data, tag: d.RangeId });
                         _d[i].orderBy = __i > -1 ? __i : 99999;
                         _d[i].existed = __i > -1 ? true : false;
-                        _d[i].changed = __i > -1 ? $.trim(result.data[__i].text) != that.format.convert({ value: that.utility.toString(d.ReferencedSourcePoint.Value), formats: d.CustomFormats }) : false;
+                        _d[i].changed = __i > -1 ? $.trim(result.data[__i].text) != that.format.convert({ value: that.utility.toString(d.ReferencedSourcePoint.Value), formats: d.CustomFormats, decimal: d.DecimalPlace }) : false;
                     });
                 }
                 else {
@@ -1919,14 +2270,23 @@ var point = (function () {
                 that.ui.item({ index: 0, data: _d, refresh: options.refresh, selected: _ss });
             });
         },
-        ///build each destination point HTML in management page.
+        ///Build each destination point HTML in management page.
         item: function (options, callback) {
             if (options.index < options.data.length) {
                 var _dsp = options.data[options.index], _item = _dsp.ReferencedSourcePoint, _sourcePointCatalog = _item.Catalog, _s = _dsp.existed && _item.Status == 0;
                 if (options.index >= that.pagerSize * (that.pagerIndex - 1) && options.index < that.pagerSize * that.pagerIndex) {
                     var _p = that.utility.position(_item.Position),
                         _fn = that.utility.fileName(_sourcePointCatalog.Name),
-                        _sel = $.inArray(_dsp.Id, options.selected) > -1;
+                        _sel = $.inArray(_dsp.Id, options.selected) > -1,
+                        _fv = that.format.convert({ value: _item.Value ? _item.Value : "", formats: _dsp.CustomFormats, decimal: _dsp.DecimalPlace }),
+                        _ff = [],
+                        _pht = _item.PublishedHistories && _item.PublishedHistories.length > 0 ? _item.PublishedHistories : [],
+                        _pi = 0;
+                    $.each(_dsp.CustomFormats != null ? _dsp.CustomFormats : [], function (_x, _y) { _ff.push(_y.DisplayName); });
+                    if (_dsp.DecimalPlace != null && _dsp.DecimalPlace != "") {
+                        _ff.push("Displayed decimals");
+                    }
+                    var _cf = _ff.join("; ").replace(/"/g, "&quot;");
                     var _h = '<li class="point-item' + (_s ? "" : " item-error") + '" data-id="' + _dsp.Id + '" data-range="' + _dsp.RangeId + '">';
                     _h += '<div class="point-item-line">';
                     _h += '<div class="i1"><div class="ckb-wrapper' + (_sel ? " checked" : "") + '"><input type="checkbox" ' + (_sel ? 'checked="checked"' : '') + ' /><i></i></div></div>';
@@ -1935,15 +2295,22 @@ var point = (function () {
                     _h += '<span><strong class="i-file" title="' + _sourcePointCatalog.Name + '" data-path="' + _sourcePointCatalog.Name + '">' + _fn + '</strong></span>';
                     _h += '</div>';
                     _h += '<div class="i3" title="' + (_item.Value ? _item.Value : "") + '">' + (_item.Value ? _item.Value : "") + '</div>';
-                    _h += '<div class="i5"><div class="i-line"><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i></div>';
-                    _h += '<div class="i-menu"><a href="javascript:"><span title="Action">...</span><span><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i></span></a></div>';
+                    _h += '<div class="i5"><div class="i-line"><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i><i class="i-edit" title="Edit Custom Format"></i></div>';
+                    _h += '<div class="i-menu"><a href="javascript:"><span title="Action">...</span><span><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i><i class="i-edit" title="Edit Custom Format"></i></span></a></div>';
                     _h += '</div>';
+                    _h += '</div>';
+                    _h += '<div class="item-format">';
+                    _h += '<span class="item-formatted" title="' + _fv + '"><strong>' + (_ff.length > 0 ? "Formatted Value" : "Source Point Value") + ':</strong>' + _fv + '</span>';
+                    _h += '<span class="item-formats" title="' + (_ff.length > 0 ? _cf : "No custom formatting applied") + '"><strong>Format:</strong>' + (_ff.length > 0 ? _cf : "No custom formatting applied") + '</span>';
                     _h += '</div>';
                     _h += '<div class="item-history"><h6>Publish History</h6><ul class="history-list">';
                     _h += '<li class="history-header"><div class="h1">Name</div><div class="h2">Value</div><div class="h3">Date</div></li>';
-                    $.each(_item.PublishedHistories, function (m, n) {
-                        if (m < 5) {
+                    $.each(_pht, function (m, n) {
+                        var __c = $.trim(_pht[m].Value ? _pht[m].Value : ""),
+                            __p = $.trim(_pht[m > 0 ? m - 1 : m].Value ? _pht[m > 0 ? m - 1 : m].Value : "");
+                        if (_pi < 5 && (m == 0 || __c != __p)) {
                             _h += '<li class="history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
+                            _pi++;
                         }
                     });
                     _h += '</ul>';
@@ -1965,7 +2332,7 @@ var point = (function () {
                 }
                 options.index++;
                 if (options.refresh && _s && _dsp.changed) {
-                    that.range.edit({ RangeId: _dsp.RangeId, Value: that.format.convert({ value: _item.Value ? _item.Value : "", formats: _dsp.CustomFormats }) }, function (result) {
+                    that.range.edit({ RangeId: _dsp.RangeId, Value: that.format.convert({ value: _item.Value ? _item.Value : "", formats: _dsp.CustomFormats, decimal: _dsp.DecimalPlace }) }, function (result) {
                         that.ui.item(options, callback);
                     });
                 }
@@ -1989,21 +2356,89 @@ var point = (function () {
             that.controls.list.find("[data-id=" + options.Id + "]").remove();
         },
         ///Build the custom format dropdown list HTML.
-        customFormat: function (options) {
+        customFormat: function (options, callback) {
             that.controls.formatList.html("");
-            that.controls.formatBtn.html("None");
-            that.controls.formatBtn.prop("selected", "");
-            that.controls.formatBtn.prop("name", "");
-            if (options.data) {
-                that.controls.formatList.append('<li class="drp-header"><div class="custom-cbk"><i></i></div><a href="javascript:">Select all</a></li>');
-                $.each(options.data, function (i, d) {
-                    var _h = '';
-                    _h += '<li class="drp-item" data-id="' + d.Id + '" data-name="' + d.Name + '" title="' + d.Description + '">';
-                    _h += '<div class="custom-cbk"><i></i></div>';
-                    _h += '<a href="javascript:">' + d.DisplayName + '</a>';
+            var _si = [], _sn = [], _sd = [];
+            if (options.selected && options.selected != null) {
+                $.each(options.selected.CustomFormats, function (_x, _y) {
+                    _si.push(_y.Id);
+                    _sn.push(_y.Name);
+                    _sd.push(_y.DisplayName);
+                });
+                that.controls.formatBtn.html(_sd.length > 0 ? _sd.join(", ") : "None");
+                that.controls.formatBtn.prop("title", _sd.length > 0 ? _sd.join(", ") : "None");
+                that.controls.formatBtn.prop("selected", _si.join(","));
+                that.controls.formatBtn.prop("name", _sn.join(","));
+                that.controls.formatBtn.prop("place", options.selected.DecimalPlace && options.selected.DecimalPlace != null ? options.selected.DecimalPlace : "");
+            }
+            else {
+                that.controls.formatBtn.html("None");
+                that.controls.formatBtn.prop("title", "None");
+                that.controls.formatBtn.prop("selected", "");
+                that.controls.formatBtn.prop("name", "");
+                that.controls.formatBtn.prop("place", "");
+            }
+
+            var _v = that.controls.formatBtn.prop("original");
+            that.controls.formatList.removeClass("convert1 convert2 convert3 convert4");
+            that.controls.previewValue.html(_v);
+            that.controls.addCustomFormat.removeClass("selected-number selected-date");
+            if (that.format.isNumber(_v)) {
+                that.controls.addCustomFormat.addClass("selected-number");
+            }
+            else if (that.format.isDate(_v)) {
+                that.controls.addCustomFormat.addClass("selected-date");
+            }
+
+            if (_sn.length > 0) {
+                var _tn = $.inArray("ConvertToThousands", _sn) > -1 ? "IncludeThousandDescriptor" : ($.inArray("ConvertToMillions", _sn) > -1 ? "IncludeMillionDescriptor" : ($.inArray("ConvertToBillions", _sn) > -1 ? "IncludeBillionDescriptor" : ($.inArray("ConvertToHundreds", _sn) > -1 ? "IncludeHundredDescriptor" : "")));
+                var _cl = $.inArray("ConvertToThousands", _sn) > -1 ? "convert2" : ($.inArray("ConvertToMillions", _sn) > -1 ? "convert3" : ($.inArray("ConvertToBillions", _sn) > -1 ? "convert4" : ($.inArray("ConvertToHundreds", _sn) > -1 ? "convert1" : "")));
+                that.controls.formatList.addClass(_cl);
+                that.controls.formatList.find("ul > li[data-name=" + _tn + "]").addClass("checked");
+            }
+
+            var _dd = [], _dt = [];
+            $.each(options.data, function (_i, _e) {
+                var _i = $.inArray(_e.GroupName, _dt);
+                if (_i == -1) {
+                    _dd.push({ Name: _e.GroupName, OrderBy: _e.GroupOrderBy, Formats: [{ Id: _e.Id, Name: _e.Name, DisplayName: _e.DisplayName, Description: _e.Description, OrderBy: _e.OrderBy }] });
+                    _dt.push(_e.GroupName);
+                }
+                else {
+                    _dd[_i].Formats.push({ Id: _e.Id, Name: _e.Name, DisplayName: _e.DisplayName, Description: _e.Description, OrderBy: _e.OrderBy });
+                }
+            });
+            $.each(_dd, function (_i, _e) {
+                _e.Formats.sort(function (_m, _n) {
+                    return _m.OrderBy > _n.OrderBy ? 1 : _m.OrderBy < _n.OrderBy ? -1 : 0;
+                });
+            });
+            _dd.sort(function (_m, _n) {
+                return _m.OrderBy > _n.OrderBy ? 1 : _m.OrderBy < _n.OrderBy ? -1 : 0;
+            });
+
+            if (_dd) {
+                $.each(_dd, function (m, n) {
+                    var _h = '', _c = '';
+                    _c = (n.Name == "Convert to" || n.Name == "Negative number" || n.Name == "Descriptor") ? "value-number" : (n.Name == "Symbol") ? "value-string" : "value-date";
+                    _h += '<li class="' + (n.Name == "Descriptor" ? "drp-checkbox drp-descriptor " : "drp-radio ") + '' + _c + '">';
+                    if (n.Name != "Descriptor") {
+                        _h += '<label>' + n.Name + '</label>';
+                    }
+                    _h += '<ul>';
+                    $.each(n.Formats, function (i, d) {
+                        _h += '<li data-id="' + d.Id + '" data-name="' + d.Name + '" title="' + d.Description + '" class="' + ($.inArray(d.Id, _si) > -1 ? "checked" : "") + '">';
+                        _h += '<div><i></i></div>';
+                        _h += '<a href="javascript:">' + (n.Name == "Descriptor" ? "Descriptor" : d.DisplayName) + '</a>';
+                        _h += '</li>';
+                    });
+                    _h += '</ul>';
                     _h += '</li>';
                     that.controls.formatList.append(_h);
                 });
+            }
+            if (callback) {
+                callback();
             }
         }
     };
