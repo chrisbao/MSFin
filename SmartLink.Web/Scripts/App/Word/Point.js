@@ -62,7 +62,7 @@ var point = (function () {
             sharePointToken: ""
         }
     }, that = point;
-
+    ///Initialize the event handlers & load the destination point list.
     that.init = function () {
         ///Get the document URL.
         that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://cand3.sharepoint.com/Shared%20Documents/Test.docx" : Office.context.document.url;
@@ -2120,7 +2120,7 @@ var point = (function () {
             that.service.common({ url: that.endpoints.updateCustomFormat, type: "PUT", data: options.data, dataType: "json" }, callback);
         }
     };
-
+    ///Build the HTML/UI.
     that.ui = {
         ///Clear the file & keyword textboxes.
         clear: function () {

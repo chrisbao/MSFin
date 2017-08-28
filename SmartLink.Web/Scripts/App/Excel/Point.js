@@ -1275,7 +1275,6 @@ var point = (function () {
             that.utility.pager.init({ refresh: true });
         }
     };
-
     ///Define get document id function.
     that.document = {
         ///Initialize get graph and sharepoint access token.
@@ -1384,7 +1383,6 @@ var point = (function () {
             that.popup.processing(false);
         }
     };
-
     ///Define all popup features.
     that.popup = {
         ///Display the message popup.

@@ -38,7 +38,7 @@ var point = (function () {
             sharePointToken: ""
         }
     }, that = point;
-
+    ///Initialize the event handlers.
     that.init = function () {
         that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://cand3.sharepoint.com/Shared%20Documents/Presentation.pptx" : Office.context.document.url;
         that.controls = {
@@ -563,6 +563,7 @@ var point = (function () {
                 that.browse.file({ siteUrl: $(elem).data("siteurl"), listName: $(elem).data("listname"), name: $(elem).text(), url: that.browse.path[that.browse.path.length - 1].url + "/" + encodeURI($(elem).text()), fileName: $.trim($(elem).text()) });
             }
         },
+        ///Display the file explorer popup.
         popup: {
             ///Reset to popup default state (an empty popup)
             dft: function () {
@@ -767,7 +768,7 @@ var point = (function () {
             that.service.common({ url: options.siteUrl + "/_api/web/lists/getbytitle('" + options.listName + "')/items?$select=FileLeafRef,EncodedAbsUrl,OData__dlc_DocId&$filter=FileLeafRef eq '" + options.fileName + "'", type: "GET", dataType: "json", headers: { "authorization": "Bearer " + that.api.sharePointToken } }, callback);
         }
     };
-
+    ///Build the HTML/UI.
     that.ui = {
         ///Set the default value for file & eyword textboxes.
         dft: function () {
