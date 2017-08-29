@@ -220,6 +220,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    - Open the solution.
    - Include the PFX certificate in SmartLink.WebJob project. 
+   - Include the PFX certificate in SmartLink.DocumentWebJob project.
 
    **For example:** smartlinkqa.pfx.
 
@@ -270,7 +271,8 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 | ida:domain                | yourtenantname.onmicrosoft.com        |                                          |
 | ida:PostLogoutRedirectUri | https://websitename.azurewebsites.net | Azure web site URL                       |
 | ResourceId                | https://graph.microsoft.com           | this is fixed value                      |
-| ConsentResource           | https://yourtenantname.sharepoint.com |                                          |
+| SharePointUrl           	| https://yourtenantname.sharepoint.com | The root site collection of the O365 site             
+| Key						| 23, 7, 19, 11, 24, 226, 85, 45, 114, 184, 27, 162, 37, 112, 222, 209, 241, 24, 175, 144, 176, 53, 196, 29, 24, 26, 17, 218, 131, 236, 53, 209 | Encrypt key, this is fixed value      
 
 ![](Images/configuration.png)
 
@@ -290,7 +292,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 9. Click *'Publish'*
 
-## Upload the Excel & Word manifest files
+## Upload the Add-in manifest file
 
 1. Go to the app for Office add-in management page. 
 
@@ -300,21 +302,36 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    ![](Images/appforoffice.png)
 
-3. Find the Excel [app manifest file](SmartLinkExcel/SmartLinkExcelManifest/SmartLinkExcel.xml) & Word [app manifest file](SmartLinkWord/SmartLinkWordManifest/SmartLinkWord.xml)
+3. Find the [app manifest file](SmartLinkExcel/SmartLinkExcelManifest/SmartLinkExcel.xml).
 
-4. Update the Excel & Word manifest files.
+4. Update the manifest file.
 
    - Update the Id with a new generated GUID and you could refer to the link below on how to generate it. [https://guidgenerator.com/online-guid-generator.aspx](https://guidgenerator.com/online-guid-generator.aspx) 
 
      > Note: please generate new GUID for the Word manifest file.
 
+   - Update the display name and description default value to SmartLink. 
+
+   - Update the icon url default value to the one provisioned in Azure.
+
+	 **For example:** `[https://<yourwebsitename>.azurewebsites.net/Images/logo.png](https://<yourwebsitename>.azurewebsites.net/Images/logo.png)`   
+
+   - Update the hosts to the following elements.
+   	
+	```
+	<Host Name="Workbook" />
+    <Host Name="Document" />
+    <Host Name="Presentation" />
+	
+	```
+   
    - Update the source location default value to the one provisioned in Azure.
 
-     **For example:** `[https://<yourwebsitename>.azurewebsites.net/Home/Index](https://msfinsmartlinkqa.azurewebsites.net/Home/Index)` 
+     **For example:** `[https://<yourwebsitename>.azurewebsites.net/Home/Index](https://<yourwebsitename>.azurewebsites.net/Home/Index)` 
 
      ![](Images/excelmanifest.png)
 
-5. Upload manifest file *SmartLinkExcel.xml* & *SmartLinkWord.xml* to the SharePoint catalog.
+5. Upload manifest file *SmartLinkExcel.xml* to the SharePoint catalog.
 
 ## Install Excel Add-in
 
@@ -342,7 +359,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    ![](Images/insertexceladdin.png)
 
-8. Click *MY ORGANIZATION* and insert the *SmartLinkExcel*. 
+8. Click *MY ORGANIZATION* and insert the *SmartLink*. 
 
    ![](Images/SelectAddIn.png)
 
@@ -370,15 +387,37 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 7. Click *Insert* and *My Add-ins*.
 
-8. Click *MY ORGANIZATION* and insert the *SmartLinkWord*.
+8. Click *MY ORGANIZATION* and insert the *SmartLink*.
 
 9. Then the Word Add-in would be shown on the task panel.
 
 
+## Install PowerPoint Add-in
+
+1. Open PowerPoint 2016
+
+2. Sign in with your O365 account. 
+
+3. Click *File* | *Options*
+
+4. Click *Trust Center* | *Trust Center settings*.
+
+   ![](Images/WordTrustCenter.png)
+
+5. Click *Trusted Add-in Catalogs* | Add catalog URL
+
+   **For example:** `https://<tenantname>.sharepoint.com/sites/AppCatelog`
+
+6. Restart PowerPoint.
+
+7. Click *Insert* and *My Add-ins*.
+
+8. Click *MY ORGANIZATION* and insert the *SmartLink*.
+
+9. Then the PowerPoint Add-in would be shown on the task panel.
 
 
-
-## Run Excel & Word Add-ins
+## Run Excel, Word & PowerPoint Add-ins
 
 1. Work with your O365 admin to go to admin consent page in the browser. 
 
@@ -408,7 +447,8 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    - Edit the source point form.
 
-     - Fill the Source Point name
+     - Select the range (only one cell is supported, please do not double click the cell.  Click Esc if double click the cell.)
+     - Click the populating cell address button
      - Select group
      - Select the range (only one cell is supported, please do not double click the cell.  Click Esc if double click the cell.)
      - Click the populating cell address button
@@ -435,6 +475,18 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 11. Save the word document and close it. 
 
 12. You could refer to the 2 section on [how to view the SQL data](#how-to-view-azure-sql-data) and [how to view data in the storage account](#how-to-view-data-in-the-storage-account).
+
+13. Open a PowerPoint file under the same document library where Excel file hosted in O365 site.
+
+14. Use your O365 account to login the PowerPoint add-in.
+	
+   - Click select file button
+	 
+   ![](Images/powerpointselectfile.png)
+
+15. Select the Excel file hosts the source points. 
+
+   ![](Images/fileexplorer.png)
 
 
 ## How to view Azure SQL data?
@@ -610,29 +662,35 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 6. Update the JavaScript file to support the local debug for Excel add-in.
 
-   - Open the [SignIn.js](SmartLink.Web/Scripts/App/SignIn.js) and update the isDev property value from false to true.
-
    - Make sure that an Excel file is uploaded to the document library in SharePoint site within your tenant. 
 
-   - Copy the Excel file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 45
-
-   - Find the disk drive where solution hosts (**For example:** E disk) and update E: to that disk drive in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 45.
+   - Copy the Excel file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 59.
 
      ```javascript
-      that.filePath = Office.context.document.url.indexOf("E:") > -1 ? "https://<yourtenantname>.sharepoint.com/Shared%20Documents/Book.xlsx" : 
+      that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://<yourtenantname>.sharepoint.com/Shared%20Documents/Book.xlsx" : Office.context.document.url;
      ```
 
 7. Update the JavaScript file to support the local debug for Word add-in.
 
    - Make sure that an Excel file is uploaded to the document library in SharePoint site within your tenant. 
 
-   - Copy the Word file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 55
+   - Copy the Word file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 68.
 
      ```javascript
-     that.filePath = Office.context && Office.context.document && Office.context.document.url ? Office.context.document.url : "https://<yourtenantname>.sharepoint.com/Shared%20Documents/Test.docx";
+     that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://<yourtenantname>.sharepoint.com/Shared%20Documents/Test.docx" : Office.context.document.url;
      ```
 
-8. Set SmartLinkExcel as StartUp project, and press F5.
+8. Update the JavaScript file to support the local debug for PowerPoint add-in.
+
+   - Make sure that an PowerPoint file is uploaded to the document library in SharePoint site within your tenant. 
+
+   - Copy the PowerPoint file link and update link in [Point.js](SmartLink.Web/Scripts/App/PowerPoint/Point.js) in line 77.
+
+     ```javascript
+     that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://<yourtenantname>.sharepoint.com/Shared%20Documents/Presentation.pptx" : Office.context.document.url;
+     ```
+
+9. Set SmartLinkExcel as StartUp project, and press F5.
 
    - Work with your O365 admin to go to admin consent page in the browser. 
 
@@ -646,31 +704,33 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    - Click *add* and edit the source point form.
 
-     - Fill the Source Point name
-
-     - Select group
-
      - Select the range (only one cell is supported, please do not double click the cell.  Click Esc if double click the cell.)
-
+     
      - Click the populating cell address button
-
+     
+     - Select group
+     
+     - Select the range (only one cell is supported, please do not double click the cell.  Click Esc if double click the cell.)
+     
+     - Click the populating cell address button
+     
      - Save the changes
+		
+	 ![](Images/addnewsourcepointstepbystep.png) 
+		 
+		> 
+		> **Note:** By default, you could debug the JavaScript file by setting the breakpoint in it.You could also attach the process to debug the web application code when click save.  This is same for debugging the Word add-in.
+		
+		![](Images/debugsp.png)
+		
+		![](Images/attachprocess.png)
 
-       ![](Images/addsplocal.png)
+		![](Images/attachiisexpressprocess.png)
 
-     > **Note:** By default, you could debug the JavaScript file by setting the breakpoint in it.You could also attach the process to debug the web application code when click save.  This is same for debugging the Word add-in.
+		![](Images/debugspsave.png)
 
-     ![](Images/debugsp.png)
 
-      ![](Images/attachprocess.png)
-
-     ![](Images/attachiisexpressprocess.png)
-
-     ​
-
-   ​                    ![](Images/debugspsave.png)
-
-9. Set SmartLinkWord as StartUp project and press F5
+10. Set SmartLinkWord as StartUp project and press F5
 
    - Open the words add-in in your local.
 
@@ -687,6 +747,17 @@ administratorLoginPasswordMSFin SmartLink Code Sample
    - Click Add to add the destination point.
 
      ![](Images/adddp.png)
+
+
+11. Set SmartLinkPowerPoint as StartUp project and press F5
+
+   - Open the PowerPoint add-in in your local.
+
+   - Click select file and browse source point file.
+
+   - Select the Excel file hosts the source points. 
+
+     ![](Images/fileexplorer.png)
 
 
 ## Understand the code
