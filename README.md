@@ -241,7 +241,8 @@ administratorLoginPasswordMSFin SmartLink Code Sample
    | CertificatePassword | The password when exporting the certificate | Step 2 in this [section](#configure-the-communication-between-webjob-and-o365-tenant) |
    | ida:AADInstance     | [https://login.microsoftonline.com/](https://login.microsoftonline.com/) | Fixed value                              |
    | ida:TenantId        | The Azure Tenant ID                      | Step 9 in this [section](#register-the-application-in-azure-active-directory-for-mvc-web-app) |
-   | SharePointUrl       | The root site collection of the O365    site | **For example:**  [https://yourtenant.sharepoint.com](https://yourtenantsharepoint.com) |
+   | SharePointUrl       | The root site collection of the O365    site | **For example:**  [https://yourtenant.sharepoint.com](https://yourtenantsharepoint.com) | 
+   | Key						| 18, 7, 19, 11, 24, 226, 85, 45, 88, 184, 27, 162, 37, 112, 183, 209, 241, 24, 175, 176, 176, 53, 196, 29, 24, 26, 17, 218, 131, 236, 53, 55 | Encrypt key, this is fixed value
    | CertificateFile     | web site relative path                   | **For example:**  smartlinkqa.pfx        |
 
 5. Update the manifest file.
@@ -272,7 +273,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 | ida:PostLogoutRedirectUri | https://websitename.azurewebsites.net | Azure web site URL                       |
 | ResourceId                | https://graph.microsoft.com           | this is fixed value                      |
 | SharePointUrl           	| https://yourtenantname.sharepoint.com | The root site collection of the O365 site             
-| Key						| 23, 7, 19, 11, 24, 226, 85, 45, 114, 184, 27, 162, 37, 112, 222, 209, 241, 24, 175, 144, 176, 53, 196, 29, 24, 26, 17, 218, 131, 236, 53, 209 | Encrypt key, this is fixed value      
+| Key						| 18, 7, 19, 11, 24, 226, 85, 45, 88, 184, 27, 162, 37, 112, 183, 209, 241, 24, 175, 176, 176, 53, 196, 29, 24, 26, 17, 218, 131, 236, 53, 55 | Encrypt key, this is fixed value      
 
 ![](Images/configuration.png)
 
