@@ -14,13 +14,17 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 [Deploy the sample to Azure](#deploy-the-sample-to-azure)
 
-[Upload the Excel & Word manifest files](#upload-the-excel--word-manifest-files)
+[Encrypt string](#encrypt-string)
+
+[Upload the Add-in manifest file](#upload-the-add-in-manifest-file)
 
 [Install Excel Add-in](#install-excel-add-in)	
 
 [Install Word Add-in](#install-word-add-in)
 
-[Run Excel & Word Add-ins](#run-excel--word-add-ins)
+[Install PowerPoint Add-in](#install-powerpoint-add-in)
+
+[Run Excel, Word & PowerPoint Add-ins](#run-excel-word-powerpoint-add-ins)
 
 [How to view Azure SQL data?](#how-to-view-azure-sql-data)
 
@@ -243,7 +247,15 @@ administratorLoginPasswordMSFin SmartLink Code Sample
    | ida:TenantId        | The Azure Tenant ID                      | Step 9 in this [section](#register-the-application-in-azure-active-directory-for-mvc-web-app) |
    | SharePointUrl       | The root site collection of the O365    site | **For example:**  [https://yourtenant.sharepoint.com](https://yourtenantsharepoint.com) | 
    | Key						| 18, 7, 19, 11, 24, 226, 85, 45, 88, 184, 27, 162, 37, 112, 183, 209, 241, 24, 175, 176, 176, 53, 196, 29, 24, 26, 17, 218, 131, 236, 53, 55 | Encrypt key, this is fixed value
-   | CertificateFile     | web site relative path                   | **For example:**  smartlinkqa.pfx        |
+   | CertificateFile     | web site relative path                   | **For example:**  smartlinkqa.pfx        | 
+
+   - Update the following connection settings.      
+
+   | **Connection  setting **   | **Value**                                | **Notes**                                |
+   | ------------------- | ---------------------------------------- | :--------------------------------------- |
+   | AzureWebJobsDashboard  | The Azure web job dashboard connection string. | Encrypt it in this [section](#encrypt-string) |
+   | AzureWebJobsStorage  | The Azure web job storage connection string | Encrypt it in this [section](#encrypt-string) |
+
 
 5. Update the manifest file.
 
@@ -292,6 +304,26 @@ administratorLoginPasswordMSFin SmartLink Code Sample
    ![](Images/WebDeployDebug.png)
 
 9. Click *'Publish'*
+
+
+## Encrypt string
+
+1. Open the project using visual studio 2015 if you already download it.
+
+2. Set SmartLink.EncryptTool as StartUp project, and press F5.
+
+3. A encrypt tool window will be displayed.
+
+4. Encrypt string
+
+	- Enter the source string
+	
+	- Click encrypt string button
+	
+	- Copy and store the encrypted string
+	
+	  ![](Images/encryptstring.png)	
+
 
 ## Upload the Add-in manifest file
 
