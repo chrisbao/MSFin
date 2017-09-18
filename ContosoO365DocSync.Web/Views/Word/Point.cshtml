@@ -1,0 +1,228 @@
+﻿@*
+    *   * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
+    *   * See LICENSE in the project root for license information.
+*@
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Point</title>
+    <script src="../../Scripts/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="../../Scripts/bignumber.min.js" type="text/javascript"></script>
+
+    <link href="../../Content/Office.css" rel="stylesheet" type="text/css" />
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
+
+    <!-- To enable offline debugging using a local reference to Office.js, use:                        -->
+    <!-- <script src="../../Scripts/Office/MicrosoftAjax.js" type="text/javascript"></script>  -->
+    <!-- <script src="../../Scripts/Office/1/office.js" type="text/javascript"></script>  -->
+
+    <script>
+        var timestamp = Math.random();
+        document.write("<link href='../../Content/App.css?t=" + timestamp + "' rel='stylesheet' type='text/css' />");
+        document.write("<script src='../../Scripts/App/App.js?t=" + timestamp + "' type='text/javascript'></s" + "cript>");
+        document.write("<script src='../../Scripts/App/Word/Point.js?t=" + timestamp + "' type='text/javascript'></s" + "cript>");
+    </script>
+</head>
+<body>
+    <div id="word-addin" class="main manage">
+        <div class="header">
+            <div class="nav-header">
+                <a class="n-back" href="javascript:" title="Back"><i></i><span>Back</span></a>
+                <a class="n-add" href="javascript:" title="Add"><i></i><span>Add</span></a>
+                <a class="n-highlight" href="javascript:" title="Highlight On"><i></i><span>Highlight On</span></a>
+                <a class="n-refresh" href="javascript:" title="Refresh All"><i></i><span>Refresh All</span></a>
+                <a class="n-delete" href="javascript:" title="Delete"><i></i><span>Delete</span></a>
+                <a class="n-signout" href="../Account/SignOut" title="Sign Out"><i></i><span>Sign Out</span></a>
+            </div>
+            <div class="content-header">
+                <div class="add-header">
+                    <h3 class="title-add" title="Add Destination Point">Add Destination Point</h3>
+                    <h3 class="title-edit" title="Update Custom Format">Update Custom Format</h3>
+                    <div class="btnWrapper">
+                        <button id="btnCancel">Cancel</button>
+                        <button id="btnAdd">Add</button>
+                        <button id="btnSave">Save</button>
+                        <button id="btnNext">NEXT</button>
+                    </div>
+                </div>
+                <div class="manage-header">
+                    <div class="manage-title">
+                        <h3 title="Manage Destination Points">
+                            Manage Destination Points
+                        </h3>
+                        <div>
+                            <a href="javascript:" id="btnMoveUp" title="Up"></a><a href="javascript:" id="btnMoveDown" title="Down"></a>
+                        </div>
+                    </div>
+                    <div class="search">
+                        <div class="s-input">
+                            <div>
+                                <input type="text" id="txtSearchSourcePoint" data-default="Search by Source Point Name" />
+                                <ul id="autoCompleteWrap2" class="search-tooltips"></ul>
+                            </div>
+                        </div>
+                        <div class="s-label">
+                            <label>Search Source Point Name:</label>
+                            <i id="iSearchSourcePoint"></i>
+                        </div>
+                    </div>
+                    <ul id="headerListPoints" class="point-list">
+                        <li class="point-header">
+                            <div class="point-header-line noscroll">
+                                <div class="i1">
+                                    <div class="ckb-wrapper all">
+                                        <input type="checkbox" />
+                                        <i></i>
+                                    </div>
+                                </div>
+                                <div class="i2">Source Point</div>
+                                <div class="i3">Value</div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        <div class="content add-point">
+            <div class="add-point-first">
+                <h4 class="height-item">Select File<em>*</em></h4>
+                <div class="point-item input-wrapper height-item">
+                    <div class="input-dropdown">
+                        <input type="text" id="txtFile" disabled="disabled" data-default="Select a file..." />
+                        <span id="btnOpenBrowse"><i>Browse</i></span>
+                    </div>
+                </div>
+                <div class="point-search point-item input-wrapper height-item">
+                    <label>Search within document:</label>
+                    <div class="input-search">
+                        <input type="text" id="txtKeyword" data-default="Search by Source Point Name" />
+                        <i id="iSearch"></i>
+                        <ul id="autoCompleteWrap" class="search-tooltips"></ul>
+                    </div>
+                </div>
+                <div class="point-filter">
+                    <div class="filter-header height-item">
+                        <span><em>Filter by</em><i></i></span>
+                    </div>
+                    <div class="filter-list">
+                        <h5>Filter by Groups:</h5>
+                        <ul id="filterList"></ul>
+                    </div>
+                </div>
+                <div class="point-result">
+                    <h4 class="height-item">Search results<em>*</em></h4>
+                    <ul id="resultList"></ul>
+                    <div id="resultNotFound">No results found.</div>
+                </div>
+            </div>
+            <div class="add-point-second">
+                <div class="add-point-info">
+                    <h4 class="add-point-source i-success">Selected Source Point<i></i></h4>
+                    <div class="add-point-files">
+                        <span id="selectedName"></span>
+                        <span id="selectedFile"></span>
+                    </div>
+                    <h4 class="add-point-cursor">Next, place your cursor in the document where you want the source value displayed, then click "Add".<i></i></h4>
+                </div>
+                <div class="add-point-customformat">
+                    <h4 class="add-point-source">Select Custom Format<i></i></h4>
+                    <div class="add-point-preview">
+                        <label>Preview:</label><span id="lbPreviewValue"></span>
+                    </div>
+                    <div id="addCustomFormat" class="add-point-format">
+                        <div class="add-point-place">
+                            <label>Decimal place:</label>
+                            <span><i class="i-increase" title="Increase decimal places"></i><i class="i-decrease" title="Decrease decimal places"></i></span>
+                        </div>
+                        <div class="add-point-select">
+                            <a id="btnSelectFormat" href="javascript:"></a>
+                            <i id="iconSelectFormat"></i>
+                            <ul id="listFormats">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content manage-point">
+            <ul id="listPoints" class="point-list">
+            </ul>
+            <div class="clear"></div>
+            <div id="pager">
+                <div>
+                    Total items: <span id="pagerTotal"></span>, Page count: <span id="pagerPages"></span>, Current page: <span id="pagerCurrent"></span>
+                </div>
+                <div>
+                    <a id="pagerPrev" href="javascript:">Prev</a><a id="pagerNext" href="javascript:">Next</a>
+                    <input type="text" id="pagerValue" /><button id="pagerGo">GO</button>
+                </div>
+            </div>
+            <div id="tlpMessage" class="tooltip-message">
+                <i id="tlpClose" title="Close"></i>
+                <div>The document is not in sync with the catalog, please click refresh to synchronize.</div>
+            </div>
+        </div>
+        <div class="content document-error">
+            <p>Load document ID failed.</p>
+            <span id="lblDocumentIDError"></span>
+            <a id="btnDocumentIDReload" href="javascript:">Click to reload document ID</a>
+        </div>
+        <div class="footer">
+            <i></i><span>Contoso O365 Doc Sync</span>
+        </div>
+        <div id="popupMain" class="popups">
+            <div class="bg"></div>
+            <div id="popupMessage" class="popup">
+                <div class="success-wrapper">
+                    <i></i>
+                    <span id="lblSuccessMessage"></span>
+                </div>
+                <div id="popupErrorMain" class="error-wrapper">
+                    <h5>Error</h5>
+                    <h6 id="lblErrorTitle"></h6>
+                    <ul id="lblErrorMessage"></ul>
+                    <h6 id="lblErrorRepair"></h6>
+                    <button id="btnErrorOK">OK</button>
+                </div>
+            </div>
+            <div id="popupProcessing" class="popup processing">
+                <i></i>
+            </div>
+            <div id="popupConfirm" class="popup">
+                <div>
+                    <div id="lblConfirmTitle"></div>
+                    <button id="btnYes">Yes</button>
+                    <button id="btnNo">No</button>
+                </div>
+            </div>
+            <div id="popupBrowse" class="popup">
+                <div>
+                    <div class="browse-file">
+                        <div class="browse-filter">
+                            <a href="javascript:" id="btnBrowseBack">&lt;&lt; Back</a>
+                            <i id="btnBrowseCancel"></i>
+                        </div>
+                        <div class="browse-content">
+                            <ul id="browseList"></ul>
+                        </div>
+                        <div class="browse-message" id="txtBrowseMessage">
+                        </div>
+                    </div>
+                    <div class="loading" id="popBrowseLoading">
+                        <div class="loading-bg"></div>
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+﻿{
+  "$schema": "http://schemastore.org/schemas/json/webjobs-list.json",
+  "WebJobs": [
+    {
+      "filePath": "../ContosoO365DocSync.WebJob/ContosoO365DocSync.WebJob.csproj"
+    },
+    {
+      "filePath": "../ContosoO365DocSync.DocumentWebJob/ContosoO365DocSync.DocumentWebJob.csproj"
+    }
+  ]
+}

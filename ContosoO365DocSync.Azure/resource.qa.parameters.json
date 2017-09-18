@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "hostingPlanName": {
+            "value": "contosodocsyncqa"
+        },
+        "administratorLogin": {
+            "value": "contosodocsync"
+        },
+      "databaseName": {
+        "value": "contosodocsyncqa"
+      },
+        "skuName": {
+            "value": "F1"
+        },
+        "administratorLoginPassword": {
+            "value": ""
+        },
+        "webSiteName": {
+            "value": "contosodocsyncqa"
+        },
+        "sqlserverName": {
+            "value": "contosodocsyncqa"
+        },
+        "storageAccountName": {
+            "value": "contosodocsyncqa"
+        },
+        "edition": {
+            "value": "Basic"
+        },
+        "requestedServiceObjectiveName": {
+            "value": "Basic"
+        }
+    }
+}

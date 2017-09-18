@@ -1,0 +1,162 @@
+﻿@*
+    *   * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
+    *   * See LICENSE in the project root for license information.
+*@
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Point</title>
+    <script src="../../Scripts/jquery-1.10.2.js" type="text/javascript"></script>
+
+    <link href="../../Content/Office.css" rel="stylesheet" type="text/css" />
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
+
+    <!-- To enable offline debugging using a local reference to Office.js, use:                        -->
+    <!-- <script src="../../Scripts/Office/MicrosoftAjax.js" type="text/javascript"></script>  -->
+    <!-- <script src="../../Scripts/Office/1/office.js" type="text/javascript"></script>  -->
+
+    <script>
+        var timestamp = Math.random();
+        document.write("<link href='../../Content/App.css?t=" + timestamp + "' rel='stylesheet' type='text/css' />");
+        document.write("<script src='../../Scripts/App/App.js?t=" + timestamp + "' type='text/javascript'></s" + "cript>");
+        document.write("<script src='../../Scripts/App/Excel/Point.js?t=" + timestamp + "' type='text/javascript'></s" + "cript>");
+    </script>
+</head>
+<body>
+    <div id="excel-addin" class="main manage">
+        <div class="header">
+            <div class="nav-header">
+                <a class="n-back" href="javascript:" title="Back"><i></i><span>Back</span></a>
+                <a class="n-add" href="javascript:" title="Add"><i></i><span>Add</span></a>
+                <a class="n-bulk" href="javascript:" title="Bulk Add"><i></i><span>Bulk Add</span></a>
+                <a class="n-publish" href="javascript:" title="Publish"><i></i><span>Publish</span></a>
+                <a class="n-refresh" href="javascript:" title="Refresh All"><i></i><span>Refresh All</span></a>
+                <a class="n-publishall" href="javascript:" title="Publish All"><i></i><span>Publish All</span></a>
+                <a class="n-delete" href="javascript:" title="Delete"><i></i><span>Delete</span></a>
+                <a class="n-signout" href="../Account/SignOut" title="Sign Out"><i></i><span>Sign Out</span></a>
+            </div>
+            <div class="content-header">
+                <div class="add-header">
+                    <h3 class="title-add" title="Add Source Point">Add Source Point</h3>
+                    <h3 class="title-edit" title="Edit Source Point">Edit Source Point</h3>
+                    <div class="btnWrapper">
+                        <button id="btnCancel">Cancel</button>
+                        <button id="btnSave">Save</button>
+                    </div>
+                </div>
+                <div class="manage-header">
+                    <h3>Manage Source Points</h3>
+                    <div class="search">
+                        <div class="s-input">
+                            <div>
+                                <input type="text" id="txtSearchSourcePoint" data-default="Search by Source Point Name" />
+                                <ul id="autoCompleteWrap2" class="search-tooltips"></ul>
+                            </div>
+                        </div>
+                        <div class="s-label">
+                            <label>Search Source Point Name:</label>
+                            <i id="iSearchSourcePoint"></i>
+                        </div>
+                    </div>
+                    <ul id="headerListPoints" class="point-list">
+                        <li class="point-header">
+                            <div class="point-header-line noscroll">
+                                <div class="i1">
+                                    <div class="ckb-wrapper all">
+                                        <input type="checkbox" />
+                                        <i></i>
+                                    </div>
+                                </div>
+                                <div class="i2">Source Point</div>
+                                <div class="i3">Published Value</div>
+                                <div class="i4">Document Value</div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        <div class="content add-point">
+            <div class="point-item input-wrapper source-name">
+                <label>Source Point Name<em>*</em></label>
+                <div class="select-range">
+                    <input type="text" id="txtName" />
+                    <a href="javascript:" id="btnSelectName" title="Select source point name"></a>
+                </div>
+            </div>
+            <h4 style="display: none;">Set Location</h4>
+            <div class="point-item input-wrapper">
+                <label>Select range:<em>*</em></label>
+                <div class="select-range">
+                    <input type="text" id="txtLocation" />
+                    <a href="javascript:" id="btnLocation" title="Select range"></a>
+                </div>
+            </div>
+            <div class="point-item input-wrapper select-group">
+                <label>Assign to Groups:</label>
+                <ul id="groupWrapper"></ul>
+            </div>
+            <div class="point-associated">
+                <h4>Files associated with this Source Point:</h4>
+                <ul id="listAssociated"></ul>
+            </div>
+        </div>
+        <div class="content manage-point">
+            <ul id="listPoints" class="point-list">
+            </ul>
+            <div class="clear"></div>
+            <div id="pager">
+                <div>
+                    Total items: <span id="pagerTotal"></span>, Page count: <span id="pagerPages"></span>, Current page: <span id="pagerCurrent"></span>
+                </div>
+                <div>
+                    <a id="pagerPrev" href="javascript:">Prev</a><a id="pagerNext" href="javascript:">Next</a>
+                    <input type="text" id="pagerValue" /><button id="pagerGo">GO</button>
+                </div>
+            </div>
+        </div>
+        <div class="content document-error">
+            <p>Load document ID failed.</p>
+            <span id="lblDocumentIDError"></span>
+            <a id="btnDocumentIDReload" href="javascript:">Click to reload document ID</a>
+        </div>
+        <div class="footer">
+            <i></i><span>Contoso O365 Doc Sync</span>
+        </div>
+        <div id="popupMain" class="popups">
+            <div class="bg"></div>
+            <div id="popupMessage" class="popup">
+                <div class="success-wrapper">
+                    <i></i>
+                    <span id="lblSuccessMessage"></span>
+                </div>
+                <div id="popupErrorMain" class="error-wrapper">
+                    <h5>Error</h5>
+                    <h6 id="lblErrorTitle"></h6>
+                    <ul id="lblErrorMessage"></ul>
+                    <h6 id="lblErrorRepair"></h6>
+                    <button id="btnErrorOK">OK</button>
+                </div>
+            </div>
+            <div id="popupProcessing" class="popup processing">
+                <i></i>
+            </div>
+            <div id="popupConfirm" class="popup">
+                <div>
+                    <div id="lblConfirmTitle"></div>
+                    <button id="btnYes">Yes</button>
+                    <button id="btnNo">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

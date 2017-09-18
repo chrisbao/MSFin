@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "hostingPlanName": {
+            "value": "contosodocsyncdev"
+        },
+        "administratorLogin": {
+            "value": "contosodocsync"
+        },
+      "databaseName": {
+        "value": "contosodocsyncdev"
+      },
+        "skuName": {
+            "value": "F1"
+        },
+        "administratorLoginPassword": {
+            "value": ""
+        },
+        "storageAccountName": {
+            "value": "contosodocsyncdev"
+        }
+    }
+}
