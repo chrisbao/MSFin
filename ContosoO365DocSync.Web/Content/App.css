@@ -370,6 +370,11 @@ ul, li {
     background: #0078d7;
 }
 
+.sign-in button .ms-Button-label, .sign-in button:hover .ms-Button-label {
+    color: inherit;
+    font-size: inherit;
+    font-weight: normal;
+}
 
 /* Style for add or edit source point page */
 .add .content-header {
