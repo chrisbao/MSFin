@@ -1,4 +1,4 @@
-administratorLoginPasswordMSFin SmartLink Code Sample
+administratorLoginPasswordMSFin Contoso O365 Doc Sync Code Sample
 
 **Table of Contents**
 
@@ -68,7 +68,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 5. Click *Add an application my organization is developing* in the popup.
 
-6. In the Add Application wizard, enter a name of *SmartLink.Web* and choose the type *Web Application and/or Web API*. Click the arrow to the next page of the wizard.
+6. In the Add Application wizard, enter a name of *ContosoO365DocSync.Web* and choose the type *Web Application and/or Web API*. Click the arrow to the next page of the wizard.
 
 7. In the *App Properties* page, enter a *SIGN-ON URL* 
 
@@ -107,7 +107,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 ## Register the application in AAD for WebJob
 
-1. Follow [Register the application in AAD for MVC Web App](#register-the-application-in-azure-active-directory-for-mvc-web-app) section to register another app named *smartlink.webjob* and please refer to the table below when filling the value. 
+1. Follow [Register the application in AAD for MVC Web App](#register-the-application-in-azure-active-directory-for-mvc-web-app) section to register another app named *contosoo365docsync.webjob* and please refer to the table below when filling the value. 
 
 | SIGN-ON URL    | https://[websitename].azurewebsites.net  |
 | -------------- | ---------------------------------------- |
@@ -121,7 +121,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    ![](Images/selecto365.png)
 
-4. Here is the O365 SharePoint Online app permission needed for the Azure AD App *smartlink.webjob*.
+4. Here is the O365 SharePoint Online app permission needed for the Azure AD App *contosoo365docsync.webjob*.
 
 ![](Images/WebJobO365permission.png)
 
@@ -131,12 +131,12 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 1. Download the project and using visual studio 2015 to open it.
 
-2. Right click on the Azure resource group project *SmartLink.Azure* and click *Deploy* | *New*.
+2. Right click on the Azure resource group project *ContosoO365DocSync.Azure* and click *Deploy* | *New*.
 
    ![](Images/ARMTemplate.png)
 
 3. Fill the Azure login account and create a new resource group (**For example:**
-   *SmartLink.QA*) then select the resource parameter json file (**For example:** *resource.qa.parameters.json*) & edit the parameter.
+   *ContosoO365DocSync.QA*) then select the resource parameter json file (**For example:** *resource.qa.parameters.json*) & edit the parameter.
 
    ![](Images/resourcegroupdeployment.png)
 
@@ -148,21 +148,21 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    | **Parameter Name**            | **Value**                                | **Note**                                 |
    | ----------------------------- | :--------------------------------------- | ---------------------------------------- |
-   | webSiteName                   | <WebSiteName>  **For example:** *SmartLinkQAWebApp* |                                          |
-   | sqlserverName                 | <SQLServerName>  **For example:**  *SmarkLinkQASQL* | The SQL Server name                      |
-   | hostingPlanName               | <hostingPlanName>  **For example:**  SmartLinkQAHostPlan | The name of the App Service plan to use for hosting the Web App. |
+   | webSiteName                   | <WebSiteName>  **For example:** *ContosoO365DocSyncQAWebApp* |                                          |
+   | sqlserverName                 | <SQLServerName>  **For example:**  *ContosoO365DocSyncQASQL* | The SQL Server name                      |
+   | hostingPlanName               | <hostingPlanName>  **For example:**  ContosoO365DocSyncQAHostPlan | The name of the App Service plan to use for hosting the Web App. |
    | skuName                       | <skuName>  **For example: **  F1         |                                          |
    | skuCapacity                   | <skuCapacity>  **For example:**  1       | sets number of workers for this App Service plan SKU |
-   | administratorLogin            | **For example:**  SmartLinkLogin         | This login is used to login to the SQL database. |
-   | administratorLoginPassword    | **For example:** smartlink@qa            |                                          |
-   | databaseName                  | **For example:**  SmartLinkQA            | The database name hosted on the SQL Server |
+   | administratorLogin            | **For example:**  ContosoO365DocSyncLogin         | This login is used to login to the SQL database. |
+   | administratorLoginPassword    | **For example:** contosoo365docsync@qa            |                                          |
+   | databaseName                  | **For example:**  contosoo365docsyncQA            | The database name hosted on the SQL Server |
    | collation                     | Leave it as is.                          |                                          |
    | edition                       | **For example:** basic                   | Specifies the edition for the database. Valid values are:   -- Default  -- None  -- Premium  -- Basic  -- Standard |
    | maxSizeBytes                  | Leave it a is                            |                                          |
    | requestedServiceObjectivename | **For example:** basic                   | performance level                        |
    | storageAccountType            | **For example:**  Standard_LRS           |                                          |
-   | storageAccountName            | **For example:**  SmartLinkQA            |                                          |
-   | appInsightName                | **For example:**  msfinsmartlinkqa       |                                          |
+   | storageAccountName            | **For example:**  ContosoO365DocSyncQA            |                                          |
+   | appInsightName                | **For example:**  contosoo365docsyncqa       |                                          |
 
 5. Validate and hit Ok.
 
@@ -223,10 +223,10 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 3. Download the project & include the certificate. 
 
    - Open the solution.
-   - Include the PFX certificate in SmartLink.WebJob project. 
-   - Include the PFX certificate in SmartLink.DocumentWebJob project.
+   - Include the PFX certificate in ContosoO365DocSync.WebJob project. 
+   - Include the PFX certificate in ContosoO365DocSync.DocumentWebJob project.
 
-   **For example:** smartlinkqa.pfx.
+   **For example:** contosoo365docsync.pfx.
 
 4. Configure the app settings in Azure portal
 
@@ -247,7 +247,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
    | ida:TenantId        | The Azure Tenant ID                      | Step 9 in this [section](#register-the-application-in-azure-active-directory-for-mvc-web-app) |
    | SharePointUrl       | The root site collection of the O365    site | **For example:**  [https://yourtenant.sharepoint.com](https://yourtenantsharepoint.com) | 
    | Key						| 18, 7, 19, 11, 24, 226, 85, 45, 88, 184, 27, 162, 37, 112, 183, 209, 241, 24, 175, 176, 176, 53, 196, 29, 24, 26, 17, 218, 131, 236, 53, 55 | Encrypt key, this is fixed value
-   | CertificateFile     | web site relative path                   | **For example:**  smartlinkqa.pfx        | 
+   | CertificateFile     | web site relative path                   | **For example:**  contosoo365docsync.pfx        | 
 
    - Update the following connection settings.      
 
@@ -289,7 +289,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 ![](Images/configuration.png)
 
-3. Right click on *SmartLink.Web* and then select *'Publish'*
+3. Right click on *ContosoO365DocSync.Web* and then select *'Publish'*
 
 4. A *Publish* popup will be displayed.
 
@@ -310,7 +310,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 1. Open the project using visual studio 2015 if you already download it.
 
-2. Set SmartLink.EncryptTool as StartUp project, and press F5.
+2. Set ContosoO365DocSync.EncryptTool as StartUp project, and press F5.
 
 3. A encrypt tool window will be displayed.
 
@@ -335,7 +335,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    ![](Images/appforoffice.png)
 
-3. Find the [app manifest file](SmartLinkExcel/SmartLinkExcelManifest/SmartLinkExcel.xml).
+3. Find the [app manifest file](ContosoO365DocSyncExcel/ContosoO365DocSyncExcelManifest/ContosoO365DocSyncExcel.xml).
 
 4. Update the manifest file.
 
@@ -343,7 +343,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
      > Note: please generate new GUID for the Word manifest file.
 
-   - Update the display name and description default value to SmartLink. 
+   - Update the display name and description default value to ContosoO365DocSync. 
 
    - Update the icon url default value to the one provisioned in Azure.
 
@@ -364,7 +364,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
      ![](Images/excelmanifest.png)
 
-5. Upload manifest file *SmartLinkExcel.xml* to the SharePoint catalog.
+5. Upload manifest file *ContosoO365DocSyncExcel.xml* to the SharePoint catalog.
 
 ## Install Excel Add-in
 
@@ -392,7 +392,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    ![](Images/insertexceladdin.png)
 
-8. Click *MY ORGANIZATION* and insert the *SmartLink*. 
+8. Click *MY ORGANIZATION* and insert the *ContosoO365DocSync*. 
 
    ![](Images/SelectAddIn.png)
 
@@ -420,7 +420,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 7. Click *Insert* and *My Add-ins*.
 
-8. Click *MY ORGANIZATION* and insert the *SmartLink*.
+8. Click *MY ORGANIZATION* and insert the *ContosoO365DocSync*.
 
 9. Then the Word Add-in would be shown on the task panel.
 
@@ -445,7 +445,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 7. Click *Insert* and *My Add-ins*.
 
-8. Click *MY ORGANIZATION* and insert the *SmartLink*.
+8. Click *MY ORGANIZATION* and insert the *ContosoO365DocSync*.
 
 9. Then the PowerPoint Add-in would be shown on the task panel.
 
@@ -596,7 +596,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
      ![](Images/ConnectAzureStorage.png)
 
-   - Fill the storage account name (**For example: **msfinsmartlinkqa)
+   - Fill the storage account name (**For example: **contosoo365docsyncqa)
 
      ![](Images/FillAccountName.png)
 
@@ -662,11 +662,11 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    - Make sure you would get the Tenant ID, Client ID, Client Secret. 
 
-5. Update the [web.config](SmartLink.Web/Web.config).
+5. Update the [web.config](ContosoO365DocSync.Web/Web.config).
 
    - Update app setting in web.config
 
-     | App setting key           | Value                                    | Update [web.config](SmartLink.Web/Web.config) or not | Update [web.debug.config](SmartLink.Web/Web.Debug.config) or not |
+     | App setting key           | Value                                    | Update [web.config](ContosoO365DocSync.Web/Web.config) or not | Update [web.debug.config](ContosoO365DocSync.Web/Web.Debug.config) or not |
      | ------------------------- | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
      | ida:ClientId              | Client ID value get from step 4          | Yes                                      | Yes                                      |
      | ida:TenantId              | Tenant ID value get from step 4          | Yes                                      | No                                       |
@@ -687,7 +687,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
        ​
 
-     | connectionStrings | value                                    | Update [web.config](SmartLink.Web/Web.config) or not | Update [web.debug.config](SmartLink.Web/Web.Debug.config) or not |
+     | connectionStrings | value                                    | Update [web.config](ContosoO365DocSync.Web/Web.config) or not | Update [web.debug.config](ContosoO365DocSync.Web/Web.Debug.config) or not |
      | ----------------- | :--------------------------------------- | :--------------------------------------- | ---------------------------------------- |
      | connectionStrings | connectionString="Data Source=tcp:**[SQL Server Name]**.database.windows.net,1433;Initial Catalog=**[Database Name]**;User Id=**[User ID]**;Password=**[Password]**" providerName="System.Data.SqlClient" | Yes                                      | No                                       |
 
@@ -697,7 +697,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    - Make sure that an Excel file is uploaded to the document library in SharePoint site within your tenant. 
 
-   - Copy the Excel file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 59.
+   - Copy the Excel file link and update link in [Point.js](ContosoO365DocSync.Web/Scripts/App/Excel/Point.js) in line 59.
 
      ```javascript
       that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://<yourtenantname>.sharepoint.com/Shared%20Documents/Book.xlsx" : Office.context.document.url;
@@ -707,7 +707,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    - Make sure that an Excel file is uploaded to the document library in SharePoint site within your tenant. 
 
-   - Copy the Word file link and update link in [Point.js](SmartLink.Web/Scripts/App/Excel/Point.js) in line 68.
+   - Copy the Word file link and update link in [Point.js](ContosoO365DocSync.Web/Scripts/App/Excel/Point.js) in line 68.
 
      ```javascript
      that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://<yourtenantname>.sharepoint.com/Shared%20Documents/Test.docx" : Office.context.document.url;
@@ -717,13 +717,13 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    - Make sure that an PowerPoint file is uploaded to the document library in SharePoint site within your tenant. 
 
-   - Copy the PowerPoint file link and update link in [Point.js](SmartLink.Web/Scripts/App/PowerPoint/Point.js) in line 77.
+   - Copy the PowerPoint file link and update link in [Point.js](ContosoO365DocSync.Web/Scripts/App/PowerPoint/Point.js) in line 77.
 
      ```javascript
      that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://<yourtenantname>.sharepoint.com/Shared%20Documents/Presentation.pptx" : Office.context.document.url;
      ```
 
-9. Set SmartLinkExcel as StartUp project, and press F5.
+9. Set ContosoO365DocSyncExcel as StartUp project, and press F5.
 
    - Work with your O365 admin to go to admin consent page in the browser. 
 
@@ -763,7 +763,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 		![](Images/debugspsave.png)
 
 
-10. Set SmartLinkWord as StartUp project and press F5
+10. Set ContosoO365DocSyncWord as StartUp project and press F5
 
    - Open the words add-in in your local.
 
@@ -782,7 +782,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
      ![](Images/adddp.png)
 
 
-11. Set SmartLinkPowerPoint as StartUp project and press F5
+11. Set ContosoO365DocSyncPowerPoint as StartUp project and press F5
 
    - Open the PowerPoint add-in in your local.
 
@@ -805,11 +805,11 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
 ### Components:
 
-1. Web Project SmartLink.Web
+1. Web Project ContosoO365DocSync.Web
 
    - SourcePoint Controller
 
-     `SmartLink.Web\Controllers\SourcePointController.cs`
+     `ContosoO365DocSync.Web\Controllers\SourcePointController.cs`
 
      - Create source point:
 
@@ -845,7 +845,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    -  DestinationPoint controller
 
-     `SmartLink.Web\Controllers\DestinationPointController.cs`
+     `ContosoO365DocSync.Web\Controllers\DestinationPointController.cs`
 
      - Create destination point.
 
@@ -885,7 +885,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
      - Open ID Authentication 
 
-       `SmartLink.Web\App_Start\Startup.Auth.cs`
+       `ContosoO365DocSync.Web\App_Start\Startup.Auth.cs`
 
      - Get graph token.
 
@@ -896,15 +896,15 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
      ​
 
-2. Service project SmartLink.Service
+2. Service project ContosoO365DocSync.Service
 
-   - SmartLink DB context
+   - ContosoO365DocSync DB context
 
-     `SmartLink\SmartLink.Service\SmartlinkDbContext.cs`
+     `ContosoO365DocSync\ContosoO365DocSync.Service\ContosoO365DocSyncDbContext.cs`
 
    - SourcePoint Service
 
-     `SmartLink\SmartLink.Service\SourcePointService.cs`
+     `ContosoO365DocSync\ContosoO365DocSync.Service\SourcePointService.cs`
 
      - Create source point
 
@@ -932,7 +932,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    - Destination point Service.
 
-     `SmartLink\SmartLink.Service\DestinationService.cs`
+     `ContosoO365DocSync\ContosoO365DocSync.Service\DestinationService.cs`
 
      - Create destination point
 
@@ -954,23 +954,23 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
      ​      
 
-3. Entity project SmartLink.Entity
+3. Entity project ContosoO365DocSync.Entity
 
    - SourcePoint entity.
 
-     `SmartLink\SmartLink.Entity\SourcePoint.cs`
+     `ContosoO365DocSync\ContosoO365DocSync.Entity\SourcePoint.cs`
 
    - DestinationPoint
 
-     `SmartLink\SmartLink.Entity\DestinationPoint.cs`
+     `ContosoO365DocSync\ContosoO365DocSync.Entity\DestinationPoint.cs`
 
    ​
 
-4. WebJob project SmartLink.WebJob
+4. WebJob project ContosoO365DocSync.WebJob
 
    - Document Service
 
-     `SmartLink\SmartLink.Service\DocumentService.cs`
+     `ContosoO365DocSync\ContosoO365DocSync.Service\DocumentService.cs`
 
      - Download the document
 
@@ -986,7 +986,7 @@ administratorLoginPasswordMSFin SmartLink Code Sample
 
    - Azure Storage Service
 
-     `SmartLink\SmartLink.Service\AzureStorageService.cs`
+     `ContosoO365DocSync\ContosoO365DocSync.Service\AzureStorageService.cs`
 
      - Get Queue 
 
