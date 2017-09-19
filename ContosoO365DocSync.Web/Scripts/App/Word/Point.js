@@ -1,10 +1,10 @@
 ﻿$(function () {
-    Office.initialize = function (reason) {
+    //Office.initialize = function (reason) {
         $(document).ready(function () {
             BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
             point.init();
         });
-    };
+    //};
 });
 
 var point = (function () {
@@ -139,7 +139,7 @@ var point = (function () {
         };
         ///Define the event handlers.
         that.highlighted = that.utility.highlight.get();
-        that.controls.highlight.find("span").html(that.highlighted ? "Highlight Off" : "Highlight On");
+        that.controls.highlight.find(".ms-CommandButton-label").html(that.highlighted ? "Highlight Off" : "Highlight On");
         that.controls.highlight.prop("title", that.highlighted ? "Highlight Off" : "Highlight On");
         that.controls.body.click(function () {
             that.action.body();
@@ -390,6 +390,10 @@ var point = (function () {
         });
         that.utility.height();
         that.action.dft(that.controls.sourcePointName, false);
+
+        that.fabric.init();
+
+        /*
         ///Retrieve the document ID via document URL
         that.document.init(function () {
             ///Load all destination points in management page.
@@ -400,7 +404,25 @@ var point = (function () {
                 }
             });
         });
+        */
     };
+
+    that.fabric = {
+        init: function () {
+            var CheckBoxElements = document.querySelectorAll(".ms-CheckBox");
+            for (var i = 0; i < CheckBoxElements.length; i++) {
+                new fabric['CheckBox'](CheckBoxElements[i]);
+            }
+
+            var ButtonElements = document.querySelectorAll(".ms-Button");
+            for (var i = 0; i < ButtonElements.length; i++) {
+                new fabric['Button'](ButtonElements[i], function () {
+                    // Insert Event Here
+                });
+            }
+        }
+    };
+
     ///Load the destination point list.
     that.list = function (options, callback) {
         that.popup.processing(true);
@@ -894,7 +916,7 @@ var point = (function () {
             else {
                 that.highlighted = !that.highlighted;
                 that.utility.highlight.set(that.highlighted, function () {
-                    that.controls.highlight.find("span").html(that.highlighted ? "Highlight Off" : "Highlight On");
+                    that.controls.highlight.find(".ms-CommandButton-label").html(that.highlighted ? "Highlight Off" : "Highlight On");
                     that.controls.highlight.prop("title", that.highlighted ? "Highlight Off" : "Highlight On");
                     that.popup.processing(false);
                 });

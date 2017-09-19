@@ -56,9 +56,23 @@ ul, li {
 .header .nav-header {
     height: 40px;
     background: #deecf9;
-    padding: 10px 20px 0 20px;
+    padding: 0 12px;
 }
 
+.header .nav-header .n-back, .header .nav-header .n-add {
+    margin-left: 0;
+}
+
+.header .nav-header .ms-CommandBar-sideCommands {
+    padding-right: 0;
+    overflow: hidden;
+}
+
+.ms-CommandButton-button:focus:before {
+    border: 0;
+}
+
+/*
 .header a {
     float: left;
     color: #0078d7;
@@ -162,7 +176,7 @@ ul, li {
 
 .header .n-add, .header .n-publish, .header .n-add, .header .n-highlight, .header .n-refresh, .header .n-publishall, .header .n-bulk, .header .n-select {
     padding-right: 20px;
-}
+}*/
 
 .add .n-add, .add .n-publish, .add .n-refresh, .add .n-highlight, .add .n-publishall, .add .n-delete, .add .header .n-bulk, .add .content-header .manage-header, .add .n-select {
     display: none;
@@ -224,8 +238,8 @@ ul, li {
 }
 
 .footer i {
-    width: 40px;
-    height: 40px;
+    width: 80px;
+    height: 30px;
     background-image: url(../Images/logo-s.png);
     background-position: center;
     background-repeat: no-repeat;
@@ -233,13 +247,13 @@ ul, li {
     vertical-align: middle;
 }
 
-.footer span {
+.footer label {
     display: table-cell;
     color: #fff;
     text-transform: uppercase;
-    font-size: 30px;
+    font-size: 24px;
     vertical-align: middle;
-    padding-left: 10px;
+    padding: 0 0 0 10px;
 }
 
 .ckb-wrapper {
@@ -1018,15 +1032,14 @@ ul, li {
 }
 
 /* Style for manage source point page */
-.manage h3 {
+.content-header .add-header .ms-Label, .content-header .manage-title .ms-Label {
     width: 100%;
-    font-family: 'Segoe UI Light';
     font-size: 21px;
     line-height: 30px;
-    color: #333333;
-    padding: 25px 20px;
+    padding: 0;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-weight: 100;
     overflow: hidden;
 }
 
@@ -1200,6 +1213,24 @@ ul, li {
     padding: 5px 0 0 0;
 }
 
+.manage .point-list .ms-CheckBox {
+    min-height: initial;
+}
+
+.manage .point-list .ms-CheckBox-field {
+    margin-top: 0;
+}
+
+.manage .point-list .ms-CheckBox-field:before, .manage .point-list .ms-CheckBox-field:after {
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+}
+
+.manage .point-list .ms-CheckBox-field.is-checked:before {
+    border: 0;
+}
+
 .manage .point-list .point-item .ckb-wrapper {
     margin-top: 2px;
 }
@@ -1350,10 +1381,31 @@ ul, li {
     padding: 0;
 }
 
-#word-addin.manage .manage-title div {
+#word-addin.manage .manage-title > div {
     position: absolute;
     top: 30px;
     right: 20px;
+}
+
+#word-addin.manage .manage-title .ms-CommandButton {
+    width: 30px;
+    height: 20px;
+    border: 1px #e6e6e6 solid;
+    margin-left: 0;
+    float: left;
+}
+
+#word-addin.manage .manage-title .ms-CommandButton-button {
+    width: 30px;
+    height: 20px;
+    padding: 0 8px;
+}
+
+#word-addin.manage .manage-title .ms-CommandButton-icon {
+    float: left;
+    font-size: 12px;
+    min-width: 12px;
+    margin: 0;
 }
 
 #word-addin.manage .manage-title a {
@@ -1848,21 +1900,17 @@ ul, li {
     }
 }
 
-@media screen and (max-width:500px) {
-    #word-addin .header a {
-        padding-right: 0 !important;
-    }
-
-    #word-addin .header a span {
+@media screen and (max-width:530px) {
+    #word-addin .header .ms-CommandButton .ms-CommandButton-label {
         display: none;
     }
 
-    #word-addin .header a i {
-        margin-right: 15px;
+    #word-addin .header .ms-CommandButton .ms-CommandButton-icon {
+        margin-right: 0;
     }
 
-    #word-addin .header a:last-child i {
-        margin: 0;
+    .footer label {
+        font-size: 18px;
     }
 }
 
@@ -1970,6 +2018,16 @@ ul, li {
     .manage .point-list .i4 {
         display: none;
     }
+
+    .footer i {
+        width: 30px;
+        height: 20px;
+        background-size: contain;
+    }
+
+    .footer label {
+        font-size: 14px;
+    }
 }
 
 @media screen and (max-width:320px) {
@@ -1996,16 +2054,6 @@ ul, li {
         width: 70px;
         height: 24px;
     }
-
-    .footer i {
-        width: 30px;
-        height: 30px;
-        background-size: contain;
-    }
-
-    .footer span {
-        font-size: 20px;
-    }
 }
 
 @media screen and (max-width:240px) {
@@ -2017,7 +2065,7 @@ ul, li {
         font-size: 12px;
     }
 
-    .manage h3 {
+    .content-header .add-header .ms-Label, .content-header .manage-title .ms-Label {
         font-size: 18px;
     }
 
@@ -2036,12 +2084,11 @@ ul, li {
     }
 
     .footer i {
-        width: 24px;
-        height: 24px;
+        display:none;
     }
 
-    .footer span {
-        font-size: 14px;
+    .footer label {
+        font-size: 12px;
     }
 }
 
