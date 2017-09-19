@@ -272,6 +272,12 @@
     <Content Include="Content\App.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\fabric.components.css" />
+    <Content Include="Content\fabric.components.min.css" />
+    <Content Include="Content\fabric.components.rtl.css" />
+    <Content Include="Content\fabric.components.rtl.min.css" />
+    <Content Include="Content\fabric.min.css" />
+    <Content Include="Content\fabric.rtl.min.css" />
     <Content Include="Content\Office.css" />
     <Content Include="Content\OfficeThemes.css" />
     <Content Include="favicon.ico" />
@@ -331,6 +337,8 @@
     <None Include="Properties\PublishProfiles\msfinsmartlinkqa - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\msfinsmartlinkqa - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\fabric.js" />
+    <Content Include="Scripts\fabric.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />

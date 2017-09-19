@@ -14,8 +14,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <title></title>
     <script src="../../Scripts/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="../../Scripts/fabric.min.js" type="text/javascript"></script>
 
     <link href="../../Content/Office.css" rel="stylesheet" type="text/css" />
+    <link href="../../Content/fabric.min.css" rel="stylesheet" type="text/css" />
+    <link href="../../Content/fabric.components.min.css" rel="stylesheet" type="text/css" />
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
 
     <!-- To enable offline debugging using a local reference to Office.js, use:                        -->
@@ -35,7 +38,9 @@
             <p>Contoso O365 Doc Sync</p>
         </div>
         <div class="sign-in-btn">
-            <button id="btnSignIn">Sign in</button>
+            <button id="btnSignIn" class="ms-Button">
+                <span class="ms-Button-label">Sign in</span>
+            </button>
         </div>
     </div>
     <div id="error-message">

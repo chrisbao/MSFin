@@ -23,7 +23,7 @@
                     //If excel requirement set is 1.3 or word requirement set is 1.2 or it is powerpoint add-in.
                     if (Office.context.requirements.isSetSupported('ExcelApi', 1.3) || Office.context.requirements.isSetSupported("WordApi", 1.2) || mode.powerPoint) {
                         $(".sign-in").show();
-                        $("#btnSignIn").click(function () {
+                        new fabric['Button']($("#btnSignIn.ms-Button").get(0), function () {
                             if (mode.word) {
                                 //go to word home page.
                                 window.location = "/Word/Point";
