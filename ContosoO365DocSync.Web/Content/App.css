@@ -72,112 +72,6 @@ ul, li {
     border: 0;
 }
 
-/*
-.header a {
-    float: left;
-    color: #0078d7;
-    font-size: 14px;
-    text-decoration: none;
-}
-
-.header a span {
-    float: left;
-}
-
-.header a i {
-    margin-right: 5px;
-}
-
-.header .n-back i {
-    float: left;
-    width: 8px;
-    height: 18px;
-    background-image: url(../Images/back.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    margin-right: 10px;
-}
-
-.header .n-add i, .header .n-select i {
-    float: left;
-    width: 15px;
-    height: 18px;
-    background-image: url(../Images/add.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-publish i {
-    float: left;
-    width: 8px;
-    height: 18px;
-    background-image: url(../Images/publish.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-refresh i {
-    float: left;
-    width: 13px;
-    height: 18px;
-    background-image: url(../Images/refresh.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-publishall i {
-    float: left;
-    width: 8px;
-    height: 18px;
-    background-image: url(../Images/publish-all.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-highlight i {
-    float: left;
-    width: 15px;
-    height: 18px;
-    background-image: url(../Images/edit.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-delete i {
-    float: left;
-    width: 15px;
-    height: 18px;
-    background-image: url(../Images/delete.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-bulk i {
-    float: left;
-    width: 10px;
-    height: 18px;
-    background-image: url(../Images/add-all.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-signout i {
-    float: left;
-    width: 15px;
-    height: 18px;
-    background-image: url(../Images/signout.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header a:last-child {
-    float: right;
-}
-
-.header .n-add, .header .n-publish, .header .n-add, .header .n-highlight, .header .n-refresh, .header .n-publishall, .header .n-bulk, .header .n-select {
-    padding-right: 20px;
-}*/
-
 .add .n-add, .add .n-publish, .add .n-refresh, .add .n-highlight, .add .n-publishall, .add .n-delete, .add .header .n-bulk, .add .content-header .manage-header, .add .n-select {
     display: none;
 }
@@ -238,11 +132,12 @@ ul, li {
 }
 
 .footer i {
-    width: 80px;
-    height: 30px;
-    background-image: url(../Images/logo-s.png);
+    width: 100px;
+    height: 40px;
+    background-image: url(../Images/logo-l.png);
     background-position: center;
     background-repeat: no-repeat;
+    background-size: contain;
     display: table-cell;
     vertical-align: middle;
 }
@@ -1160,6 +1055,10 @@ ul, li {
     left: 20px;
 }
 
+.manage .point-list .point-item .i1 .ms-CheckBox {
+    padding-top: 2px;
+}
+
 .manage .point-list .point-header .i1 {
     left: 0;
 }
@@ -1267,36 +1166,18 @@ ul, li {
     padding-right: 5px;
 }
 
-.manage .point-list .point-item .i5 .i-edit {
+.manage .point-list .point-item .i5 .ms-Icon {
     float: right;
     width: 20px;
     height: 20px;
-    background-image: url(../Images/edit.png);
-    background-position: center;
-    background-repeat: no-repeat;
+    font-size: 16px;
+    padding: 2px;
+    text-align: center;
     cursor: pointer;
 }
 
-.manage .point-list .point-item .i5 .i-delete {
-    float: right;
-    width: 20px;
-    height: 20px;
-    background-image: url(../Images/delete.png);
-    background-position: center;
-    background-repeat: no-repeat;
+.manage .point-list .point-item .i5 .i-delete, .manage .point-list .point-item .i5 .i-history {
     margin-left: 8px;
-    cursor: pointer;
-}
-
-.manage .point-list .point-item .i5 .i-history {
-    float: right;
-    width: 20px;
-    height: 20px;
-    background-image: url(../Images/down-circle.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    margin-left: 8px;
-    cursor: pointer;
 }
 
 .manage .point-list .point-item .item-format {
@@ -1345,7 +1226,9 @@ ul, li {
 .manage .point-list .item-history .history-list .history-item {
     width: 100%;
     float: left;
-    padding-top: 7px;
+    padding: 7px 0 0 0;
+    font-size: 11px;
+    color: #fff;
 }
 
 .manage .point-list .item-history .history-list .history-header {
@@ -1354,6 +1237,8 @@ ul, li {
     font-weight: bold;
     border-bottom: 1px #fff solid;
     padding: 7px 0;
+    font-size: 11px;
+    color: #fff;
 }
 
 .manage .point-list .item-history .history-list .h1 {
@@ -1466,20 +1351,22 @@ ul, li {
     text-align: center;
 }
 
-#pager div:first-child {
+#pager .ms-Label {
     font-size: 12px;
+    padding: 0;
 }
 
-#pager div:last-child {
+#pager div {
     font-size: 13px;
-    padding: 10px 0 0 0;
+    padding: 5px 0 0 0;
 }
 
 #pager span {
     font-weight: 600;
 }
 
-#pager a {
+#pager .ms-Link {
+    font-size: 13px;
     color: #0078d7;
     text-decoration: none;
 }
@@ -1488,25 +1375,25 @@ ul, li {
     margin-left: 8px;
 }
 
-#pager input {
+#pager .ms-TextField-field {
     font-size: 12px;
     height: 20px;
     padding: 2px 5px;
     width: 30px;
     margin: 0 5px;
+    min-width: 10px;
 }
 
-#pager button {
-    text-align: center;
-    background: #0078d7;
-    color: #fff;
-    font-size: 12px;
+#pager .ms-Button {
     text-transform: uppercase;
     width: auto;
     height: 20px;
-    cursor: pointer;
-    font-weight: 600;
     padding: 0 5px;
+    min-width: 10px;
+}
+
+#pager .ms-Button .ms-Button-label {
+    font-size: 12px;
 }
 
 #pager a.disabled {
@@ -1520,24 +1407,27 @@ ul, li {
     background-color: #fff;
     bottom: 60px;
     padding: 10px 30px 10px 20px;
-    font-size: 14px;
     border: 1px #ccc solid;
-    color: red;
     border-left: 0;
     border-right: 0;
     display: none;
+}
+
+.tooltip-message label {
+    font-size: 14px;
+    color: red;
+    padding: 0;
 }
 
 .tooltip-message i {
     position: absolute;
     top: 10px;
     right: 20px;
-    width: 15px;
-    height: 18px;
-    background-image: url(../Images/delete.png);
-    background-position: center;
-    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px;
     cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .tooltip-message.active {
@@ -1589,20 +1479,18 @@ ul, li {
     font-size: 14px;
 }
 
-.manage .content.document-error span, .manage .content.document-error p, .manage .content.document-error a {
+.manage .content.document-error label, .manage .content.document-error a {
     display: inline-block;
     width: 100%;
     padding-bottom: 5px;
 }
 
-.manage .content.document-error p {
+.manage .content.document-error label:first-child {
     font-size: 16px;
     font-weight: 600;
-    color: #000;
 }
 
 .manage .content.document-error a {
-    color: #0078d7;
     margin-top: 5px;
 }
 
@@ -1906,17 +1794,6 @@ ul, li {
 }
 
 @media screen and (max-width:530px) {
-    #word-addin .header .ms-CommandButton .ms-CommandButton-label {
-        display: none;
-    }
-
-    #word-addin .header .ms-CommandButton .ms-CommandButton-icon {
-        margin-right: 0;
-    }
-
-    .footer label {
-        font-size: 18px;
-    }
 }
 
 @media screen and (max-width:440px) {
@@ -1962,10 +1839,11 @@ ul, li {
     }
 
     .manage .point-list .i5 .i-menu span:last-child i {
+        float: left;
         width: 100%;
         padding: 0;
-        margin: 0;
-        height: 24px;
+        margin: 5px 0 0 0;
+        height: 20px;
     }
 
     .manage .point-list .i5 .i-menu a:hover span:last-child {
@@ -2025,13 +1903,13 @@ ul, li {
     }
 
     .footer i {
-        width: 30px;
-        height: 20px;
+        width: 70px;
+        height: 30px;
         background-size: contain;
     }
 
     .footer label {
-        font-size: 14px;
+        font-size: 16px;
     }
 }
 
@@ -2089,7 +1967,7 @@ ul, li {
     }
 
     .footer i {
-        display:none;
+        display: none;
     }
 
     .footer label {
