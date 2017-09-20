@@ -1,9 +1,9 @@
 ﻿$(function () {
     //Office.initialize = function (reason) {
-        $(document).ready(function () {
-            BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
-            point.init();
-        });
+    $(document).ready(function () {
+        BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
+        point.init();
+    });
     //};
 });
 
@@ -414,11 +414,15 @@ var point = (function () {
                 new fabric['CheckBox'](CheckBoxElements[i]);
             }
 
-            var ButtonElements = document.querySelectorAll(".ms-Button");
-            for (var i = 0; i < ButtonElements.length; i++) {
-                new fabric['Button'](ButtonElements[i], function () {
-                    // Insert Event Here
-                });
+            var CommandBarElements = document.querySelectorAll(".ms-CommandBar");
+            for (var i = 0; i < CommandBarElements.length; i++) {
+                new fabric['CommandBar'](CommandBarElements[i]);
+            }
+        },
+        bind: function () {
+            var CheckBoxElements = document.querySelectorAll(".ms-CheckBox");
+            for (var i = 0; i < CheckBoxElements.length; i++) {
+                new fabric['CheckBox'](CheckBoxElements[i]);
             }
         }
     };
@@ -2309,29 +2313,41 @@ var point = (function () {
                         _ff.push("Displayed decimals");
                     }
                     var _cf = _ff.join("; ").replace(/"/g, "&quot;");
-                    var _h = '<li class="point-item' + (_s ? "" : " item-error") + '" data-id="' + _dsp.Id + '" data-range="' + _dsp.RangeId + '">';
+                    var _h = '<li class="ms-ListItem point-item' + (_s ? "" : " item-error") + '" data-id="' + _dsp.Id + '" data-range="' + _dsp.RangeId + '">';
                     _h += '<div class="point-item-line">';
-                    _h += '<div class="i1"><div class="ckb-wrapper' + (_sel ? " checked" : "") + '"><input type="checkbox" ' + (_sel ? 'checked="checked"' : '') + ' /><i></i></div></div>';
+                    _h += '<div class="i1">';
+                    _h += '<div class="ms-CheckBox"><input tabindex="-1" type="checkbox" class="ms-CheckBox-input">';
+                    _h += '<label role="checkbox" class="ms-CheckBox-field ' + (_sel ? " is-checked" : "") + '" tabindex="0" aria-checked="false" name="checkboxa"></label></div>';
+                    _h += '</div>';
                     _h += '<div class="i2"><span class="s-name" title="' + _item.Name + '">' + _item.Name + '</span>';
                     _h += '<span><strong title="' + (_p.sheet ? _p.sheet : "") + ':[' + (_p.cell ? _p.cell : "") + ']">' + (_p.sheet ? _p.sheet : "") + ':</strong>[' + (_p.cell ? _p.cell : "") + ']</span>';
                     _h += '<span><strong class="i-file" title="' + _sourcePointCatalog.Name + '" data-path="' + _sourcePointCatalog.Name + '">' + _fn + '</strong></span>';
                     _h += '</div>';
                     _h += '<div class="i3" title="' + (_item.Value ? _item.Value : "") + '">' + (_item.Value ? _item.Value : "") + '</div>';
-                    _h += '<div class="i5"><div class="i-line"><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i><i class="i-edit" title="Edit Custom Format"></i></div>';
-                    _h += '<div class="i-menu"><a href="javascript:"><span title="Action">...</span><span><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i><i class="i-edit" title="Edit Custom Format"></i></span></a></div>';
+                    _h += '<div class="i5">';
+                    _h += '<div class="i-line">';
+                    _h += '<i title="History" class="ms-Icon ms-Icon--History ms-fontColor-themePrimary i-history"></i>';
+                    _h += '<i title="Delete" class="ms-Icon ms-Icon--Delete ms-fontColor-themePrimary i-delete"></i>';
+                    _h += '<i title="Edit Custom Format" class="ms-Icon ms-Icon--Edit ms-fontColor-themePrimary i-edit"></i>';
+                    _h += '</div>';
+                    _h += '<div class="i-menu"><a href="javascript:"><span title="Action">...</span><span>';
+                    _h += '<i title="Edit Custom Format" class="ms-Icon ms-Icon--Edit ms-fontColor-themePrimary i-edit"></i>';
+                    _h += '<i title="Delete" class="ms-Icon ms-Icon--Delete ms-fontColor-themePrimary i-delete"></i>';
+                    _h += '<i title="History" class="ms-Icon ms-Icon--History ms-fontColor-themePrimary i-history"></i>';
+                    _h += '</span></a></div>';
                     _h += '</div>';
                     _h += '</div>';
                     _h += '<div class="item-format">';
                     _h += '<span class="item-formatted" title="' + _fv + '"><strong>' + (_ff.length > 0 ? "Formatted Value" : "Source Point Value") + ':</strong>' + _fv + '</span>';
                     _h += '<span class="item-formats" title="' + (_ff.length > 0 ? _cf : "No custom formatting applied") + '"><strong>Format:</strong>' + (_ff.length > 0 ? _cf : "No custom formatting applied") + '</span>';
                     _h += '</div>';
-                    _h += '<div class="item-history"><h6>Publish History</h6><ul class="history-list">';
-                    _h += '<li class="history-header"><div class="h1">Name</div><div class="h2">Value</div><div class="h3">Date</div></li>';
+                    _h += '<div class="item-history"><h6>Publish History</h6><ul class="ms-List history-list">';
+                    _h += '<li class="ms-ListItem history-header"><div class="h1">Name</div><div class="h2">Value</div><div class="h3">Date</div></li>';
                     $.each(_pht, function (m, n) {
                         var __c = $.trim(_pht[m].Value ? _pht[m].Value : ""),
                             __p = $.trim(_pht[m > 0 ? m - 1 : m].Value ? _pht[m > 0 ? m - 1 : m].Value : "");
                         if (_pi < 5 && (m == 0 || __c != __p)) {
-                            _h += '<li class="history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
+                            _h += '<li class="ms-ListItem history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
                             _pi++;
                         }
                     });
@@ -2368,6 +2384,7 @@ var point = (function () {
                     that.controls.tooltipMessage.addClass("active");
                 }
                 that.firstLoad = false;
+                that.fabric.bind();
                 if (callback) {
                     callback();
                 }
