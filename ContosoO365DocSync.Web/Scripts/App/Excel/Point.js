@@ -57,16 +57,18 @@ var point = (function () {
     that.init = function () {
         ///Get the document URL.
         that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://cand3.sharepoint.com/Shared%20Documents/Book.xlsx" : Office.context.document.url;
+        ///Create fabric command bar
+        new fabric['CommandBar']($(".nav-header").get(0));
         that.controls = {
             body: $("body"),
             main: $(".main"),
-            back: $(".n-back"),
-            add: $(".n-add"),
-            publish: $(".n-publish"),
-            publishAll: $(".n-publishall"),
-            refresh: $(".n-refresh"),
-            del: $(".n-delete"),
-            bulk: $(".n-bulk"),
+            back: $(".n-back, .ms-ContextualMenu-item:has(.ms-Icon--Back)"),
+            add: $(".n-add, .ms-ContextualMenu-item:has(.ms-Icon--Add)"),
+            publish: $(".n-publish, .ms-ContextualMenu-item:has(.ms-Icon--Upload)"),
+            publishAll: $(".n-publishall, .ms-ContextualMenu-item:has(.ms-Icon--publishAll)"),
+            refresh: $(".n-refresh, .ms-ContextualMenu-item:has(.ms-Icon--Refresh)"),
+            del: $(".n-delete, .ms-ContextualMenu-item:has(.ms-Icon--Delete)"),
+            bulk: $(".n-bulk, .ms-ContextualMenu-item:has(.ms-Icon--bulkAdd)"),
             cancel: $("#btnCancel"),
             save: $("#btnSave"),
             name: $("#txtName"),

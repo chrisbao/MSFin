@@ -41,11 +41,13 @@ var point = (function () {
     ///Initialize the event handlers.
     that.init = function () {
         that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://cand3.sharepoint.com/Shared%20Documents/Presentation.pptx" : Office.context.document.url;
+        ///Create fabric command bar
+        new fabric['CommandBar']($(".nav-header").get(0));
         that.controls = {
             body: $("body"),
             main: $(".main"),
-            select: $(".n-select"),
-            refresh: $(".n-refresh"),
+            select: $(".n-select, .ms-ContextualMenu-item:has(.ms-Icon--Add)"),
+            refresh: $(".n-refresh, .ms-ContextualMenu-item:has(.ms-Icon--Refresh)"),
             titleName: $("#lblSourcePointName"),
             sourcePointName: $("#txtSearchSourcePoint"),
             searchSourcePoint: $("#iSearchSourcePoint"),

@@ -18,7 +18,47 @@ body {
     overflow: auto; /* Enable scrollbars within main content section */
 }
 
-.main.manage {
+.ms-ContextualHost {
+    z-index: 101;
+}
+
+.ms-ContextualMenu.ms-ContextualMenu--hasIcons {
+    width: auto;
+    min-width: 0;
+}
+
+.ms-ContextualMenu .ms-ContextualMenu-link {
+    text-decoration: none;
+}
+
+.ms-ContextualMenu .ms-ContextualMenu-item .ms-Icon {
+    color: #0078d7;
+    font-weight: bold;
+}
+
+.ms-Icon--bulkAdd, .ms-Icon--publishAll {
+    width: 100%;
+    height: 100%;
+}
+
+.ms-Icon--bulkAdd:before, .ms-Icon--publishAll:before, .ms-Icon--bulkAdd:after, .ms-Icon--publishAll:after {
+    content: "\E94E";
+    font-size: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.ms-Icon--bulkAdd:before, .ms-Icon--publishAll:before {
+    top: 35%;
+}
+
+.ms-Icon--bulkAdd:after, .ms-Icon--publishAll:after {
+    content: "\E710";
+    top: 60%;
+}
+
+.ms-Icon--publishAll:after {
+    content: "\E74A";
 }
 
 .padding {
@@ -59,6 +99,10 @@ ul, li {
     padding: 0 12px;
 }
 
+.header .nav-header .ms-Icon {
+    font-weight: bold;
+}
+
 .header .nav-header .n-back, .header .nav-header .n-add {
     margin-left: 0;
 }
@@ -67,116 +111,9 @@ ul, li {
     padding-right: 0;
     overflow: hidden;
 }
-
 .ms-CommandButton-button:focus:before {
     border: 0;
 }
-
-/*
-.header a {
-    float: left;
-    color: #0078d7;
-    font-size: 14px;
-    text-decoration: none;
-}
-
-.header a span {
-    float: left;
-}
-
-.header a i {
-    margin-right: 5px;
-}
-
-.header .n-back i {
-    float: left;
-    width: 8px;
-    height: 18px;
-    background-image: url(../Images/back.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    margin-right: 10px;
-}
-
-.header .n-add i, .header .n-select i {
-    float: left;
-    width: 15px;
-    height: 18px;
-    background-image: url(../Images/add.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-publish i {
-    float: left;
-    width: 8px;
-    height: 18px;
-    background-image: url(../Images/publish.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-refresh i {
-    float: left;
-    width: 13px;
-    height: 18px;
-    background-image: url(../Images/refresh.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-publishall i {
-    float: left;
-    width: 8px;
-    height: 18px;
-    background-image: url(../Images/publish-all.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-highlight i {
-    float: left;
-    width: 15px;
-    height: 18px;
-    background-image: url(../Images/edit.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-delete i {
-    float: left;
-    width: 15px;
-    height: 18px;
-    background-image: url(../Images/delete.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-bulk i {
-    float: left;
-    width: 10px;
-    height: 18px;
-    background-image: url(../Images/add-all.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header .n-signout i {
-    float: left;
-    width: 15px;
-    height: 18px;
-    background-image: url(../Images/signout.png);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.header a:last-child {
-    float: right;
-}
-
-.header .n-add, .header .n-publish, .header .n-add, .header .n-highlight, .header .n-refresh, .header .n-publishall, .header .n-bulk, .header .n-select {
-    padding-right: 20px;
-}*/
 
 .add .n-add, .add .n-publish, .add .n-refresh, .add .n-highlight, .add .n-publishall, .add .n-delete, .add .header .n-bulk, .add .content-header .manage-header, .add .n-select {
     display: none;
@@ -1887,24 +1824,6 @@ ul, li {
 }
 
 /* RWD */
-@media screen and (max-width:680px) {
-    #excel-addin .header a {
-        padding-right: 0 !important;
-    }
-
-    #excel-addin .header a span {
-        display: none;
-    }
-
-    #excel-addin .header a i {
-        margin-right: 15px;
-    }
-
-    #excel-addin .header a:last-child i {
-        margin: 0;
-    }
-}
-
 @media screen and (max-width:530px) {
     #word-addin .header .ms-CommandButton .ms-CommandButton-label {
         display: none;
@@ -1984,21 +1903,6 @@ ul, li {
     }
 
     #word-addin.add.step-second .content-header > div {
-        padding-right: 140px;
-    }
-}
-
-@media screen and (max-width:380px) {
-    #excel-addin.add .content-header h3 {
-        font-size: 18px;
-    }
-
-    #excel-addin.add .content-header button {
-        font-size: 12px;
-        width: 60px;
-    }
-
-    #excel-addin.add .content-header > div {
         padding-right: 140px;
     }
 }
