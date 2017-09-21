@@ -1,8 +1,8 @@
 ﻿$(function () {
     //Office.initialize = function (reason) {
-        $(document).ready(function () {
-            point.init();
-        });
+    $(document).ready(function () {
+        point.init();
+    });
     //};
 });
 
@@ -62,13 +62,6 @@ var point = (function () {
             main: $(".main"),
             manageNavBar: new fabric['CommandBar']($(".nav-header").get(0)),
             addNavBar: new fabric['CommandBar']($(".nav-header").get(1)),
-            back: $(".n-back"),
-            add: $(".n-add"),
-            publish: $(".n-publish, .ms-ContextualMenu-item:has(.ms-Icon--Upload)"),
-            publishAll: $(".n-publishall, .ms-ContextualMenu-item:has(.ms-Icon--publishAll)"),
-            refresh: $(".n-refresh, .ms-ContextualMenu-item:has(.ms-Icon--Refresh)"),
-            del: $(".n-delete, .ms-ContextualMenu-item:has(.ms-Icon--Delete)"),
-            bulk: $(".n-bulk, .ms-ContextualMenu-item:has(.ms-Icon--bulkAdd)"),
             cancel: $("#btnCancel"),
             save: $("#btnSave"),
             name: $("#txtName"),
@@ -109,25 +102,26 @@ var point = (function () {
         that.controls.body.click(function () {
             that.action.body();
         });
-        that.controls.add.click(function () {
-            that.action.add();
-        });
-        that.controls.back.click(function () {
+
+        $(document).on("click", ".n-back,.ms-ContextualMenu-item:has(.ms-Icon--Back)", function () {
             that.action.back();
         });
-        that.controls.publish.click(function () {
+        $(document).on("click", ".n-add,.ms-ContextualMenu-item:has(.ms-Icon--Add)", function () {
+            that.action.add();
+        });
+        $(document).on("click", ".n-publish,.ms-ContextualMenu-item:has(.ms-Icon--Upload)", function () {
             that.action.publish();
         });
-        that.controls.publishAll.click(function () {
+        $(document).on("click", ".n-publishall,.ms-ContextualMenu-item:has(.ms-Icon--publishAll)", function () {
             that.action.publishAll();
         });
-        that.controls.refresh.click(function () {
+        $(document).on("click", ".n-refresh,.ms-ContextualMenu-item:has(.ms-Icon--Refresh)", function () {
             that.action.refresh();
         });
-        that.controls.del.click(function () {
+        $(document).on("click", ".n-refresh,.ms-ContextualMenu-item:has(.ms-Icon--Delete)", function () {
             that.action.deleteSelected();
         });
-        that.controls.bulk.click(function () {
+        $(document).on("click", ".n-bulk,.ms-ContextualMenu-item:has(.ms-Icon--bulkAdd)", function () {
             that.action.bulk();
         });
         that.controls.selectName.click(function () {
@@ -180,19 +174,19 @@ var point = (function () {
         that.controls.list.on("click", ".point-item .i2, .point-item .i3, .point-item .i4, .point-item .i5, .point-item .error-info, .point-item .item-history", function () {
             that.action.goto($(this).closest(".point-item").data("id"), $(this).closest(".point-item"));
         });
-        that.controls.main.on("change", ".ckb-wrapper input", function () {
+        that.controls.main.on("change", ".ms-CheckBox input", function () {
             if ($(this).get(0).checked) {
-                $(this).closest(".ckb-wrapper").addClass("checked");
+                $(this).next(".ms-CheckBox-field").addClass("is-checked");
                 if ($(this).closest(".all").length > 0) {
-                    that.controls.list.find("input").prop("checked", true);
-                    that.controls.list.find(".ckb-wrapper").addClass("checked");
+                    that.controls.list.find(".ms-CheckBox input").prop("checked", true);
+                    that.controls.list.find(".ms-CheckBox .ms-CheckBox-field").addClass("checked");
                 }
             }
             else {
-                $(this).closest(".ckb-wrapper").removeClass("checked");
+                $(this).next(".ms-CheckBox-field").removeClass("is-checked");
                 if ($(this).closest(".all").length > 0) {
-                    that.controls.list.find("input").prop("checked", false);
-                    that.controls.list.find(".ckb-wrapper").removeClass("checked");
+                    that.controls.list.find(".ms-CheckBox input").prop("checked", false);
+                    that.controls.list.find(".ms-CheckBox .ms-CheckBox-field").removeClass("checked");
                 }
             }
         });
@@ -244,6 +238,9 @@ var point = (function () {
         });
         that.utility.height();
         that.action.dft(that.controls.sourcePointName, false);
+
+        that.fabric.init();
+
         ///Retrieve the document id via document url.
         that.document.init(function () {
             ///Load all source points in management page.
@@ -259,27 +256,22 @@ var point = (function () {
     ///Initialize the fabric components
     that.fabric = {
         init: function () {
-            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--Back)", function() {
-                that.controls.back.click();
-            });
-            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--Add)", function() {
-                that.controls.add.click();
-            });
-            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--Upload)", function() {
-                that.controls.publish.click();
-            });
-            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--publishAll)", function() {
-                that.controls.publishAll.click();
-            });
-            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--Refresh)", function() {
-                that.controls.refresh.click();
-            });
-            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--Delete)", function() {
-                that.controls.del.click();
-            });
-            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--bulkAdd)", function() {
-                that.controls.bulk.click();
-            });
+            var CheckBoxElements = document.querySelectorAll(".ms-CheckBox");
+            for (var i = 0; i < CheckBoxElements.length; i++) {
+                new fabric['CheckBox'](CheckBoxElements[i]);
+            }
+        },
+        bindCheckBoxInList: function () {
+            var CheckBoxElements = document.querySelectorAll("#listPoints .ms-CheckBox");
+            for (var i = 0; i < CheckBoxElements.length; i++) {
+                new fabric['CheckBox'](CheckBoxElements[i]);
+            }
+        },
+        bindCheckBoxInGroup: function () {
+            var CheckBoxElements = document.querySelectorAll("#groupWrapper .ms-CheckBox");
+            for (var i = 0; i < CheckBoxElements.length; i++) {
+                new fabric['CheckBox'](CheckBoxElements[i]);
+            }
         }
     };
     ///Load the source point list.
@@ -573,8 +565,8 @@ var point = (function () {
         ///Get an array of selected source points.
         selected: function () {
             var _s = [];
-            that.controls.list.find(".point-item .ckb-wrapper input").each(function (i, d) {
-                if ($(d).prop("checked")) {
+            that.controls.list.find(".point-item .ms-CheckBox-field").each(function (i, d) {
+                if ($(d).hasClass("is-checked")) {
                     _s.push({
                         SourcePointId: $(d).closest(".point-item").data("id"),
                         Name: $.trim($(d).closest(".point-item").find(".i2 .s-name").text()),
@@ -735,8 +727,8 @@ var point = (function () {
         },
         ///UnSelect all checkboxes.
         unSelectAll: function () {
-            that.controls.headerListPoints.find(".point-header .ckb-wrapper input").prop("checked", false);
-            that.controls.headerListPoints.find(".point-header .ckb-wrapper").removeClass("checked");
+            that.controls.headerListPoints.find(".point-header .ms-CheckBox-field input").prop("checked", false);
+            that.controls.headerListPoints.find(".point-header .ms-CheckBox-field .ms-CheckBox-field").removeClass("checked");
         },
         ///Calculate the height source point list display area.
         height: function () {
@@ -1717,21 +1709,21 @@ var point = (function () {
                     return (_a.Name.toUpperCase() > _b.Name.toUpperCase()) ? 1 : (_a.Name.toUpperCase() < _b.Name.toUpperCase()) ? -1 : 0;
                 });
                 if (options.refresh) {
-                    var _c = that.controls.headerListPoints.find(".point-header .ckb-wrapper input").prop("checked"), _s = that.utility.selected();
+                    var _c = that.controls.headerListPoints.find(".point-header .ms-CheckBox-field").hasClass("is-checked"), _s = that.utility.selected();
                     $.each(_s, function (m, n) {
                         _ss.push(n.SourcePointId);
                     });
-                    that.controls.headerListPoints.find(".point-header .ckb-wrapper input").prop("checked", _c);
+                    that.controls.headerListPoints.find(".point-header .ms-CheckBox input").prop("checked", _c);
                     if (_c) {
-                        that.controls.headerListPoints.find(".point-header .ckb-wrapper").addClass("checked");
+                        that.controls.headerListPoints.find(".point-header .ms-CheckBox .ms-CheckBox-field").addClass("is-checked");
                     }
                     else {
-                        that.controls.headerListPoints.find(".point-header .ckb-wrapper").removeClass("checked");
+                        that.controls.headerListPoints.find(".point-header .ms-CheckBox .ms-CheckBox-field").removeClass("is-checked");
                     }
                 }
                 else {
-                    that.controls.headerListPoints.find(".point-header .ckb-wrapper input").prop("checked", false);
-                    that.controls.headerListPoints.find(".point-header .ckb-wrapper").removeClass("checked");
+                    that.controls.headerListPoints.find(".point-header .ms-CheckBox input").prop("checked", false);
+                    that.controls.headerListPoints.find(".point-header .ms-CheckBox .ms-CheckBox-field").removeClass("is-checked");
                 }
                 that.controls.list.find(".point-item").remove();
                 that.ui.item({ index: 0, data: _d, selected: _ss });
@@ -1762,9 +1754,12 @@ var point = (function () {
                                 _sel = $.inArray(_item.Id, options.selected) > -1,
                                 _pht = _item.PublishedHistories && _item.PublishedHistories.length > 0 ? _item.PublishedHistories : [],
                                 _pi = 0;
-                            var _h = '<li class="point-item' + (_ss ? "" : " item-error") + '" data-id="' + _item.Id + '" data-range="' + _item.RangeId + '" data-position="' + (_s ? result.data.address : "") + '" data-namerange="' + (_st ? _item.NameRangeId : "") + '" data-nameposition="' + (_st ? ret.data.address : "") + '">';
+                            var _h = '<li class="ms-ListItem point-item' + (_ss ? "" : " item-error") + '" data-id="' + _item.Id + '" data-range="' + _item.RangeId + '" data-position="' + (_s ? result.data.address : "") + '" data-namerange="' + (_st ? _item.NameRangeId : "") + '" data-nameposition="' + (_st ? ret.data.address : "") + '">';
                             _h += '<div class="point-item-line">';
-                            _h += '<div class="i1"><div class="ckb-wrapper' + (_sel ? " checked" : "") + '"><input type="checkbox" ' + (_sel ? 'checked="checked"' : '') + ' /><i></i></div></div>';
+                            _h += '<div class="i1">';
+                            _h += '<div class="ms-CheckBox"><input tabindex="-1" type="checkbox" class="ms-CheckBox-input">';
+                            _h += '<label role="checkbox" class="ms-CheckBox-field ' + (_sel ? " is-checked" : "") + '" tabindex="0" aria-checked="false" name="checkboxa"></label></div>';
+                            _h += '</div>';
                             _h += '<div class="i2"><span class="s-name" title="' + _n + '">' + _n + '</span>';
                             if (_st) {
                                 _h += '<span title="' + (_pn.sheet ? _pn.sheet : "") + ':[' + (_pn.cell ? _pn.cell : "") + ']"><strong>' + (_pn.sheet ? _pn.sheet : "") + ':</strong>[' + (_pn.cell ? _pn.cell : "") + ']</span>';
@@ -1776,17 +1771,26 @@ var point = (function () {
                                 _h += '<span title="' + (_p.sheet ? _p.sheet : "") + ':[' + (_p.cell ? _p.cell : "") + ']"><strong>' + (_p.sheet ? _p.sheet : "") + ':</strong>[' + (_p.cell ? _p.cell : "") + ']</span>';
                             }
                             _h += '</div>';
-                            _h += '<div class="i5"><div class="i-line"><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i><i class="i-edit" title="Edit"></i></div>';
-                            _h += '<div class="i-menu"><a href="javascript:"><span title="Action">...</span><span><i class="i-history" title="History"></i><i class="i-delete" title="Delete"></i><i class="i-edit" title="Edit"></i></span></a></div>';
+                            _h += '<div class="i5">';
+                            _h += '<div class="i-line">';
+                            _h += '<i class="ms-Icon ms-Icon--History ms-fontColor-themePrimary i-history" title="History"></i>';
+                            _h += '<i class="ms-Icon ms-Icon--Delete ms-fontColor-themePrimary i-delete" title="Delete"></i>';
+                            _h += '<i class="ms-Icon ms-Icon--Edit ms-fontColor-themePrimary i-edit" title="Edit"></i>';
+                            _h += '</div>';
+                            _h += '<div class="i-menu"><a href="javascript:"><span title="Action">...</span><span>';
+                            _h += '<i class="ms-Icon ms-Icon--Edit ms-fontColor-themePrimary i-edit" title="Edit"></i>';
+                            _h += '<i class="ms-Icon ms-Icon--Delete ms-fontColor-themePrimary i-delete" title="Delete"></i>';
+                            _h += '<i class="ms-Icon ms-Icon--History ms-fontColor-themePrimary i-history" title="History"></i>';
+                            _h += '</span></a></div>';
                             _h += '</div>';
                             _h += '</div>';
-                            _h += '<div class="item-history"><h6>Publish History</h6><ul class="history-list">';
-                            _h += '<li class="history-header"><div class="h1">Name</div><div class="h2">Value</div><div class="h3">Date</div></li>';
+                            _h += '<div class="item-history"><h6>Publish History</h6><ul class="ms-List history-list">';
+                            _h += '<li class="ms-ListItem history-header"><div class="h1">Name</div><div class="h2">Value</div><div class="h3">Date</div></li>';
                             $.each(_pht, function (m, n) {
                                 var __c = $.trim(_pht[m].Value ? _pht[m].Value : ""),
                                     __p = $.trim(_pht[m > 0 ? m - 1 : m].Value ? _pht[m > 0 ? m - 1 : m].Value : "");
                                 if (_pi < 5 && (m == 0 || __c != __p)) {
-                                    _h += '<li class="history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
+                                    _h += '<li class="ms-ListItem history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
                                     _pi++;
                                 }
                             });
@@ -1807,6 +1811,7 @@ var point = (function () {
             else {
                 that.filteredPoints = options.data;
                 that.controls.main.get(0).scrollTop = 0;
+                that.fabric.bindCheckBoxInList();
                 if (callback) {
                     callback();
                 }
@@ -1833,8 +1838,8 @@ var point = (function () {
                     }
                 });
                 _e.find(".i3").prop("title", _pv).html(_pv);
-                that.controls.list.find(".ckb-wrapper input").prop("checked", false);
-                that.controls.list.find(".ckb-wrapper").removeClass("checked");
+                that.controls.list.find(".ms-CheckBox input").prop("checked", false);
+                that.controls.list.find(".ms-CheckBox .ms-CheckBox-field").removeClass("checked");
             });
 
             callback();

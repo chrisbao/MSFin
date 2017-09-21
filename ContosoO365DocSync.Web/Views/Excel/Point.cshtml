@@ -39,7 +39,7 @@
                 <div class="ms-CommandBar-sideCommands">
                     <div class="ms-CommandButton n-signout" title="Sign Out">
                         <a class="ms-CommandButton-button" href="../Account/SignOut" title="Sign Out">
-                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--SignOut"></i></span> 
+                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--SignOut"></i></span>
                             <span class="ms-CommandButton-label">Sign Out</span>
                         </a>
                     </div>
@@ -47,37 +47,37 @@
                 <div class="ms-CommandBar-mainArea">
                     <div class="ms-CommandButton n-add" title="Add">
                         <button class="ms-CommandButton-button">
-                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Add"></i></span> 
+                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Add"></i></span>
                             <span class="ms-CommandButton-label">Add</span>
                         </button>
                     </div>
                     <div class="ms-CommandButton n-bulk" title="Bulk Add">
                         <button class="ms-CommandButton-button">
-                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--bulkAdd"></i></span> 
+                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--bulkAdd"></i></span>
                             <span class="ms-CommandButton-label">Bulk Add</span>
                         </button>
                     </div>
                     <div class="ms-CommandButton n-publish" title="Publish">
                         <button class="ms-CommandButton-button">
-                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Upload"></i></span> 
+                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Upload"></i></span>
                             <span class="ms-CommandButton-label">Publish</span>
                         </button>
                     </div>
                     <div class="ms-CommandButton n-refresh" title="Refresh All">
                         <button class="ms-CommandButton-button">
-                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Refresh"></i></span> 
+                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Refresh"></i></span>
                             <span class="ms-CommandButton-label">Refresh All</span>
                         </button>
                     </div>
                     <div class="ms-CommandButton n-publishall" title="Publish All">
                         <button class="ms-CommandButton-button">
-                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--publishAll"></i></span> 
+                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--publishAll"></i></span>
                             <span class="ms-CommandButton-label">Publish All</span>
                         </button>
                     </div>
                     <div class="ms-CommandButton n-delete" title="Delete">
                         <button class="ms-CommandButton-button">
-                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Delete"></i></span> 
+                            <span class="ms-CommandButton-icon ms-fontColor-themePrimary"><i class="ms-Icon ms-Icon--Delete"></i></span>
                             <span class="ms-CommandButton-label">Delete</span>
                         </button>
                     </div>
@@ -127,15 +127,21 @@
             </div>
             <div class="content-header">
                 <div class="add-header">
-                    <h3 class="title-add" title="Add Source Point">Add Source Point</h3>
-                    <h3 class="title-edit" title="Edit Source Point">Edit Source Point</h3>
+                    <label class="ms-Label title-add" title="Add Source Point">Add Source Point</label>
+                    <label class="ms-Label title-edit" title="Edit Source Point">Edit Source Point</label>
                     <div class="btnWrapper">
-                        <button id="btnCancel">Cancel</button>
-                        <button id="btnSave">Save</button>
+                        <button id="btnCancel" class="ms-Button ms-Button--primary">
+                            <span class="ms-Button-label">Cancel</span>
+                        </button>
+                        <button id="btnSave" class="ms-Button ms-Button--primary">
+                            <span class="ms-Button-label">Save</span>
+                        </button>
                     </div>
                 </div>
                 <div class="manage-header">
-                    <h3>Manage Source Points</h3>
+                    <div class="manage-title">
+                        <label class="ms-Label">Manage Source Points</label>
+                    </div>
                     <div class="search">
                         <div class="s-input">
                             <div>
@@ -144,7 +150,7 @@
                             </div>
                         </div>
                         <div class="s-label">
-                            <label>Search Source Point Name:</label>
+                            <label class="ms-Label">Search Source Point Name:</label>
                             <i id="iSearchSourcePoint"></i>
                         </div>
                     </div>
@@ -152,9 +158,9 @@
                         <li class="point-header">
                             <div class="point-header-line noscroll">
                                 <div class="i1">
-                                    <div class="ckb-wrapper all">
-                                        <input type="checkbox" />
-                                        <i></i>
+                                    <div class="ms-CheckBox all">
+                                        <input tabindex="-1" type="checkbox" class="ms-CheckBox-input">
+                                        <label role="checkbox" class="ms-CheckBox-field" tabindex="0" aria-checked="false" name="checkboxa"></label>
                                     </div>
                                 </div>
                                 <div class="i2">Source Point</div>
@@ -193,26 +199,29 @@
             </div>
         </div>
         <div class="content manage-point">
-            <ul id="listPoints" class="point-list">
-            </ul>
+            <ul id="listPoints" class="ms-List point-list"></ul>
             <div class="clear"></div>
             <div id="pager">
-                <div>
+                <label class="ms-Label">
                     Total items: <span id="pagerTotal"></span>, Page count: <span id="pagerPages"></span>, Current page: <span id="pagerCurrent"></span>
-                </div>
+                </label>
                 <div>
-                    <a id="pagerPrev" href="javascript:">Prev</a><a id="pagerNext" href="javascript:">Next</a>
-                    <input type="text" id="pagerValue" /><button id="pagerGo">GO</button>
+                    <a class="ms-Link" id="pagerPrev" href="javascript:">Prev</a><a class="ms-Link" id="pagerNext" href="javascript:">Next</a>
+                    <input class="ms-TextField-field" type="text" id="pagerValue" />
+                    <button id="pagerGo" class="ms-Button ms-Button--primary">
+                        <span class="ms-Button-label">GO</span>
+                    </button>
                 </div>
             </div>
         </div>
         <div class="content document-error">
-            <p>Load document ID failed.</p>
-            <span id="lblDocumentIDError"></span>
-            <a id="btnDocumentIDReload" href="javascript:">Click to reload document ID</a>
+            <label class="ms-Label">Load document ID failed.</label>
+            <label class="ms-Label" id="lblDocumentIDError">Load document ID failed.</label>
+            <a class="ms-Link ms-fontColor-themePrimary" id="btnDocumentIDReload" href="javascript:">Click to reload document ID</a>
         </div>
         <div class="footer">
-            <i></i><span>Contoso O365 Doc Sync</span>
+            <i></i>
+            <label class="ms-Label">O365 Doc Sync</label>
         </div>
         <div id="popupMain" class="popups">
             <div class="bg"></div>

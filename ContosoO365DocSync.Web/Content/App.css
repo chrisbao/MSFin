@@ -48,6 +48,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
 .ms-Icon--bulkAdd:before, .ms-Icon--publishAll:before {
     top: 35%;
 }
@@ -103,6 +104,11 @@ ul, li {
     font-weight: bold;
 }
 
+.header .nav-header .ms-CommandBar-sideCommands {
+    padding-right: 0;
+    overflow: hidden;
+}
+
 .ms-CommandButton-button:focus:before {
     border: 0;
 }
@@ -111,7 +117,7 @@ ul, li {
     display: none;
 }
 
-.manage .header .nav-header:nth-child(2), .manage .content-header .add-header {
+.manage .header .nav-header:nth-child(2), .manage .content-header .add-header, .add .content-header .manage-header {
     display: none;
 }
 
@@ -211,6 +217,10 @@ ul, li {
     width: 10px;
     background: #000;
     margin: 1px;
+}
+
+.ms-CheckBox-field.is-checked:before {
+    border: 0;
 }
 
 /* Style for sign in page */
@@ -361,7 +371,6 @@ ul, li {
 .add .content-header button {
     float: left;
     text-align: center;
-    background: #0078d7;
     color: #fff;
     font-size: 14px;
     text-transform: uppercase;
@@ -369,6 +378,8 @@ ul, li {
     height: 30px;
     cursor: pointer;
     font-weight: 600;
+    border: 0;
+    padding: 0;
 }
 
 .add .content-header button#btnSave, .add .content-header button#btnAdd {
@@ -395,6 +406,7 @@ ul, li {
     font-size: 12px;
     color: #333333;
     width: 100%;
+    padding-top: 0;
     padding-bottom: 10px;
 }
 
@@ -505,15 +517,22 @@ ul, li {
     position: relative;
 }
 
+#word-addin.add .input-wrapper .input-dropdown .ms-TextField {
+    margin-bottom: 0;
+}
+
 #word-addin.add .input-wrapper .input-dropdown input[type="text"] {
     padding-right: 110px;
     color: #000;
+    background-color: #fff;
     white-space: nowrap;
     text-overflow: ellipsis;
     cursor: pointer;
+    min-width: 10px;
+    font-weight: normal;
 }
 
-#word-addin.add .input-wrapper .input-dropdown span {
+#word-addin.add .input-wrapper .input-dropdown #btnOpenBrowse {
     position: absolute;
     top: 0;
     right: 0;
@@ -522,7 +541,7 @@ ul, li {
     cursor: pointer;
 }
 
-#word-addin.add .input-wrapper .input-dropdown i {
+#word-addin.add .input-wrapper .input-dropdown button {
     float: right;
     height: 38px;
     line-height: 38px;
@@ -532,11 +551,16 @@ ul, li {
     cursor: pointer;
     text-align: center;
     background: #0078d7;
-    color: #fff;
     font-size: 14px;
     font-style: normal;
     text-transform: uppercase;
     font-weight: 600;
+    padding: 0;
+    border: 0;
+}
+
+#word-addin.add .input-wrapper .input-dropdown button .ms-Button-label {
+    color: #fff;
 }
 
 #word-addin.add .input-wrapper .input-search input[type="text"] {
@@ -590,24 +614,29 @@ ul, li {
     float: left;
     width: 7px;
     height: 22px;
-    background-image: url(../Images/w-down-s.png);
-    background-position: center;
-    background-repeat: no-repeat;
+    font-family: FabricMDL2Icons;
+    font-style: normal;
+    font-weight: 400;
+    speak: none;
+}
+
+#word-addin.add .filter-header span i:before {
+    content: "\E972";
 }
 
 #word-addin.add .filter-list {
     display: none;
 }
 
-#word-addin.add .point-filter.open-filter span i {
-    background-image: url(../Images/w-up-s.png);
+#word-addin.add .point-filter.open-filter span i:before {
+    content: "\E971";
 }
 
 #word-addin.add .point-filter.open-filter .filter-list {
     display: block;
 }
 
-#word-addin.add .filter-list h5 {
+#word-addin.add .point-filter.open-filter .filter-list > .ms-Label {
     font-size: 11px;
     padding: 10px 0;
 }
@@ -627,20 +656,30 @@ ul, li {
 }
 
 #word-addin.add .filter-list li > div {
-    display: table-cell;
-    padding: 2px 10px 5px 0;
+    padding: 3px 0 3px 0;
     margin: 0;
+    min-height: inherit;
 }
 
-#word-addin.add .filter-list li > label {
-    display: table-cell;
-    padding: 0 0 5px 0;
+#word-addin.add .filter-list li label {
+    padding: 0;
     margin: 0;
     vertical-align: top;
     cursor: pointer;
+    line-height: 16px;
 }
 
-#word-addin.add .filter-list li:last-child > div, #word-addin.add .filter-list li:last-child > label {
+#word-addin.add .filter-list li .ms-CheckBox-field:before, #word-addin.add .filter-list li .ms-CheckBox-field:after {
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+}
+
+#word-addin.add .filter-list li:first-child > div {
+    padding-top: 0;
+}
+
+#word-addin.add .filter-list li:last-child > div {
     padding-bottom: 0;
 }
 
@@ -660,19 +699,34 @@ ul, li {
 
 #word-addin.add .point-result li {
     font-size: 14px;
-    padding: 5px 5px 5px 25px;
-    background-image: url(../Images/w-list-style.png);
-    background-position: left 10px;
-    background-repeat: no-repeat;
-    cursor: pointer;
+    padding: 5px 0;
 }
 
-#word-addin.add .point-result li span {
+#word-addin.add .point-result li:last-child {
+    padding-bottom: 0;
+}
+
+#word-addin.add .point-result li em {
     font-style: italic;
 }
 
-#word-addin.add .point-result li.selected {
-    background-image: url(../Images/w-list-style-selected.png);
+#word-addin.add .point-result .ms-RadioButton {
+    min-height: 1px;
+}
+
+#word-addin.add .point-result .ms-RadioButton-field {
+    margin: 0;
+    line-height: 16px;
+}
+
+#word-addin.add .point-result .ms-RadioButton-field:before {
+    width: 16px;
+    height: 16px;
+}
+
+#word-addin.add .point-result .ms-RadioButton-field.is-checked:after {
+    top: 3px;
+    left: 3px;
 }
 
 #word-addin.add .point-result #resultNotFound {
@@ -687,12 +741,7 @@ ul, li {
 }
 
 #word-addin.add .add-point-second .i-success i {
-    display: inline-block;
-    width: 20px;
-    height: 18px;
-    background-image: url(../Images/w-ok.png);
-    background-position: center;
-    background-repeat: no-repeat;
+    font-weight: bold;
     margin-left: 10px;
 }
 
@@ -709,16 +758,23 @@ ul, li {
 #word-addin.add .add-point-second .add-point-files span:first-child {
     font-size: 14px;
     font-weight: 600;
-    background-image: url(../Images/list-style.png);
-    background-position: left 7px;
-    background-repeat: no-repeat;
-    padding-left: 16px;
+    padding: 0 0 0 16px;
+    position: relative;
+}
+
+#word-addin.add .add-point-second .add-point-files span:first-child i {
+    position: absolute;
+    left: 0;
+    top: 4px;
+    font-size: 12px;
+}
+
+#word-addin.add .add-point-second .add-point-files span:first-child em {
+    font-style: normal;
 }
 
 #word-addin.add .add-point-second .add-point-files span:last-child {
-    font-size: 12px;
     padding-left: 16px;
-    padding-top: 5px;
 }
 
 #word-addin.add .add-point-second .add-point-files span:last-child strong {
@@ -967,6 +1023,11 @@ ul, li {
 }
 
 /* Style for manage source point page */
+.manage .manage-title {
+    padding: 25px 90px 25px 20px;
+    position: relative;
+}
+
 .content-header .add-header .ms-Label, .content-header .manage-title .ms-Label {
     width: 100%;
     font-size: 21px;
@@ -1166,10 +1227,6 @@ ul, li {
     line-height: 16px;
 }
 
-.manage .point-list .ms-CheckBox-field.is-checked:before {
-    border: 0;
-}
-
 .manage .point-list .point-item .ckb-wrapper {
     margin-top: 2px;
 }
@@ -1297,11 +1354,6 @@ ul, li {
 }
 
 /* Word Add-In */
-#word-addin.manage .manage-title {
-    padding: 25px 90px 25px 20px;
-    position: relative;
-}
-
 #word-addin.manage .manage-title h3 {
     padding: 0;
 }
@@ -1550,9 +1602,7 @@ ul, li {
 }
 
 .popups .popup {
-    position: fixed;
     z-index: 1010;
-    top: 30%;
     height: auto;
     width: 100%;
     padding: 0 20px;
@@ -1673,7 +1723,7 @@ ul, li {
     background-repeat: no-repeat;
 }
 
-.popups .popup button {
+.popups .popup .ms-Button {
     text-align: center;
     background: #0078d7;
     color: #fff;
@@ -1711,27 +1761,24 @@ ul, li {
     width: 100%;
     height: auto;
     position: relative;
-    padding: 0 0 10px 0;
+    padding: 0 34px 0 0;
     border-bottom: 1px #ccc solid;
     text-align: left;
-    height: 28px;
+    height: 24px;
 }
 
 #popupBrowse .browse-filter a {
-    font-size: 13px;
+    float: left;
+    font-size: 12px;
     text-decoration: none;
-    line-height: 18px;
+    line-height: 16px;
     color: #0078d7;
+    padding: 4px 0;
 }
 
 #popupBrowse .browse-filter i {
-    content: "";
-    float: right;
-    width: 15px;
-    height: 18px;
-    background-image: url(../Images/delete.png);
-    background-position: center;
-    background-repeat: no-repeat;
+    float: left;
+    padding: 0 5px 0 0;
     cursor: pointer;
 }
 
@@ -1796,17 +1843,36 @@ ul, li {
     opacity: 0.2;
     width: 100%;
     height: 100%;
+    z-index: 100;
 }
 
-#popupBrowse .loading i {
-    height: 64px;
+#popupBrowse .loading .ms-Spinner {
     width: 100%;
-    background-image: url(../Images/loading.gif);
-    background-position: center;
-    background-repeat: no-repeat;
     position: absolute;
+    left: 45%;
+    top: 45%;
+}
+
+.ms-Dialog {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    padding: 0 20px;
+    transform: none;
     left: 0;
-    top: 40%;
+    top: 30%;
+    box-shadow: none;
+    background-color: transparent;
+}
+
+.ms-Dialog .ms-Dialog-buttonClose {
+    right: 30px;
+    height: 24px;
+    top: 8px;
+}
+
+.ms-Dialog-buttonClose .ms-Icon.ms-Icon--Cancel {
+    color: #0078d7;
 }
 
 /* RWD */

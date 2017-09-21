@@ -77,7 +77,7 @@
                             <span class="ms-CommandButton-icon"><i class="ms-Icon ms-Icon--More"></i></span>
                             <span class="ms-CommandButton-label"></span>
                         </button>
-                        <ul class="ms-ContextualMenu excel-page is-opened ms-ContextualMenu--hasIcons">
+                        <ul class="ms-ContextualMenu is-opened ms-ContextualMenu--hasIcons">
                             <li class="ms-ContextualMenu-item">
                                 <a class="ms-ContextualMenu-link" tabindex="1"></a>
                                 <i class="ms-Icon"></i>
@@ -107,7 +107,7 @@
                             <span class="ms-CommandButton-icon"><i class="ms-Icon ms-Icon--More"></i></span>
                             <span class="ms-CommandButton-label"></span>
                         </button>
-                        <ul class="ms-ContextualMenu excel-page is-opened ms-ContextualMenu--hasIcons">
+                        <ul class="ms-ContextualMenu is-opened ms-ContextualMenu--hasIcons">
                             <li class="ms-ContextualMenu-item">
                                 <a class="ms-ContextualMenu-link" tabindex="1"></a>
                                 <i class="ms-Icon"></i>
@@ -118,13 +118,21 @@
             </div>
             <div class="content-header">
                 <div class="add-header">
-                    <label class="ms-Label" title="Add Destination Point">Add Destination Point</label>
-                    <label class="ms-Label" title="Update Custom Format">Update Custom Format</label>
+                    <label class="ms-Label title-add" title="Add Destination Point">Add Destination Point</label>
+                    <label class="ms-Label title-edit" title="Update Custom Format">Update Custom Format</label>
                     <div class="btnWrapper">
-                        <button id="btnCancel">Cancel</button>
-                        <button id="btnAdd">Add</button>
-                        <button id="btnSave">Save</button>
-                        <button id="btnNext">NEXT</button>
+                        <button id="btnCancel" class="ms-Button ms-Button--primary">
+                            <span class="ms-Button-label">Cancel</span>
+                        </button>
+                        <button id="btnAdd" class="ms-Button ms-Button--primary">
+                            <span class="ms-Button-label">Add</span>
+                        </button>
+                        <button id="btnSave" class="ms-Button ms-Button--primary">
+                            <span class="ms-Button-label">Save</span>
+                        </button>
+                        <button id="btnNext" class="ms-Button ms-Button--primary disabled">
+                            <span class="ms-Button-label">Next</span>
+                        </button>
                     </div>
                 </div>
                 <div class="manage-header">
@@ -155,15 +163,11 @@
                             <i id="iSearchSourcePoint"></i>
                         </div>
                     </div>
-                    <ul id="headerListPoints" class="point-list">
-                        <li class="point-header">
+                    <ul id="headerListPoints" class="ms-List point-list">
+                        <li class="ms-ListItem point-header">
                             <div class="point-header-line noscroll">
                                 <div class="i1">
-                                    <!--<div class="ckb-wrapper all">
-                                        <input type="checkbox" />
-                                        <i></i>
-                                    </div>-->
-                                    <div class="ms-CheckBox">
+                                    <div class="ms-CheckBox all">
                                         <input tabindex="-1" type="checkbox" class="ms-CheckBox-input">
                                         <label role="checkbox" class="ms-CheckBox-field" tabindex="0" aria-checked="false" name="checkboxa"></label>
                                     </div>
@@ -182,12 +186,18 @@
                 <h4 class="height-item">Select File<em>*</em></h4>
                 <div class="point-item input-wrapper height-item">
                     <div class="input-dropdown">
-                        <input type="text" id="txtFile" disabled="disabled" data-default="Select a file..." />
-                        <span id="btnOpenBrowse"><i>Browse</i></span>
+                        <div class="ms-TextField">
+                            <input id="txtFile" class="ms-TextField-field" type="text" disabled="disabled" data-default="Select a file..." />
+                        </div>
+                        <span id="btnOpenBrowse">
+                            <button class="ms-Button">
+                                <span class="ms-Button-label">Browse</span>
+                            </button>
+                        </span>
                     </div>
                 </div>
                 <div class="point-search point-item input-wrapper height-item">
-                    <label>Search within document:</label>
+                    <label class="ms-Label">Search within document:</label>
                     <div class="input-search">
                         <input type="text" id="txtKeyword" data-default="Search by Source Point Name" />
                         <i id="iSearch"></i>
@@ -196,25 +206,25 @@
                 </div>
                 <div class="point-filter">
                     <div class="filter-header height-item">
-                        <span><em>Filter by</em><i></i></span>
+                        <span><em>Filter by</em><i class="ms-Icon"></i></span>
                     </div>
                     <div class="filter-list">
-                        <h5>Filter by Groups:</h5>
-                        <ul id="filterList"></ul>
+                        <label class="ms-Label">Filter by Groups:</label>
+                        <ul id="filterList" class="ms-List"></ul>
                     </div>
                 </div>
                 <div class="point-result">
                     <h4 class="height-item">Search results<em>*</em></h4>
-                    <ul id="resultList"></ul>
+                    <ul id="resultList" class="ms-ChoiceFieldGroup" role="radiogroup"></ul>
                     <div id="resultNotFound">No results found.</div>
                 </div>
             </div>
             <div class="add-point-second">
                 <div class="add-point-info">
-                    <h4 class="add-point-source i-success">Selected Source Point<i></i></h4>
+                    <h4 class="add-point-source i-success">Selected Source Point<i class="ms-Icon ms-Icon--Accept ms-fontColor-green"></i></h4>
                     <div class="add-point-files">
-                        <span id="selectedName"></span>
-                        <span id="selectedFile"></span>
+                        <span class="ms-Label" id="selectedName"><i class="ms-Icon ms-Icon--CheckboxIndeterminate"></i><em></em></span>
+                        <span class="ms-Label" id="selectedFile"></span>
                     </div>
                     <h4 class="add-point-cursor">Next, place your cursor in the document where you want the source value displayed, then click "Add".<i></i></h4>
                 </div>
@@ -238,30 +248,33 @@
             </div>
         </div>
         <div class="content manage-point">
-            <ul id="listPoints" class="point-list"></ul>
+            <ul id="listPoints" class="ms-List point-list"></ul>
             <div class="clear"></div>
             <div id="pager">
-                <div>
+                <label class="ms-Label">
                     Total items: <span id="pagerTotal"></span>, Page count: <span id="pagerPages"></span>, Current page: <span id="pagerCurrent"></span>
-                </div>
+                </label>
                 <div>
-                    <a id="pagerPrev" href="javascript:">Prev</a><a id="pagerNext" href="javascript:">Next</a>
-                    <input type="text" id="pagerValue" /><button id="pagerGo">GO</button>
+                    <a class="ms-Link" id="pagerPrev" href="javascript:">Prev</a><a class="ms-Link" id="pagerNext" href="javascript:">Next</a>
+                    <input class="ms-TextField-field" type="text" id="pagerValue" />
+                    <button id="pagerGo" class="ms-Button ms-Button--primary">
+                        <span class="ms-Button-label">GO</span>
+                    </button>
                 </div>
             </div>
             <div id="tlpMessage" class="tooltip-message">
-                <i id="tlpClose" title="Close"></i>
-                <div>The document is not in sync with the catalog, please click refresh to synchronize.</div>
+                <i id="tlpClose" class="ms-Icon ms-Icon--Cancel ms-fontColor-themePrimary" title="Close"></i>
+                <label class="ms-Label">The document is not in sync with the catalog, please click refresh to synchronize.</label>
             </div>
         </div>
         <div class="content document-error">
-            <p>Load document ID failed.</p>
-            <span id="lblDocumentIDError"></span>
-            <a id="btnDocumentIDReload" href="javascript:">Click to reload document ID</a>
+            <label class="ms-Label">Load document ID failed.</label>
+            <label class="ms-Label" id="lblDocumentIDError">Load document ID failed.</label>
+            <a class="ms-Link ms-fontColor-themePrimary" id="btnDocumentIDReload" href="javascript:">Click to reload document ID</a>
         </div>
         <div class="footer">
             <i></i>
-            <label class="ms-Label">Contoso O365 Doc Sync</label>
+            <label class="ms-Label">O365 Doc Sync</label>
         </div>
         <div id="popupMain" class="popups">
             <div class="bg"></div>
@@ -288,22 +301,25 @@
                     <button id="btnNo">No</button>
                 </div>
             </div>
-            <div id="popupBrowse" class="popup">
-                <div>
+            <div id="popupBrowse" class="ms-Dialog ms-Dialog--close popup">
+                <button id="btnBrowseCancel" class="ms-Dialog-button ms-Dialog-buttonClose">
+                    <i class="ms-Icon ms-Icon--Cancel"></i>
+                </button>
+                <div class="ms-Dialog-content">
                     <div class="browse-file">
                         <div class="browse-filter">
-                            <a href="javascript:" id="btnBrowseBack">&lt;&lt; Back</a>
-                            <i id="btnBrowseCancel"></i>
+                            <a id="btnBrowseBack" class="ms-Link" href="javascript:"><i class="ms-Icon ms-Icon--Back"></i>Back</a>
                         </div>
                         <div class="browse-content">
-                            <ul id="browseList"></ul>
+                            <ul id="browseList" class="ms-List"></ul>
                         </div>
                         <div class="browse-message" id="txtBrowseMessage">
                         </div>
                     </div>
                     <div class="loading" id="popBrowseLoading">
                         <div class="loading-bg"></div>
-                        <i></i>
+                        <div class="ms-Spinner ms-Spinner--large">
+                        </div>
                     </div>
                 </div>
             </div>
