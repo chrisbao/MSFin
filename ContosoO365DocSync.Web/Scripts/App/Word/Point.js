@@ -314,19 +314,24 @@ var point = (function () {
         that.controls.list.on("click", ".point-item .i2, .point-item .i3, .point-item .i5, .point-item .error-info, .point-item .item-history, .point-item .item-format", function (e) {
             that.action.goto($(this).closest(".point-item"));
         });
-        that.controls.main.on("change", ".ckb-wrapper input", function (e) {
-            if ($(this).get(0).checked) {
-                $(this).closest(".ckb-wrapper").addClass("checked");
+        that.controls.main.on("change", ".ms-CheckBox input", function (e) {
+            if ($(this).next().hasClass("is-checked")) {
+                var CheckBoxElements = document.querySelectorAll(".ms-CheckBox");
+                for (var i = 0; i < CheckBoxElements.length; i++) {
+                    var a = (fabric['CheckBox'](CheckBoxElements[i])).getValue();
+                    var b = a;
+                }
+                //$(this).closest(".ms-CheckBox").addClass("checked");
                 if ($(this).closest(".all").length > 0) {
-                    that.controls.list.find("input").prop("checked", true);
-                    that.controls.list.find(".ckb-wrapper").addClass("checked");
+                    that.controls.list.find(".ms-CheckBox input").prop("checked", true);
+                    that.controls.list.find(".ms-CheckBox .ms-CheckBox-field").addClass("is-checked");
                 }
             }
             else {
-                $(this).closest(".ckb-wrapper").removeClass("checked");
+                //$(this).closest(".ckb-wrapper").removeClass("checked");
                 if ($(this).closest(".all").length > 0) {
-                    that.controls.list.find("input").prop("checked", false);
-                    that.controls.list.find(".ckb-wrapper").removeClass("checked");
+                    that.controls.list.find(".ms-CheckBox input").prop("checked", false);
+                    that.controls.list.find(".ms-CheckBox .ckb-wrapper").removeClass("is-checked");
                 }
             }
         });
@@ -393,7 +398,6 @@ var point = (function () {
 
         that.fabric.init();
 
-        /*
         ///Retrieve the document ID via document URL
         that.document.init(function () {
             ///Load all destination points in management page.
@@ -404,14 +408,16 @@ var point = (function () {
                 }
             });
         });
-        */
     };
 
     that.fabric = {
         init: function () {
-            var CheckBoxElements = document.querySelectorAll(".ms-CheckBox");
+            var CheckBoxElements = document.querySelectorAll(".point-header .ms-CheckBox");
             for (var i = 0; i < CheckBoxElements.length; i++) {
-                new fabric['CheckBox'](CheckBoxElements[i]);
+                new fabric['CheckBox'](CheckBoxElements[i], function (a, b, c) {
+                    var _a = a.getValue();
+                    var _b = _a;
+                });
             }
 
             var CommandBarElements = document.querySelectorAll(".ms-CommandBar");
@@ -420,9 +426,11 @@ var point = (function () {
             }
         },
         bind: function () {
-            var CheckBoxElements = document.querySelectorAll(".ms-CheckBox");
+            var CheckBoxElements = document.querySelectorAll("#listPoints .ms-CheckBox");
             for (var i = 0; i < CheckBoxElements.length; i++) {
-                new fabric['CheckBox'](CheckBoxElements[i]);
+                new fabric['CheckBox'](CheckBoxElements[i], function (a, b, c) {
+                    var _s = a;
+                });
             }
         }
     };
@@ -667,8 +675,8 @@ var point = (function () {
         ///Return current selected destination points in management page.
         selected: function () {
             var _s = [];
-            that.controls.list.find(".point-item .ckb-wrapper input").each(function (i, d) {
-                if ($(d).prop("checked")) {
+            that.controls.list.find(".point-item .ms-CheckBox-field").each(function (i, d) {
+                if ($(d).hasClass("is-checked")) {
                     var _id = $(d).closest(".point-item").data("id"), _rid = $(d).closest(".point-item").data("range");
                     _s.push({ DestinationPointId: _id, RangeId: _rid });
                 }
@@ -2276,7 +2284,7 @@ var point = (function () {
                 });
 
                 if (options.refresh) {
-                    var _c = that.controls.headerListPoints.find(".point-header .ckb-wrapper input").prop("checked"), _s = that.utility.selected();
+                    var _c = that.controls.headerListPoints.find(".point-header .ms-CheckBox-field").hasClass("is-checked"), _s = that.utility.selected();
                     $.each(_s, function (m, n) {
                         _ss.push(n.DestinationPointId);
                     });
