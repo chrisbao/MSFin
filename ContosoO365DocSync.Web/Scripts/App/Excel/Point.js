@@ -1,9 +1,9 @@
 ﻿$(function () {
-    Office.initialize = function (reason) {
+    //Office.initialize = function (reason) {
         $(document).ready(function () {
             point.init();
         });
-    };
+    //};
 });
 
 var point = (function () {
@@ -60,13 +60,15 @@ var point = (function () {
         that.controls = {
             body: $("body"),
             main: $(".main"),
+            manageNavBar: new fabric['CommandBar']($(".nav-header").get(0)),
+            addNavBar: new fabric['CommandBar']($(".nav-header").get(1)),
             back: $(".n-back"),
             add: $(".n-add"),
-            publish: $(".n-publish"),
-            publishAll: $(".n-publishall"),
-            refresh: $(".n-refresh"),
-            del: $(".n-delete"),
-            bulk: $(".n-bulk"),
+            publish: $(".n-publish, .ms-ContextualMenu-item:has(.ms-Icon--Upload)"),
+            publishAll: $(".n-publishall, .ms-ContextualMenu-item:has(.ms-Icon--publishAll)"),
+            refresh: $(".n-refresh, .ms-ContextualMenu-item:has(.ms-Icon--Refresh)"),
+            del: $(".n-delete, .ms-ContextualMenu-item:has(.ms-Icon--Delete)"),
+            bulk: $(".n-bulk, .ms-ContextualMenu-item:has(.ms-Icon--bulkAdd)"),
             cancel: $("#btnCancel"),
             save: $("#btnSave"),
             name: $("#txtName"),
@@ -253,6 +255,33 @@ var point = (function () {
             });
         });
     };
+
+    ///Initialize the fabric components
+    that.fabric = {
+        init: function () {
+            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--Back)", function() {
+                that.controls.back.click();
+            });
+            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--Add)", function() {
+                that.controls.add.click();
+            });
+            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--Upload)", function() {
+                that.controls.publish.click();
+            });
+            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--publishAll)", function() {
+                that.controls.publishAll.click();
+            });
+            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--Refresh)", function() {
+                that.controls.refresh.click();
+            });
+            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--Delete)", function() {
+                that.controls.del.click();
+            });
+            $(document).on("click", ".ms-ContextualMenu-item:has(.ms-Icon--bulkAdd)", function() {
+                that.controls.bulk.click();
+            });
+        }
+    };
     ///Load the source point list.
     that.list = function (options, callback) {
         ///Display the processing layer.
@@ -286,6 +315,7 @@ var point = (function () {
                     that.controls.position.val(that.model ? that.model.Position : "");
                     that.ui.groups({ data: that.groups, selected: that.model ? that.model.Groups : [] });
                     that.controls.main.removeClass("manage add edit bulk").addClass(that.model ? "add edit" : (that.bulk ? "add bulk" : "add"));
+                    that.controls.addNavBar._doResize();
                     if (callback) {
                         callback();
                     }
@@ -300,6 +330,7 @@ var point = (function () {
             that.controls.position.val(that.model ? that.model.Position : "");
             that.ui.groups({ data: that.groups, selected: that.model ? that.model.Groups : [] });
             that.controls.main.removeClass("manage add edit bulk").addClass(that.model ? "add edit" : (that.bulk ? "add bulk" : "add"));
+            that.controls.addNavBar._doResize();
             if (callback) {
                 callback();
             }
@@ -768,10 +799,12 @@ var point = (function () {
                         }, function () {
                             that.controls.popupMain.removeClass("message process confirm active");
                             that.controls.main.removeClass("add edit bulk").addClass("manage");
+                            that.controls.manageNavBar._doResize();
                         });
                     }
                     else {
                         that.controls.main.removeClass("add edit bulk").addClass("manage");
+                        that.controls.manageNavBar._doResize();
                     }
                 });
             });
@@ -1462,11 +1495,13 @@ var point = (function () {
                 setTimeout(function () {
                     that.controls.popupMain.removeClass("active message");
                     that.controls.main.removeClass("manage add edit bulk").addClass("manage");
+                    that.controls.manageNavBar._doResize();
                 }, millisecond);
             }
             else {
                 that.controls.popupMain.removeClass("active message");
                 that.controls.main.removeClass("manage add edit bulk").addClass("manage");
+                that.controls.manageNavBar._doResize();
             }
         }
     };
