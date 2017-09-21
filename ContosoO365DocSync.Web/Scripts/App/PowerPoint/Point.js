@@ -1,9 +1,9 @@
 ﻿$(function () {
-    Office.initialize = function (reason) {
+    //Office.initialize = function (reason) {
         $(document).ready(function () {
             point.init();
         });
-    };
+    //};
 });
 
 var point = (function () {

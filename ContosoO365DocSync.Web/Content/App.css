@@ -103,23 +103,15 @@ ul, li {
     font-weight: bold;
 }
 
-.header .nav-header .n-back, .header .nav-header .n-add {
-    margin-left: 0;
-}
-
-.header .nav-header .ms-CommandBar-sideCommands {
-    padding-right: 0;
-    overflow: hidden;
-}
 .ms-CommandButton-button:focus:before {
     border: 0;
 }
 
-.add .n-add, .add .n-publish, .add .n-refresh, .add .n-highlight, .add .n-publishall, .add .n-delete, .add .header .n-bulk, .add .content-header .manage-header, .add .n-select {
+.add .header .nav-header:first-child {
     display: none;
 }
 
-.manage .header .n-back, .manage .content-header .add-header {
+.manage .header .nav-header:nth-child(2), .manage .content-header .add-header {
     display: none;
 }
 
@@ -1818,9 +1810,6 @@ ul, li {
 }
 
 /* RWD */
-@media screen and (max-width:530px) {
-}
-
 @media screen and (max-width:440px) {
     .manage .point-list .point-header .point-header-line, .manage .point-list .point-item .point-item-line, #word-addin.manage .point-list .point-header .point-header-line, #word-addin.manage .point-list .point-item .point-item-line {
         padding-right: 42px;
