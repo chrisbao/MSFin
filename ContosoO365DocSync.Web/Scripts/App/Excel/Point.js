@@ -83,13 +83,12 @@ var point = (function () {
             popupProcessing: $("#popupProcessing"),
             popupSuccessMessage: $("#lblSuccessMessage"),
             popupErrorMain: $("#popupErrorMain"),
-            popupErrorTitle: $("#lblErrorTitle"),
-            popupErrorMessage: $("#lblErrorMessage"),
-            popupErrorRepair: $("#lblErrorRepair"),
-            popupConfirm: $("#popupConfirm"),
-            popupConfirmTitle: $("#lblConfirmTitle"),
-            popupConfirmYes: $("#btnYes"),
-            popupConfirmNo: $("#btnNo"),
+            popupErrorTitle: $("#popupErrorMain #lblErrorTitle"),
+            popupErrorMessage: $("#popupErrorMain #lblErrorMessage"),
+            popupErrorRepair: $("#popupErrorMain #lblErrorRepair"),
+            popupConfirmTitle: $("#popupConfirm .ms-Dialog-title"),
+            popupConfirmYes: $("#popupConfirm #btnYes"),
+            popupConfirmNo: $("#popupConfirm #btnNo"),
             pager: $("#pager"),
             pagerTotal: $("#pagerTotal"),
             pagerPages: $("#pagerPages"),
@@ -260,6 +259,8 @@ var point = (function () {
             for (var i = 0; i < CheckBoxElements.length; i++) {
                 new fabric['CheckBox'](CheckBoxElements[i]);
             }
+
+            new fabric["Spinner"]($(".popups .ms-Spinner").get(0));
         },
         bindCheckBoxInList: function () {
             var CheckBoxElements = document.querySelectorAll("#listPoints .ms-CheckBox");
@@ -1452,8 +1453,8 @@ var point = (function () {
             }
         },
         ///Display the process popup.
-        processing: function (hide) {
-            if (!hide) {
+        processing: function (show) {
+            if (!show) {
                 that.controls.popupMain.removeClass("active process");
             }
             else {

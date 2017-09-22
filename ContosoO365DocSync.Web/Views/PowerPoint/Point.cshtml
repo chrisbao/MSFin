@@ -116,23 +116,36 @@
             <i></i><span>Contoso O365 Doc Sync</span>
         </div>
         <div id="popupMain" class="popups">
-            <div class="bg"></div>
+            <div class="ms-Overlay ms-Overlay--dark popup"></div>
             <div id="popupMessage" class="popup">
-                <div class="success-wrapper">
-                    <i></i>
+                <div class="ms-Dialog success-wrapper">
+                    <i class="ms-Icon ms-Icon--CheckMark"></i>
                     <span id="lblSuccessMessage"></span>
                 </div>
-                <div id="popupErrorMain" class="error-wrapper">
-                    <h5>Error</h5>
-                    <h6 id="lblErrorTitle"></h6>
-                    <ul id="lblErrorMessage"></ul>
-                    <h6 id="lblErrorRepair"></h6>
-                    <button id="btnErrorOK">OK</button>
+                <div id="popupErrorMain" class="ms-Dialog ms-Dialog--blocking is-open error-wrapper">
+                    <div class="ms-Dialog-main">
+                        <div class="ms-Dialog-header">
+                            <p class="ms-Dialog-title">
+                                <span><i class="ms-Icon ms-Icon--Error"></i></span>
+                                <span>Error</span>
+                            </p>
+                        </div>
+                        <div class="ms-Dialog-inner">
+                            <div class="ms-Dialog-content">
+                                <h6 id="lblErrorTitle" class="ms-Dialog-subText"></h6>
+                            </div>
+                            <ul id="lblErrorMessage"></ul>
+                            <h6 id="lblErrorRepair"></h6>
+                            <div class="ms-Dialog-actions">
+                                <button id="btnErrorOK" class="ms-Dialog-action ms-Button ms-Button--primary">
+                                    <span class="ms-Button-label">OK</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div id="popupProcessing" class="popup processing">
-                <i></i>
-            </div>
+            <div id="popupProcessing" class="ms-Spinner ms-Spinner--large processing popup"></div>
             <div id="popupBrowse" class="popup">
                 <div>
                     <div class="browse-file">

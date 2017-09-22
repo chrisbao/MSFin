@@ -41,13 +41,10 @@ var point = (function () {
     ///Initialize the event handlers.
     that.init = function () {
         that.filePath = window.location.href.indexOf("localhost") > -1 ? "https://cand3.sharepoint.com/Shared%20Documents/Presentation.pptx" : Office.context.document.url;
-        ///Create fabric command bar
-        new fabric['CommandBar']($(".nav-header").get(0));
         that.controls = {
             body: $("body"),
             main: $(".main"),
-            select: $(".n-select, .ms-ContextualMenu-item:has(.ms-Icon--Add)"),
-            refresh: $(".n-refresh, .ms-ContextualMenu-item:has(.ms-Icon--Refresh)"),
+            spinner: new fabric["Spinner"]($(".popups .ms-Spinner").get(0)),
             titleName: $("#lblSourcePointName"),
             sourcePointName: $("#txtSearchSourcePoint"),
             searchSourcePoint: $("#iSearchSourcePoint"),
@@ -60,9 +57,9 @@ var point = (function () {
             popupProcessing: $("#popupProcessing"),
             popupSuccessMessage: $("#lblSuccessMessage"),
             popupErrorMain: $("#popupErrorMain"),
-            popupErrorTitle: $("#lblErrorTitle"),
-            popupErrorMessage: $("#lblErrorMessage"),
-            popupErrorRepair: $("#lblErrorRepair"),
+            popupErrorTitle: $("#popupErrorMain #lblErrorTitle"),
+            popupErrorMessage: $("#popupErrorMain #lblErrorMessage"),
+            popupErrorRepair: $("#popupErrorMain #lblErrorRepair"),
             popupBrowseList: $("#browseList"),
             popupBrowseBack: $("#btnBrowseBack"),
             popupBrowseCancel: $("#btnBrowseCancel"),
@@ -81,10 +78,11 @@ var point = (function () {
         that.controls.body.click(function () {
             that.action.body();
         });
-        that.controls.select.click(function () {
+
+        $(document).on("click", ".n-select, .ms-ContextualMenu-item:has(.ms-Icon--Add)", function () {
             that.browse.init();
         });
-        that.controls.refresh.click(function () {
+        $(document).on("click", ".n-refresh, .ms-ContextualMenu-item:has(.ms-Icon--Refresh)", function () {
             if (that.selectDocument != null) {
                 that.list();
             }
@@ -176,6 +174,15 @@ var point = (function () {
         that.utility.height();
         that.action.dft(that.controls.sourcePointName, false);
         that.utility.pager.status({ length: 0 });
+
+        that.fabric.init();
+    };
+    ///Initialize the fabric components
+    that.fabric = {
+        init: function () {
+            ///Create fabric command bar
+            new fabric['CommandBar']($(".nav-header").get(0));
+        }
     };
     ///Load the source point list.
     that.list = function () {
@@ -675,7 +682,7 @@ var point = (function () {
                 that.controls.popupMain.removeClass("active process");
             }
             else {
-                that.controls.popupMain.removeClass("message confirm browse").addClass("active process");
+                that.controls.popupMain.removeClass("message confirm").addClass("active process");
             }
         },
         ///Diplay the file explorer.

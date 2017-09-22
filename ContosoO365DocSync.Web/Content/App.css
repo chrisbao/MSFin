@@ -109,6 +109,10 @@ ul, li {
     overflow: hidden;
 }
 
+.header .nav-header .ms-CommandButton-button:hover {
+    background-color: #e5f1fc;
+}
+
 .ms-CommandButton-button:focus:before {
     border: 0;
 }
@@ -1586,37 +1590,60 @@ ul, li {
     display: none;
 }
 
-.popups.active {
+.popups.active, .popups.active .ms-Overlay{
     display: block;
-}
-
-.popups .bg {
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: #000;
-    opacity: 0.5;
 }
 
 .popups .popup {
     z-index: 1010;
-    height: auto;
-    width: 100%;
-    padding: 0 20px;
     display: none;
+}
+
+.popups .ms-Dialog {
+    z-index: 1011;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 20px;
+    background-color: transparent;
+    box-shadow:none
+}
+
+.popups .ms-Dialog .ms-Dialog-main {
+    max-width: 100%;
+    padding: 28px 24px;
+    background-color: #ffffff;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,.4);
+}
+
+.popups .ms-Dialog .ms-Dialog-header {
+    padding-bottom: 0;
+}
+
+.popups .ms-Dialog .ms-Dialog-header .ms-Dialog-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.popups .ms-Dialog .ms-Dialog-actions {
+    text-align: center;
+    margin-top: 0;
+}
+
+.popups .ms-Dialog .ms-Dialog-actions button:last-child {
+    margin-left: 8px;
+}
+
+.popups .ms-Spinner {
+    position: fixed;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
 }
 
 .popups.message.active #popupMessage, .popups.process.active #popupProcessing, .popups.confirm.active #popupConfirm, .popups.browse.active #popupBrowse {
     display: block;
-}
-
-.popups .popup > div {
-    padding: 30px 20px;
-    background-color: #fff;
-    text-align: center;
 }
 
 .popups .popup.success .success-wrapper, .popups .popup.error .error-wrapper {
@@ -1627,13 +1654,16 @@ ul, li {
     display: none;
 }
 
+.popups .popup .success-wrapper {
+    text-align: center;
+    padding: 30px 20px;
+}
+
 .popups .popup .success-wrapper i {
     display: inline-block;
-    width: 100%;
-    height: 98px;
-    background-image: url(../Images/success.png);
-    background-position: center;
-    background-repeat: no-repeat;
+    color: #009A62;
+    font-size: 98px;
+    font-weight: bolder;
 }
 
 .popups .popup .success-wrapper span {
@@ -1642,17 +1672,32 @@ ul, li {
     padding-top: 10px;
 }
 
-.popups .popup .error-wrapper h5 {
-    font-family: 'Segoe UI Light';
-    font-size: 24px;
-    text-align: left;
+.popups .popup .error-wrapper .ms-Dialog-title {
     color: #ff0000;
-    line-height: 24px;
-    padding-left: 30px;
-    background-image: url(../Images/error.png);
-    background-position: left center;
-    background-repeat: no-repeat;
     margin-bottom: 15px;
+}
+
+.popups .popup .error-wrapper .ms-Dialog-title span {
+    position: relative;
+    font-size: 24px;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1em;
+    height: 1em;
+    min-width: 1em;
+}
+
+.popups .popup .error-wrapper .ms-Dialog-title span:last-child {
+    font-family: 'Segoe UI Light';
+    margin-left: 6px;
+    vertical-align: top;
+}
+
+.popups .popup .error-wrapper .ms-Dialog-title .ms-Icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
 }
 
 .popups .popup .error-wrapper h6 {
@@ -1710,40 +1755,8 @@ ul, li {
     display: none;
 }
 
-.popups .popup.processing {
-    text-align: center;
-}
-
-.popups .popup.processing i {
-    display: inline-block;
-    height: 64px;
-    width: 64px;
-    background-image: url(../Images/loading.gif);
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.popups .popup .ms-Button {
-    text-align: center;
-    background: #0078d7;
-    color: #fff;
-    font-size: 14px;
-    text-transform: uppercase;
-    width: 90px;
-    height: 30px;
-    cursor: pointer;
-    font-weight: 600;
+.popups .popup .error-wrapper button {
     margin-top: 5px;
-}
-
-#popupConfirm > div > div {
-    font-size: 16px;
-    padding-bottom: 20px;
-    font-weight: 600;
-}
-
-#popupConfirm button:last-child {
-    margin-left: 8px;
 }
 
 #popupBrowse {
@@ -1847,13 +1860,10 @@ ul, li {
 }
 
 #popupBrowse .loading .ms-Spinner {
-    width: 100%;
     position: absolute;
-    left: 45%;
-    top: 45%;
 }
 
-.ms-Dialog {
+#popupBrowse.ms-Dialog {
     width: 100%;
     max-width: 100%;
     min-width: 100%;
@@ -1865,13 +1875,13 @@ ul, li {
     background-color: transparent;
 }
 
-.ms-Dialog .ms-Dialog-buttonClose {
+#popupBrowse.ms-Dialog .ms-Dialog-buttonClose {
     right: 30px;
     height: 24px;
     top: 8px;
 }
 
-.ms-Dialog-buttonClose .ms-Icon.ms-Icon--Cancel {
+#popupBrowse.ms-Dialog .ms-Dialog-buttonClose .ms-Icon.ms-Icon--Cancel {
     color: #0078d7;
 }
 
@@ -1993,26 +2003,7 @@ ul, li {
     }
 }
 
-@media screen and (max-width:300px) {
-    #popupConfirm > div > div {
-        font-size: 14px;
-    }
-
-    #popupConfirm button {
-        width: 70px;
-        height: 24px;
-    }
-}
-
 @media screen and (max-width:240px) {
-    .popups .popup > div {
-        padding: 15px;
-    }
-
-    #popupConfirm > div > div {
-        font-size: 12px;
-    }
-
     .content-header .add-header .ms-Label, .content-header .manage-title .ms-Label {
         font-size: 18px;
     }
@@ -2025,23 +2016,11 @@ ul, li {
         display: none;
     }
 
-    #popupConfirm button {
-        width: 45px;
-        font-size: 12px;
-        height: 20px;
-    }
-
     .footer i {
         display: none;
     }
 
     .footer label {
         font-size: 12px;
-    }
-}
-
-@media screen and (max-width:180px) {
-    #popupConfirm button:last-child {
-        margin: 10px 0 0 0;
     }
 }
