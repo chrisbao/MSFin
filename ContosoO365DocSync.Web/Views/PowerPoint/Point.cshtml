@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/7.1.0/css/fabric.min.css" />
     <link rel="stylesheet" type="text/css" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/css/fabric.components.min.css" />
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
-    <script src="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/js/fabric.js" type="text/javascript"></script>
+    <script src="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/js/fabric.min.js" type="text/javascript"></script>
 
     <!-- To enable offline debugging using a local reference to Office.js, use:                        -->
     <!-- <script src="../../Scripts/Office/MicrosoftAjax.js" type="text/javascript"></script>  -->
@@ -73,7 +73,9 @@
             </div>
             <div class="content-header">
                 <div class="manage-header">
-                    <h3 id="lblSourcePointName">Source Points</h3>
+                    <div class="manage-title">
+                        <label class="ms-Label" id="lblSourcePointName">Source Points</label>
+                    </div>
                     <div class="search">
                         <div class="s-input">
                             <div>
@@ -82,12 +84,12 @@
                             </div>
                         </div>
                         <div class="s-label">
-                            <label>Search Source Point Name:</label>
-                            <i id="iSearchSourcePoint"></i>
+                            <label class="ms-Label">Search Source Point Name:</label>
+                            <i id="iSearchSourcePoint" class="ms-Icon ms-Icon--Search ms-fontColor-neutralTertiary"></i>
                         </div>
                     </div>
-                    <ul id="headerListPoints" class="point-list">
-                        <li class="point-header">
+                    <ul id="headerListPoints" class="ms-List point-list">
+                        <li class="ms-ListItem point-header">
                             <div class="point-header-line noscroll">
                                 <div class="i2">Source Point</div>
                                 <div class="i3">Published Value</div>
@@ -99,21 +101,24 @@
             </div>
         </div>
         <div class="content manage-point">
-            <ul id="listPoints" class="point-list">
-            </ul>
+            <ul id="listPoints" class="ms-List point-list"></ul>
             <div class="clear"></div>
             <div id="pager">
-                <div>
+                <label class="ms-Label">
                     Total items: <span id="pagerTotal"></span>, Page count: <span id="pagerPages"></span>, Current page: <span id="pagerCurrent"></span>
-                </div>
+                </label>
                 <div>
-                    <a id="pagerPrev" href="javascript:">Prev</a><a id="pagerNext" href="javascript:">Next</a>
-                    <input type="text" id="pagerValue" /><button id="pagerGo">GO</button>
+                    <a class="ms-Link" id="pagerPrev" href="javascript:">Prev</a><a class="ms-Link" id="pagerNext" href="javascript:">Next</a>
+                    <input class="ms-TextField-field" type="text" id="pagerValue" />
+                    <button id="pagerGo" class="ms-Button ms-Button--primary">
+                        <span class="ms-Button-label">GO</span>
+                    </button>
                 </div>
             </div>
         </div>
         <div class="footer">
-            <i></i><span>Contoso O365 Doc Sync</span>
+            <i></i>
+            <label class="ms-Label">O365 Doc Sync</label>
         </div>
         <div id="popupMain" class="popups">
             <div class="ms-Overlay ms-Overlay--dark popup"></div>
@@ -124,7 +129,7 @@
                         <span id="lblSuccessMessage"></span>
                     </div>
                 </div>
-                <div id="popupErrorMain" class="ms-Dialog ms-Dialog--blocking is-open error-wrapper">
+                <div id="popupErrorMain" class="ms-Dialog ms-Dialog--blocking error-wrapper">
                     <div class="ms-Dialog-main">
                         <div class="ms-Dialog-header">
                             <p class="ms-Dialog-title">
@@ -148,22 +153,25 @@
                 </div>
             </div>
             <div id="popupProcessing" class="ms-Spinner ms-Spinner--large processing popup"></div>
-            <div id="popupBrowse" class="popup">
-                <div>
+            <div id="popupBrowse" class="ms-Dialog ms-Dialog--close popup">
+                <button id="btnBrowseCancel" class="ms-Dialog-button ms-Dialog-buttonClose">
+                    <i class="ms-Icon ms-Icon--Cancel"></i>
+                </button>
+                <div class="ms-Dialog-content">
                     <div class="browse-file">
                         <div class="browse-filter">
-                            <a href="javascript:" id="btnBrowseBack">&lt;&lt; Back</a>
-                            <i id="btnBrowseCancel"></i>
+                            <a id="btnBrowseBack" class="ms-Link" href="javascript:"><i class="ms-Icon ms-Icon--Back"></i>Back</a>
                         </div>
                         <div class="browse-content">
-                            <ul id="browseList"></ul>
+                            <ul id="browseList" class="ms-List"></ul>
                         </div>
                         <div class="browse-message" id="txtBrowseMessage">
                         </div>
                     </div>
                     <div class="loading" id="popBrowseLoading">
                         <div class="loading-bg"></div>
-                        <i></i>
+                        <div class="ms-Spinner ms-Spinner--large">
+                        </div>
                     </div>
                 </div>
             </div>

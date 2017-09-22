@@ -196,35 +196,23 @@ ul, li {
     padding: 0 0 0 10px;
 }
 
-.ckb-wrapper {
-    width: 16px;
-    height: 16px;
-    border: 2px #cccccc solid;
-    position: relative;
+.ms-CheckBox {
+    min-height: inherit;
 }
 
-.ckb-wrapper input[type="checkbox"] {
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    opacity: 0;
-    top: -2px;
-    left: -2px;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
-}
-
-.ckb-wrapper.checked i {
-    float: left;
-    height: 10px;
-    width: 10px;
-    background: #000;
-    margin: 1px;
+.ms-CheckBox-field {
+    margin-top: 0;
+    line-height: 16px;
 }
 
 .ms-CheckBox-field.is-checked:before {
     border: 0;
+}
+
+.ms-CheckBox-field:before, .ms-CheckBox-field:after {
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
 }
 
 /* Style for sign in page */
@@ -300,7 +288,7 @@ ul, li {
 .sign-in .logo p {
     color: #fff;
     text-transform: uppercase;
-    font-size: 48px;
+    font-size: 36px;
     font-weight: bold;
     padding: 5px 0;
     margin: 0;
@@ -424,6 +412,8 @@ ul, li {
     height: 38px;
     padding: 0 10px;
     font-size: 16px;
+    min-width: inherit;
+    font-weight: normal;
 }
 
 .add.bulk .source-name {
@@ -477,9 +467,10 @@ ul, li {
     right: 0;
     width: 38px;
     height: 38px;
-    background-image: url(../Images/excel-cell.png);
-    background-position: center;
-    background-repeat: no-repeat;
+}
+
+.add .select-range a .ms-Icon {
+    font-size: 38px;
 }
 
 .add .title-add, .add.edit .title-edit {
@@ -501,11 +492,16 @@ ul, li {
 
 .edit .point-associated li {
     width: 100%;
-    font-size: 14px;
-    padding-left: 16px;
-    background-image: url(../Images/list-style.png);
-    background-position: left center;
-    background-repeat: no-repeat;
+    padding: 0 0 0 16px;
+    line-height: 20px;
+    word-wrap: break-word;
+    position: relative;
+}
+
+.edit .point-associated li .ms-Icon {
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 /* Word Add-In */
@@ -574,13 +570,12 @@ ul, li {
 #word-addin.add .input-wrapper .input-search i {
     position: absolute;
     width: 43px;
-    height: 34px;
-    background-image: url(../Images/w-search.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    top: 2px;
+    height: 32px;
+    top: 3px;
     right: 2px;
     cursor: pointer;
+    font-size: 32px;
+    text-align: center;
 }
 
 #word-addin.add .input-wrapper input[type="text"].input-default {
@@ -673,12 +668,6 @@ ul, li {
     line-height: 16px;
 }
 
-#word-addin.add .filter-list li .ms-CheckBox-field:before, #word-addin.add .filter-list li .ms-CheckBox-field:after {
-    width: 16px;
-    height: 16px;
-    line-height: 16px;
-}
-
 #word-addin.add .filter-list li:first-child > div {
     padding-top: 0;
 }
@@ -715,7 +704,7 @@ ul, li {
 }
 
 #word-addin.add .point-result .ms-RadioButton {
-    min-height: 1px;
+    min-height: inherit;
 }
 
 #word-addin.add .point-result .ms-RadioButton-field {
@@ -873,13 +862,14 @@ ul, li {
 .add-point-select > i {
     position: absolute;
     width: 41px;
-    height: 30px;
-    top: 1px;
+    height: 28px;
+    top: 0;
     right: 0;
     cursor: pointer;
-    background-image: url(../Images/w-down.png);
-    background-position: center;
-    background-repeat: no-repeat;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 4px;
 }
 
 .add-point-select > ul {
@@ -1085,14 +1075,13 @@ ul, li {
 .manage .search .s-label i {
     position: absolute;
     width: 33px;
-    height: 26px;
-    background-image: url(../Images/w-search.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    top: 2px;
+    height: 24px;
+    top: 3px;
     right: 22px;
     cursor: pointer;
     background-color: #fff;
+    font-size: 24px;
+    text-align: center;
 }
 
 .manage .point-list {
@@ -1215,24 +1204,6 @@ ul, li {
 .manage .point-list .error-info p {
     margin: 0;
     padding: 5px 0 0 0;
-}
-
-.manage .point-list .ms-CheckBox {
-    min-height: initial;
-}
-
-.manage .point-list .ms-CheckBox-field {
-    margin-top: 0;
-}
-
-.manage .point-list .ms-CheckBox-field:before, .manage .point-list .ms-CheckBox-field:after {
-    width: 16px;
-    height: 16px;
-    line-height: 16px;
-}
-
-.manage .point-list .point-item .ckb-wrapper {
-    margin-top: 2px;
 }
 
 .manage .point-list .point-item .i2 {
@@ -1389,20 +1360,6 @@ ul, li {
     margin: 0;
 }
 
-#word-addin.manage .manage-title a {
-    float: left;
-    width: 30px;
-    height: 20px;
-    background-image: url(../Images/w-up-ss.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    border: 1px #e6e6e6 solid;
-}
-
-#word-addin.manage .manage-title a:last-child {
-    background-image: url(../Images/w-down-ss.png);
-}
-
 #word-addin.manage .point-list .point-item {
     border: 1px #fff solid;
     cursor: pointer;
@@ -1435,6 +1392,10 @@ ul, li {
 
 #word-addin.manage .point-list .point-item .i4 {
     text-decoration: underline;
+}
+
+#powerpoint-addin.manage .manage-title {
+    padding-right: 20px;
 }
 
 #pager {
@@ -1590,7 +1551,7 @@ ul, li {
     display: none;
 }
 
-.popups.active, .popups.active .ms-Overlay{
+.popups.active, .popups.active .ms-Overlay {
     display: block;
 }
 
@@ -1606,7 +1567,10 @@ ul, li {
     box-sizing: border-box;
     padding: 0 20px;
     background-color: transparent;
-    box-shadow:none
+    box-shadow: none;
+    transform: none;
+    left: 0;
+    top: 30%;
 }
 
 .popups .ms-Dialog .ms-Dialog-main {
@@ -1636,10 +1600,10 @@ ul, li {
 
 .popups .ms-Spinner {
     position: fixed;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    left: 50%;
-    top: 50%;
+    transform: translate(-45%, -45%);
+    -ms-transform: translate(-45%, -45%);
+    left: 45%;
+    top: 45%;
 }
 
 .popups.message.active #popupMessage, .popups.process.active #popupProcessing, .popups.confirm.active #popupConfirm, .popups.browse.active #popupBrowse {
@@ -1663,6 +1627,7 @@ ul, li {
     display: inline-block;
     color: #009A62;
     font-size: 98px;
+    width: 100%;
     font-weight: bolder;
 }
 
@@ -1713,17 +1678,16 @@ ul, li {
     max-height: 120px;
     overflow-y: auto;
     overflow-x: hidden;
+    list-style-type: square;
 }
 
 .popups .popup .error-wrapper li {
     text-align: left;
     font-size: 14px;
     font-weight: 600;
-    padding-left: 16px;
-    background-image: url(../Images/list-style.png);
-    background-position: left 8px;
-    background-repeat: no-repeat;
     padding-bottom: 5px;
+    list-style-type: square;
+    list-style-position: inside;
 }
 
 .popups .popup .error-wrapper li:last-child {
@@ -1809,28 +1773,42 @@ ul, li {
 #popupBrowse .browse-content li {
     cursor: pointer;
     width: 100%;
-    padding: 4px 10px 4px 21px;
+    padding: 4px 10px 4px 0;
     font-size: 13px;
     max-width: 100%;
     word-break: break-all;
-    background-position: left center;
-    background-repeat: no-repeat;
+    line-height: 16px;
 }
 
-#popupBrowse .browse-content li.i-folder {
-    background-image: url(../Images/icon-folder.png);
+#popupBrowse .browse-content li:before {
+    font-family: FabricMDL2Icons;
+    font-style: normal;
+    font-weight: 400;
+    speak: none;
+    font-size: 16px;
+    padding-right: 5px;
+    line-height: 16px;
+    float: left;
 }
 
-#popupBrowse .browse-content li.i-file {
-    background-image: url(../Images/icon-file.png);
+#popupBrowse .browse-content li.i-folder:before {
+    content: "\F0A9";
+    color: #a6a6a6;
 }
 
-#popupBrowse .browse-content li.i-library {
-    background-image: url(../Images/icon-library.png);
+#popupBrowse .browse-content li.i-file:before {
+    content: "\EF73";
+    color: #207347;
 }
 
-#popupBrowse .browse-content li.i-site {
-    background-image: url(../Images/icon-site.png);
+#popupBrowse .browse-content li.i-library:before {
+    content: "\EEB8";
+    color: #eac282;
+}
+
+#popupBrowse .browse-content li.i-site:before {
+    color: #0078d7;
+    content: "\F27E";
 }
 
 #popupBrowse .browse-content li:hover {

@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/7.1.0/css/fabric.min.css" />
     <link rel="stylesheet" type="text/css" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/css/fabric.components.min.css" />
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
-    <script src="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/js/fabric.js" type="text/javascript"></script>
+    <script src="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.4.0/js/fabric.min.js" type="text/javascript"></script>
 
     <!-- To enable offline debugging using a local reference to Office.js, use:                        -->
     <!-- <script src="../../Scripts/Office/MicrosoftAjax.js" type="text/javascript"></script>  -->
@@ -151,11 +151,11 @@
                         </div>
                         <div class="s-label">
                             <label class="ms-Label">Search Source Point Name:</label>
-                            <i id="iSearchSourcePoint"></i>
+                            <i id="iSearchSourcePoint" class="ms-Icon ms-Icon--Search ms-fontColor-neutralTertiary"></i>
                         </div>
                     </div>
-                    <ul id="headerListPoints" class="point-list">
-                        <li class="point-header">
+                    <ul id="headerListPoints" class="ms-List point-list">
+                        <li class="ms-ListItem point-header">
                             <div class="point-header-line noscroll">
                                 <div class="i1">
                                     <div class="ms-CheckBox all">
@@ -175,27 +175,26 @@
         </div>
         <div class="content add-point">
             <div class="point-item input-wrapper source-name">
-                <label>Source Point Name<em>*</em></label>
+                <label class="ms-Label">Source Point Name<em>*</em></label>
                 <div class="select-range">
-                    <input type="text" id="txtName" />
-                    <a href="javascript:" id="btnSelectName" title="Select source point name"></a>
+                    <input type="text" class="ms-TextField-field" id="txtName" />
+                    <a href="javascript:" id="btnSelectName" title="Select source point name"><i class="ms-Icon ms-Icon--ArrowUpRightMirrored8 ms-fontColor-themePrimary"></i></a>
                 </div>
             </div>
-            <h4 style="display: none;">Set Location</h4>
             <div class="point-item input-wrapper">
-                <label>Select range:<em>*</em></label>
+                <label class="ms-Label">Select range:<em>*</em></label>
                 <div class="select-range">
-                    <input type="text" id="txtLocation" />
-                    <a href="javascript:" id="btnLocation" title="Select range"></a>
+                    <input type="text" class="ms-TextField-field" id="txtLocation" />
+                    <a href="javascript:" id="btnLocation" title="Select range"><i class="ms-Icon ms-Icon--ArrowUpRightMirrored8 ms-fontColor-themePrimary"></i></a>
                 </div>
             </div>
             <div class="point-item input-wrapper select-group">
-                <label>Assign to Groups:</label>
-                <ul id="groupWrapper"></ul>
+                <label class="ms-Label">Assign to Groups:</label>
+                <ul id="groupWrapper" class="ms-List"></ul>
             </div>
             <div class="point-associated">
                 <h4>Files associated with this Source Point:</h4>
-                <ul id="listAssociated"></ul>
+                <ul id="listAssociated" class="ms-List"></ul>
             </div>
         </div>
         <div class="content manage-point">
@@ -232,7 +231,7 @@
                         <span id="lblSuccessMessage"></span>
                     </div>
                 </div>
-                <div id="popupErrorMain" class="ms-Dialog ms-Dialog--blocking is-open error-wrapper">
+                <div id="popupErrorMain" class="ms-Dialog ms-Dialog--blocking error-wrapper">
                     <div class="ms-Dialog-main">
                         <div class="ms-Dialog-header">
                             <p class="ms-Dialog-title">
@@ -256,7 +255,7 @@
                 </div>
             </div>
             <div id="popupProcessing" class="ms-Spinner ms-Spinner--large processing popup"></div>
-            <div id="popupConfirm" class="ms-Dialog ms-Dialog--blocking is-open popup">
+            <div id="popupConfirm" class="ms-Dialog ms-Dialog--blocking popup">
                 <div class="ms-Dialog-main">
                     <div class="ms-Dialog-header">
                         <p class="ms-Dialog-title"></p>

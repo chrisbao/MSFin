@@ -1,9 +1,9 @@
 ﻿$(function () {
-    //Office.initialize = function (reason) {
-    $(document).ready(function () {
-        point.init();
-    });
-    //};
+    Office.initialize = function (reason) {
+        $(document).ready(function () {
+            point.init();
+        });
+    };
 });
 
 var point = (function () {
@@ -117,7 +117,7 @@ var point = (function () {
         $(document).on("click", ".n-refresh,.ms-ContextualMenu-item:has(.ms-Icon--Refresh)", function () {
             that.action.refresh();
         });
-        $(document).on("click", ".n-refresh,.ms-ContextualMenu-item:has(.ms-Icon--Delete)", function () {
+        $(document).on("click", ".n-delete,.ms-ContextualMenu-item:has(.ms-Icon--Delete)", function () {
             that.action.deleteSelected();
         });
         $(document).on("click", ".n-bulk,.ms-ContextualMenu-item:has(.ms-Icon--bulkAdd)", function () {
@@ -178,14 +178,14 @@ var point = (function () {
                 $(this).next(".ms-CheckBox-field").addClass("is-checked");
                 if ($(this).closest(".all").length > 0) {
                     that.controls.list.find(".ms-CheckBox input").prop("checked", true);
-                    that.controls.list.find(".ms-CheckBox .ms-CheckBox-field").addClass("checked");
+                    that.controls.list.find(".ms-CheckBox .ms-CheckBox-field").addClass("is-checked");
                 }
             }
             else {
                 $(this).next(".ms-CheckBox-field").removeClass("is-checked");
                 if ($(this).closest(".all").length > 0) {
                     that.controls.list.find(".ms-CheckBox input").prop("checked", false);
-                    that.controls.list.find(".ms-CheckBox .ms-CheckBox-field").removeClass("checked");
+                    that.controls.list.find(".ms-CheckBox .ms-CheckBox-field").removeClass("is-checked");
                 }
             }
         });
@@ -1665,8 +1665,15 @@ var point = (function () {
                 _s.push(d.Id);
             });
             $.each(options.data, function (i, d) {
-                $("<li><div><div class=\"ckb-wrapper" + ($.inArray(d.Id, _s) > -1 ? " checked" : "") + "\"><input type=\"checkbox\" id=\"group_" + d.Id + "\" value=\"" + d.Id + "\" " + (($.inArray(d.Id, _s) > -1 ? "checked=\"checked\"" : "")) + " /><i></i></div></div><label for=\"group_" + d.Id + "\">" + d.Name + "</label></li>").appendTo(that.controls.groups);
+                var _h = '<li class="ms-ListItem">';
+                _h += '<div class="ms-CheckBox">';
+                _h += '<input tabindex="-1" type="checkbox" class="ms-CheckBox-input" ' + ($.inArray(d.Id, _s) > -1 ? 'checked="checked"' : '') + ' value="' + d.Id + '">';
+                _h += '<label role="checkbox" class="ms-CheckBox-field ' + ($.inArray(d.Id, _s) > -1 ? " is-checked" : "") + '" tabindex="0" aria-checked="false" name="checkboxa"><span class="ms-Label">' + d.Name + '</span></label>';
+                _h += '</div>';
+                _h += '</li>';
+                $(_h).appendTo(that.controls.groups);
             });
+            that.fabric.bindCheckBoxInGroup();
         },
         ///Build the associated files list.
         associated: function (options) {
@@ -1682,7 +1689,7 @@ var point = (function () {
             });
             that.controls.listAssociated.html("");
             $.each(_s, function (i, d) {
-                $("<li>" + d + "</li>").appendTo(that.controls.listAssociated);
+                $("<li class=\"ms-ListItem\"><i class=\"ms-Icon ms-Icon--CheckboxIndeterminate\"></i>" + d + "</li>").appendTo(that.controls.listAssociated);
             });
         },
         ///Build the source point management UI.
@@ -1758,7 +1765,7 @@ var point = (function () {
                             var _h = '<li class="ms-ListItem point-item' + (_ss ? "" : " item-error") + '" data-id="' + _item.Id + '" data-range="' + _item.RangeId + '" data-position="' + (_s ? result.data.address : "") + '" data-namerange="' + (_st ? _item.NameRangeId : "") + '" data-nameposition="' + (_st ? ret.data.address : "") + '">';
                             _h += '<div class="point-item-line">';
                             _h += '<div class="i1">';
-                            _h += '<div class="ms-CheckBox"><input tabindex="-1" type="checkbox" class="ms-CheckBox-input">';
+                            _h += '<div class="ms-CheckBox"><input tabindex="-1" type="checkbox" class="ms-CheckBox-input" ' + ((_sel ? 'checked="checked"' : '')) + '>';
                             _h += '<label role="checkbox" class="ms-CheckBox-field ' + (_sel ? " is-checked" : "") + '" tabindex="0" aria-checked="false" name="checkboxa"></label></div>';
                             _h += '</div>';
                             _h += '<div class="i2"><span class="s-name" title="' + _n + '">' + _n + '</span>';

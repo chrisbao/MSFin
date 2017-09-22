@@ -1,10 +1,10 @@
 ﻿$(function () {
-    //Office.initialize = function (reason) {
-    $(document).ready(function () {
-        BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
-        point.init();
-    });
-    //};
+    Office.initialize = function (reason) {
+        $(document).ready(function () {
+            BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
+            point.init();
+        });
+    };
 });
 
 var point = (function () {
@@ -429,7 +429,6 @@ var point = (function () {
             }
         }
     };
-
     ///Load the destination point list.
     that.list = function (options, callback) {
         that.popup.processing(true);
@@ -2333,7 +2332,7 @@ var point = (function () {
                     var _h = '<li class="ms-ListItem point-item' + (_s ? "" : " item-error") + '" data-id="' + _dsp.Id + '" data-range="' + _dsp.RangeId + '">';
                     _h += '<div class="point-item-line">';
                     _h += '<div class="i1">';
-                    _h += '<div class="ms-CheckBox"><input tabindex="-1" type="checkbox" class="ms-CheckBox-input">';
+                    _h += '<div class="ms-CheckBox"><input tabindex="-1" type="checkbox" class="ms-CheckBox-input" ' + (_sel ? ' checked="checked"' : '') + '>';
                     _h += '<label role="checkbox" class="ms-CheckBox-field ' + (_sel ? " is-checked" : "") + '" tabindex="0" aria-checked="false" name="checkboxa"></label></div>';
                     _h += '</div>';
                     _h += '<div class="i2"><span class="s-name" title="' + _item.Name + '">' + _item.Name + '</span>';

@@ -1,9 +1,9 @@
 ﻿$(function () {
-    //Office.initialize = function (reason) {
+    Office.initialize = function (reason) {
         $(document).ready(function () {
             point.init();
         });
-    //};
+    };
 });
 
 var point = (function () {
@@ -824,7 +824,7 @@ var point = (function () {
                         _pv = (_item.PublishedHistories && _item.PublishedHistories.length > 0 ? (_item.PublishedHistories[0].Value ? _item.PublishedHistories[0].Value : "") : ""),
                         _pht = _item.PublishedHistories && _item.PublishedHistories.length > 0 ? _item.PublishedHistories : [],
                         _pi = 0;
-                    var _h = '<li class="point-item" data-id="' + _item.Id + '" data-range="' + _item.RangeId + '" data-position="' + _item.Position + '" data-namerange="' + _item.NameRangeId + '" data-nameposition="' + _item.NamePosition + '">';
+                    var _h = '<li class="ms-ListItem point-item" data-id="' + _item.Id + '" data-range="' + _item.RangeId + '" data-position="' + _item.Position + '" data-namerange="' + _item.NameRangeId + '" data-nameposition="' + _item.NamePosition + '">';
                     _h += '<div class="point-item-line">';
                     _h += '<div class="i2"><span class="s-name" title="' + _item.Name + '">' + _item.Name + '</span>';
                     _h += '<span title="' + (_pn.sheet ? _pn.sheet : "") + ':[' + (_pn.cell ? _pn.cell : "") + ']"><strong>' + (_pn.sheet ? _pn.sheet : "") + ':</strong>[' + (_pn.cell ? _pn.cell : "") + ']</span>';
@@ -834,13 +834,13 @@ var point = (function () {
                     _h += '<div class="i-menu"><a href="javascript:"><span title="Action">...</span><span><i class="i-history" title="History"></i></span></a></div>';
                     _h += '</div>';
                     _h += '</div>';
-                    _h += '<div class="item-history"><h6>Publish History</h6><ul class="history-list">';
-                    _h += '<li class="history-header"><div class="h1">Name</div><div class="h2">Value</div><div class="h3">Date</div></li>';
+                    _h += '<div class="item-history"><h6>Publish History</h6><ul class="ms-List history-list">';
+                    _h += '<li class="ms-ListItem history-header"><div class="h1">Name</div><div class="h2">Value</div><div class="h3">Date</div></li>';
                     $.each(_pht, function (m, n) {
                         var __c = $.trim(_pht[m].Value ? _pht[m].Value : ""),
                             __p = $.trim(_pht[m > 0 ? m - 1 : m].Value ? _pht[m > 0 ? m - 1 : m].Value : "");
                         if (_pi < 5 && (m == 0 || __c != __p)) {
-                            _h += '<li class="history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
+                            _h += '<li class="ms-ListItem history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
                             _pi++;
                         }
                     });

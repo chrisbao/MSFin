@@ -20,7 +20,7 @@
 
     <link rel="stylesheet" type="text/css" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/7.1.0/css/fabric.min.css" />
     <link rel="stylesheet" type="text/css" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/css/fabric.components.min.css" />
-    <script src="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/js/fabric.js"></script>
+    <script src="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-js/1.2.0/js/fabric.min.js"></script>
 
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
 
@@ -160,7 +160,7 @@
                         </div>
                         <div class="s-label">
                             <label class="ms-Label">Search Source Point Name:</label>
-                            <i id="iSearchSourcePoint"></i>
+                            <i id="iSearchSourcePoint" class="ms-Icon ms-Icon--Search ms-fontColor-neutralTertiary"></i>
                         </div>
                     </div>
                     <ul id="headerListPoints" class="ms-List point-list">
@@ -200,7 +200,7 @@
                     <label class="ms-Label">Search within document:</label>
                     <div class="input-search">
                         <input type="text" id="txtKeyword" data-default="Search by Source Point Name" />
-                        <i id="iSearch"></i>
+                        <i id="iSearch" class="ms-Icon ms-Icon--Search ms-fontColor-neutralTertiary"></i>
                         <ul id="autoCompleteWrap" class="search-tooltips"></ul>
                     </div>
                 </div>
@@ -240,7 +240,7 @@
                         </div>
                         <div class="add-point-select">
                             <a id="btnSelectFormat" href="javascript:"></a>
-                            <i id="iconSelectFormat"></i>
+                            <i id="iconSelectFormat" class="ms-Icon ms-Icon--ChevronDownMed ms-fontColor-neutralTertiary"></i>
                             <ul id="listFormats"></ul>
                         </div>
                     </div>
@@ -285,7 +285,7 @@
                         <span id="lblSuccessMessage"></span>
                     </div>
                 </div>
-                <div id="popupErrorMain" class="ms-Dialog ms-Dialog--blocking is-open error-wrapper">
+                <div id="popupErrorMain" class="ms-Dialog ms-Dialog--blocking error-wrapper error-list">
                     <div class="ms-Dialog-main">
                         <div class="ms-Dialog-header">
                             <p class="ms-Dialog-title">
@@ -309,7 +309,7 @@
                 </div>
             </div>
             <div id="popupProcessing" class="ms-Spinner ms-Spinner--large processing popup"></div>
-            <div id="popupConfirm" class="ms-Dialog ms-Dialog--blocking is-open popup">
+            <div id="popupConfirm" class="ms-Dialog ms-Dialog--blocking popup">
                 <div class="ms-Dialog-main">
                     <div class="ms-Dialog-header">
                         <p class="ms-Dialog-title"></p>
