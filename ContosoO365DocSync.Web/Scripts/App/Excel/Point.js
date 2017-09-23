@@ -729,7 +729,7 @@ var point = (function () {
         ///UnSelect all checkboxes.
         unSelectAll: function () {
             that.controls.headerListPoints.find(".point-header .ms-CheckBox input").prop("checked", false);
-            that.controls.headerListPoints.find(".point-header .ms-CheckBox .ms-CheckBox-field").removeClass("checked");
+            that.controls.headerListPoints.find(".point-header .ms-CheckBox .ms-CheckBox-field").removeClass("is-checked");
         },
         ///Calculate the height source point list display area.
         height: function () {
@@ -1847,7 +1847,7 @@ var point = (function () {
                 });
                 _e.find(".i3").prop("title", _pv).html(_pv);
                 that.controls.list.find(".ms-CheckBox input").prop("checked", false);
-                that.controls.list.find(".ms-CheckBox .ms-CheckBox-field").removeClass("checked");
+                that.controls.list.find(".ms-CheckBox .ms-CheckBox-field").removeClass("is-checked");
             });
 
             callback();

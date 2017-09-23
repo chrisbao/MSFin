@@ -73,7 +73,7 @@ namespace ContosoO365DocSync.WebJob
                     }
                     Task.WaitAll(tasks.Values.ToArray());
                     var errorItems = tasks.Where(o => o.Value.Result.IsSuccess == false || o.Value.IsFaulted);
-                    retValue.Comments = String.Join("\n\n", tasks.Select(o => $"{o.Key}:\t{String.Join("\n",o.Value.Result.Message)}"));
+                    retValue.Comments = String.Join("\n\n", tasks.Select(o => $"{o.Key}:\t{String.Join("\n", o.Value.Result.Message)}"));
                     if (errorItems.Count() > 0)
                     {
                         retValue.Status = PublishStatus.Error;
@@ -97,7 +97,7 @@ namespace ContosoO365DocSync.WebJob
                 tableBinding.Execute(TableOperation.InsertOrReplace(retValue));
                 log.Write("Publish is finished.");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 log.Write($"Publish the source point: '{message.SourcePointId}' failed due to {ex.ToString()}");
             }

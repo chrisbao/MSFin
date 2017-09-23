@@ -29,7 +29,7 @@
     <SccProvider>SAK</SccProvider>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <ApplicationInsightsResourceId>/subscriptions/ba4b754a-7463-466a-bd84-9d07c7ac9c9e/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/SmartLink.Web</ApplicationInsightsResourceId>
+    <ApplicationInsightsResourceId>/subscriptions/ba4b754a-7463-466a-bd84-9d07c7ac9c9e/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/ContosoO365DocSync.Web</ApplicationInsightsResourceId>
     <WebProject_DirectoryAccessLevelKey>0</WebProject_DirectoryAccessLevelKey>
     <TargetOfficeVersion>15.0</TargetOfficeVersion>
   </PropertyGroup>
@@ -297,9 +297,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Properties\webjobs-list.json" />
-    <None Include="Properties\PublishProfiles\msfinsmartlinkdev - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\msfinsmartlinkqa - Web Deploy %282%29.pubxml" />
-    <None Include="Properties\PublishProfiles\msfinsmartlinkqa - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -612,6 +609,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

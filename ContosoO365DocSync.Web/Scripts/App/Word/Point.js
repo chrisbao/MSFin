@@ -1005,6 +1005,7 @@ var point = (function () {
                     that.range.goto({ RangeId: $(o).data("range") }, function (result) {
                         if (result.status == app.status.succeeded) {
                             that.controls.main.removeClass("manage add edit step-first step-second").addClass("add edit");
+                            that.ui.status({ next: false, cancel: true, save: true });
                             that.controls.formatBtn.prop("original", that.model.ReferencedSourcePoint.Value ? that.model.ReferencedSourcePoint.Value : "");
                             that.action.customFormat({ selected: that.model }, function () {
                                 that.format.preview();
@@ -1889,12 +1890,12 @@ var point = (function () {
             if (millisecond) {
                 setTimeout(function () {
                     that.controls.popupMain.removeClass("active message");
-                    that.controls.main.removeClass("manage add").addClass("manage");
+                    that.controls.main.removeClass("manage add edit step-first step-second").addClass("manage");
                 }, millisecond);
             }
             else {
                 that.controls.popupMain.removeClass("active message");
-                that.controls.main.removeClass("manage add").addClass("manage");
+                that.controls.main.removeClass("manage add edit step-first step-second").addClass("manage");
             }
         }
     };
