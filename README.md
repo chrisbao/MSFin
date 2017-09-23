@@ -519,7 +519,7 @@ administratorLoginPasswordMSFin Contoso O365 Doc Sync Code Sample
 
 15. Select the Excel file hosts the source points. 
 
-   ![](Images/fileexplorer.png)
+   ![](Images/fileexplorer2.png)
 
 
 ## How to view Azure SQL data?
@@ -790,7 +790,7 @@ administratorLoginPasswordMSFin Contoso O365 Doc Sync Code Sample
 
    - Select the Excel file hosts the source points. 
 
-     ![](Images/fileexplorer.png)
+     ![](Images/fileexplorer2.png)
 
 
 ## Understand the code
