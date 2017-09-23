@@ -182,6 +182,11 @@ var point = (function () {
         init: function () {
             ///Create fabric command bar
             new fabric['CommandBar']($(".nav-header").get(0));
+
+            var SpinnerElements = document.querySelectorAll(".ms-Spinner");
+            for (var i = 0; i < SpinnerElements.length; i++) {
+                new fabric['Spinner'](SpinnerElements[i]);
+            }
         }
     };
     ///Load the source point list.
@@ -830,8 +835,8 @@ var point = (function () {
                     _h += '<span title="' + (_pn.sheet ? _pn.sheet : "") + ':[' + (_pn.cell ? _pn.cell : "") + ']"><strong>' + (_pn.sheet ? _pn.sheet : "") + ':</strong>[' + (_pn.cell ? _pn.cell : "") + ']</span>';
                     _h += '</div>';
                     _h += '<div class="i3" title="' + _pv + '">' + _pv + '</div>';
-                    _h += '<div class="i5"><div class="i-line"><i class="i-history" title="History"></i></div>';
-                    _h += '<div class="i-menu"><a href="javascript:"><span title="Action">...</span><span><i class="i-history" title="History"></i></span></a></div>';
+                    _h += '<div class="i5"><div class="i-line"><i title="History" class="ms-Icon ms-Icon--History ms-fontColor-themePrimary i-history"></i></div>';
+                    _h += '<div class="i-menu"><a href="javascript:"><span title="Action">...</span><span><i title="History" class="ms-Icon ms-Icon--History ms-fontColor-themePrimary i-history"></i></span></a></div>';
                     _h += '</div>';
                     _h += '</div>';
                     _h += '<div class="item-history"><h6>Publish History</h6><ul class="ms-List history-list">';

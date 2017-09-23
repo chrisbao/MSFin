@@ -728,8 +728,8 @@ var point = (function () {
         },
         ///UnSelect all checkboxes.
         unSelectAll: function () {
-            that.controls.headerListPoints.find(".point-header .ms-CheckBox-field input").prop("checked", false);
-            that.controls.headerListPoints.find(".point-header .ms-CheckBox-field .ms-CheckBox-field").removeClass("checked");
+            that.controls.headerListPoints.find(".point-header .ms-CheckBox input").prop("checked", false);
+            that.controls.headerListPoints.find(".point-header .ms-CheckBox .ms-CheckBox-field").removeClass("checked");
         },
         ///Calculate the height source point list display area.
         height: function () {

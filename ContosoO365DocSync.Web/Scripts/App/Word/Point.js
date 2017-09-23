@@ -702,8 +702,8 @@ var point = (function () {
         },
         ///Uncheck all selected destination points.
         unSelectAll: function () {
-            that.controls.headerListPoints.find(".point-header .ms-CheckBox-field input").prop("checked", false);
-            that.controls.headerListPoints.find(".point-header .ms-CheckBox-field .ms-CheckBox-field").removeClass("is-checked");
+            that.controls.headerListPoints.find(".point-header .ms-CheckBox input").prop("checked", false);
+            that.controls.headerListPoints.find(".point-header .ms-CheckBox .ms-CheckBox-field").removeClass("is-checked");
         },
         ///Get an array of paths (server ralative URl splitted by '/' )
         path: function () {

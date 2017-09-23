@@ -279,11 +279,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Images\icon-decrease.png" />
-    <Content Include="Images\icon-file.png" />
-    <Content Include="Images\icon-folder.png" />
     <Content Include="Images\icon-increase.png" />
-    <Content Include="Images\icon-library.png" />
-    <Content Include="Images\icon-site.png" />
     <Content Include="Images\logo-l.png" />
     <Content Include="Images\logo.png" />
     <Content Include="Images\mode-excel.png" />
