@@ -1,4 +1,4 @@
-administratorLoginPasswordMSFin Contoso O365 Doc Sync Code Sample
+Contoso O365 Doc Sync Code Sample
 
 **Table of Contents**
 
