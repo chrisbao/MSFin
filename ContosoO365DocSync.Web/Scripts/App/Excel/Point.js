@@ -752,6 +752,18 @@ var point = (function () {
                 _p.push(_c.join("/"));
             }
             return _p;
+        },
+        ///Return 5 publish histories
+        publishHistory: function (options) {
+            var _ph = [], _td = options.data && options.data.length > 0 ? options.data.reverse() : [];
+            $.each(_td, function (m, n) {
+                var __c = _td[m].Value ? _td[m].Value : "",
+                    __p = _td[m > 0 ? m - 1 : m].Value ? _td[m > 0 ? m - 1 : m].Value : "";
+                if (m == 0 || __c != __p) {
+                    _ph.push(n);
+                }
+            });
+            return _ph.reverse().slice(0, 5);
         }
     };
     ///Define all the event handlers.
@@ -1427,7 +1439,7 @@ var point = (function () {
                     $.each(options.values, function (i, d) {
                         _h += "<li>";
                         $.each(d, function (m, n) {
-                            _h += "<span>" + n + "</span>";
+                            _h += "" + n + "";
                         });
                         _h += "</li>";
                     });
@@ -1760,8 +1772,7 @@ var point = (function () {
                                 _pn = _st ? that.utility.position(ret.data.address) : {},
                                 _pv = (_item.PublishedHistories && _item.PublishedHistories.length > 0 ? (_item.PublishedHistories[0].Value ? _item.PublishedHistories[0].Value : "") : ""),
                                 _sel = $.inArray(_item.Id, options.selected) > -1,
-                                _pht = _item.PublishedHistories && _item.PublishedHistories.length > 0 ? _item.PublishedHistories : [],
-                                _pi = 0;
+                                _pht = that.utility.publishHistory({ data: _item.PublishedHistories });
                             var _h = '<li class="ms-ListItem point-item' + (_ss ? "" : " item-error") + '" data-id="' + _item.Id + '" data-range="' + _item.RangeId + '" data-position="' + (_s ? result.data.address : "") + '" data-namerange="' + (_st ? _item.NameRangeId : "") + '" data-nameposition="' + (_st ? ret.data.address : "") + '">';
                             _h += '<div class="point-item-line">';
                             _h += '<div class="i1">';
@@ -1795,12 +1806,7 @@ var point = (function () {
                             _h += '<div class="item-history"><h6>Publish History</h6><ul class="ms-List history-list">';
                             _h += '<li class="ms-ListItem history-header"><div class="h1">Name</div><div class="h2">Value</div><div class="h3">Date</div></li>';
                             $.each(_pht, function (m, n) {
-                                var __c = $.trim(_pht[m].Value ? _pht[m].Value : ""),
-                                    __p = $.trim(_pht[m > 0 ? m - 1 : m].Value ? _pht[m > 0 ? m - 1 : m].Value : "");
-                                if (_pi < 5 && (m == 0 || __c != __p)) {
-                                    _h += '<li class="ms-ListItem history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
-                                    _pi++;
-                                }
+                                _h += '<li class="ms-ListItem history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
                             });
                             _h += '</ul>';
                             _h += '</div>';
@@ -1834,16 +1840,10 @@ var point = (function () {
             $.each(options.SourcePoints, function (i, d) {
                 var _e = that.controls.list.find("[data-id=" + d.Id + "]"),
                     _pv = (d.PublishedHistories && d.PublishedHistories.length > 0 ? (d.PublishedHistories[0].Value ? d.PublishedHistories[0].Value : "") : ""),
-                    _pht = d.PublishedHistories && d.PublishedHistories.length > 0 ? d.PublishedHistories : [],
-                    _pi = 0;
+                    _pht = that.utility.publishHistory({ data: d.PublishedHistories });
                 _e.find(".history-list").find(".history-item").remove();
                 $.each(_pht, function (m, n) {
-                    var __c = $.trim(_pht[m].Value ? _pht[m].Value : ""),
-                        __p = $.trim(_pht[m > 0 ? m - 1 : m].Value ? _pht[m > 0 ? m - 1 : m].Value : "");
-                    if (_pi < 5 && (m == 0 || __c != __p)) {
-                        _e.find(".history-list").append('<li class="history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>');
-                        _pi++;
-                    }
+                    _e.find(".history-list").append('<li class="history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>');
                 });
                 _e.find(".i3").prop("title", _pv).html(_pv);
                 that.controls.list.find(".ms-CheckBox input").prop("checked", false);

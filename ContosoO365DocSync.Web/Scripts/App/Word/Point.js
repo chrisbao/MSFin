@@ -726,6 +726,18 @@ var point = (function () {
                 var _h = that.controls.formatBtn.offset().top;
                 that.controls.formatList.css("maxHeight", (_a - _h - 96) + "px");
             }
+        },
+        ///Return 5 publish histories
+        publishHistory: function (options) {
+            var _ph = [], _td = options.data && options.data.length > 0 ? options.data.reverse() : [];
+            $.each(_td, function (m, n) {
+                var __c = _td[m].Value ? _td[m].Value : "",
+                    __p = _td[m > 0 ? m - 1 : m].Value ? _td[m > 0 ? m - 1 : m].Value : "";
+                if (m == 0 || __c != __p) {
+                    _ph.push(n);
+                }
+            });
+            return _ph.reverse().slice(0, 5);
         }
     };
     ///Define all the event handlers.
@@ -2323,10 +2335,9 @@ var point = (function () {
                         _sel = $.inArray(_dsp.Id, options.selected) > -1,
                         _fv = that.format.convert({ value: _item.Value ? _item.Value : "", formats: _dsp.CustomFormats, decimal: _dsp.DecimalPlace }),
                         _ff = [],
-                        _pht = _item.PublishedHistories && _item.PublishedHistories.length > 0 ? _item.PublishedHistories : [],
-                        _pi = 0;
+                        _pht = that.utility.publishHistory({ data: _item.PublishedHistories });
                     $.each(_dsp.CustomFormats != null ? _dsp.CustomFormats : [], function (_x, _y) { _ff.push(_y.DisplayName); });
-                    if (_dsp.DecimalPlace != null && _dsp.DecimalPlace != "") {
+                    if (_dsp.DecimalPlace != null) {
                         _ff.push("Displayed decimals");
                     }
                     var _cf = _ff.join("; ").replace(/"/g, "&quot;");
@@ -2361,12 +2372,7 @@ var point = (function () {
                     _h += '<div class="item-history"><h6>Publish History</h6><ul class="ms-List history-list">';
                     _h += '<li class="ms-ListItem history-header"><div class="h1">Name</div><div class="h2">Value</div><div class="h3">Date</div></li>';
                     $.each(_pht, function (m, n) {
-                        var __c = $.trim(_pht[m].Value ? _pht[m].Value : ""),
-                            __p = $.trim(_pht[m > 0 ? m - 1 : m].Value ? _pht[m > 0 ? m - 1 : m].Value : "");
-                        if (_pi < 5 && (m == 0 || __c != __p)) {
-                            _h += '<li class="ms-ListItem history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
-                            _pi++;
-                        }
+                        _h += '<li class="ms-ListItem history-item"><div class="h1" title="' + n.PublishedUser + '">' + n.PublishedUser + '</div><div class="h2" title="' + (n.Value ? n.Value : "") + '">' + (n.Value ? n.Value : "") + '</div><div class="h3" title="' + that.utility.date(n.PublishedDate) + '">' + that.utility.date(n.PublishedDate) + '</div></li>';
                     });
                     _h += '</ul>';
                     _h += '</div>';
